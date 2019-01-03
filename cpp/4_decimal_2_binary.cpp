@@ -1,8 +1,21 @@
 #include <iostream>
 
+// convert decimal to binary
+int solve(int n)
+{
+  if (n <= 1)
+    return n;
+  else
+    return n%2 + 2 * solve(n/10);
+}
+
+
 int convert(int n)
 {
-  return 10110;
+  if (n > 0)
+    return solve(n);
+  else
+    return - solve(-n);
 }
 
 int main()
