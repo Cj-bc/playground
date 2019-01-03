@@ -7,10 +7,10 @@ int main() {
 
   std::cout << "How is your height: ";
   std::cin >> height;
-  std::cout << "\nHow is your mass: ";
+  std::cout << "How is your mass: ";
   std::cin >> mass;
 
   bmi = mass / (height*height);
 
-  std::cout << "Your BMI is: " << bmi;
+  std::cout << "Your BMI is: " << bmi << "\n";
 }
