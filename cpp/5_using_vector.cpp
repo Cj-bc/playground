@@ -11,6 +11,8 @@ int main()
     v.push_back(i);
   }
 
-  std::cout << "size of v: " << v.size();
+  std::cout << "size of v: " << v.size() << "\n";
+
+  std::cout << "5th item: " << v.at(4) << "\n";
 }
 
