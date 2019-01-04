@@ -10,3 +10,5 @@ all.h.gch: all.h
 
 run:
 	./dst/$(basename $(FILE))
+
+.PHONY: run build build_all
