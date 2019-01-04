@@ -5,23 +5,22 @@ int main()
 {
   std::vector v = { 8, 0, 4, 2, 9, 5, 7, 1, 3};
   std::size_t min_index = 0;
-  std::size_t start_index=0;
   std::size_t temp;
 
-  for (std::size_t index=0; index != v.size(); ++index)
+  for (std::size_t head=0; head != v.size(); ++head)
   {
-    for (std::size_t j=start_index; j != v.size(); ++j)
+    min_index = head;
+
+    for (std::size_t j=head; j != v.size(); ++j)
     {
       if (v.at(j) < v.at(min_index))
         min_index = j;
     }
 
-    temp = v.at(start_index);
-    v.at(start_index) = v.at(min_index);
+    temp = v.at(head);
+    v.at(head) = v.at(min_index);
     v.at(min_index) = temp;
 
-    ++start_index;
-    min_index = start_index;
   }
 
   std::cout << "sorted: ";
