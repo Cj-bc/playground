@@ -1,5 +1,6 @@
-	clang++ -std=c++17 -Wall -o dst/$(basename $(FILE)) $(FILE)
 build: all.h.gch
+	clang++ -std=c++17 -Wall --pedantic-errors -o dst/$(basename $(FILE)) -include all.h $(FILE)
+
 build_all: all.h.gch
 	for file in *.cpp;do
 		clang++ -std=c++17 -Wall --pedantic-errors -o dst/${file%.cpp} -include all.h $file
