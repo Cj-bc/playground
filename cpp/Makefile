@@ -1,9 +1,10 @@
+clang_optiopns = -std=c++17 -Wall --pedantic-errors -include all.h
 build: all.h.gch
-	clang++ -std=c++17 -Wall --pedantic-errors -o dst/$(basename $(FILE)) -include all.h $(FILE)
+	clang++ $(clang_optiopns) -o dst/$(basename $(FILE)) $(FILE)
 
 build_all: all.h.gch
 	for file in *.cpp;do
-		clang++ -std=c++17 -Wall --pedantic-errors -o dst/${file%.cpp} -include all.h $file
+		clang++ $(clang_optiopns) -o dst/${file%.cpp} $file
 	done
 
 all.h.gch: all.h
