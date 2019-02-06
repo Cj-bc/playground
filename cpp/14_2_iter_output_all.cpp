@@ -20,4 +20,10 @@ int main()
 
   output_all(v_begin, v_end);
   output_all(str_begin, str_end);
+
+  std::cout << "any input in int: ";
+
+  std::istream_iterator<int> io_first(std::cin), io_last;
+
+  output_all(io_first, io_last);
 }
