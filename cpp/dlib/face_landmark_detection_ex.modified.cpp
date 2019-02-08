@@ -1,10 +1,12 @@
 // this sample script is copyed from: http://blib.net/face_landmark_detection_ex.html
-// and modified to combine with 
-//
+
 #include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/image_processing/render_face_detections.h>
 #include <dlib/image_processing.h>
+#include <dlib/gui_widgets.h>
 #include <dlib/image_io.h>
 #include <iostream>
+#undef DLIB_NO_GUI_SUPPORT
 
 
 using namespace dlib;
@@ -32,7 +34,7 @@ int main(int argc, char** argv)
 
     // We need a face detector. We will use this to get bounding boxes
     // for each face in an image.
-    frontal_face_detector detector =get_frontal_face_detector();
+    frontal_face_detector detector = get_frontal_face_detector();
     // And we also need a shape_predictor. TZhis is the tool that will predict face
     // landmark positions given an image and face bounding box.
     // Here we are just loading the model from the shape_predictor_68_face_landmarks.dat file
@@ -40,6 +42,7 @@ int main(int argc, char** argv)
     shape_predictor sp;
     deserialize(argv[1]) >> sp;
 
+    image_window win, win_faces;
     // Loop over all the images provided on the command line.
     for (int i = 2; i<argc;++i)
     {
@@ -68,10 +71,12 @@ int main(int argc, char** argv)
         // put them on the screen.
         shapes.push_back(shape);
 
-        string filename = "img_out/" + to_string(i) + "_" + to_string(j) + ".jpeg" ;
-        save_jpeg(img, filename);
       }
 
+      // Now let's view our face poses on the screen.
+      win.clear_overlay();
+      win.set_image(img);
+      win.add_overlay(render_face_detections(shapes));
 
       cout << "Hit enter to process the next image..." <<endl;
       cin.get();
