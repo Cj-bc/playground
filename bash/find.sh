@@ -3,7 +3,11 @@
 # Copyright 2019 (c) Cj-bc
 # This software is released under MIT License
 #
-# @(#) version -
+# landmark:
+#   /usr/bin/find: 0m0.691s
+#     this script: 0m11.957s
+#
+# @(#) version 0.1.0
 
 EX_DATAERR=65
 EX_SUCCESS=0
