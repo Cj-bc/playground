@@ -3,6 +3,12 @@
 # Copyright 2019 (c) Cj-bc
 # This software is released under MIT License
 #
+# @(#) usage:
+# @(#)    ./find.sh (path) (name)
+#
+# @(#) feature:
+# @(#)    refer to commit for the latest version
+#
 # landmark:
 #   /usr/bin/find: 0m0.691s
 #     this script: 0m11.957s
