@@ -36,7 +36,7 @@ function find_core()
   else
     # for -name option.currently not used.
     # local regex_protected="${target/\./\\.}"
-    if [[ "$_path" =~ $target ]];then
+    if [[ "$_path" =~ ^$target$ ]];then
       echo "$(pwd)/$_path"
       return $EX_SUCCESS;
     else
