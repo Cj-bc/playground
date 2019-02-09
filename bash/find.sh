@@ -57,4 +57,14 @@ function find_core()
 }
 # }}}
 
-find_core "$1" "$2"
+# _find: find command itself {{{
+function _find()
+{
+  case "$2" in
+    '-name') find_core "$1" "$3";; # not supported for now
+    '-regex'|'') find_core "$1" "$3";;
+  esac
+}
+# }}}
+
+_find "$@"
