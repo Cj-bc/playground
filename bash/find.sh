@@ -27,12 +27,12 @@ function find_core()
   local target="$2"
 
   if [ -d "$_path" ];then
-    (
-      cd "$_path" || return $EX_DATAERR;
-      for _file in *; do
-        find_core "$_file" "$target"
-      done
-    )
+    local c_pwd="$(pwd)"
+    cd "$_path" || return $EX_DATAERR;
+    for _file in *; do
+      find_core "$_file" "$target"
+    done
+    cd "$c_pwd" || :
     if [[ "$_path" =~ ^${target}$ ]];then
       echo "$(pwd)/$_path"
       return $EX_SUCCESS;
