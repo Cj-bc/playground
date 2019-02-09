@@ -9,11 +9,16 @@
 # @(#) feature:
 # @(#)    refer to commit for the latest version
 #
-# landmark:
-#   /usr/bin/find: 0m0.691s
-#     this script: 0m11.957s
+# landmark(using ./landmark):
+#   /usr/bin/find: 0m15.993s
+#     this script: 0m28.503s
 #
-# @(#) version 0.1.0
+# landmark detail:
+#   execute each command 1,000 times using `bash/landmark.sh`
+#   ./landmark.sh ./landmark.sh './find.sh ~/.ghq/github.com/Cj-bc/blib ".*md"' 'find ~/.ghq/github.com/Cj-bc/blib -regex ".*md"'
+#   blib's commit hash: 1ba122a
+#
+# @(#) version 0.2.0
 
 EX_DATAERR=65
 EX_SUCCESS=0
@@ -42,7 +47,7 @@ function find_core()
   else
     # for -name option.currently not used.
     # local regex_protected="${target/\./\\.}"
-    if [[ "$_path" =~ ^$target$ ]];then
+    if [[ "$_path" =~ ^${target}$ ]];then
       echo "$(pwd)/$_path"
       return $EX_SUCCESS;
     else
