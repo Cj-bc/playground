@@ -33,6 +33,12 @@ function find_core()
         find_core "$_file" "$target"
       done
     )
+    if [[ "$_path" =~ ^${target}$ ]];then
+      echo "$(pwd)/$_path"
+      return $EX_SUCCESS;
+    else
+      return 1;
+    fi
   else
     # for -name option.currently not used.
     # local regex_protected="${target/\./\\.}"
