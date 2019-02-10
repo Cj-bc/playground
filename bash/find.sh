@@ -4,7 +4,7 @@
 # This software is released under MIT License
 #
 # @(#) usage:
-# @(#)    ./find.sh (path) (name)
+# @(#)    ./find.sh (path) [-name|-regex] (regex)
 #
 # @(#) feature:
 # @(#)    refer to commit for the latest version
@@ -32,7 +32,7 @@ function find_core()
   local target="$2"
 
   if [ -d "$_path" ];then
-    local c_pwd="$(pwd)"
+    local c_pwd && c_pwd="$(pwd)"
     cd "$_path" || return $EX_DATAERR;
     for _file in *; do
       find_core "$_file" "$target"
@@ -45,7 +45,7 @@ function find_core()
       return 1;
     fi
   else
-    # for -name option.currently not used.
+    # for -name option. currently not used.
     # local regex_protected="${target/\./\\.}"
     if [[ "$_path" =~ ^${target}$ ]];then
       echo "$(pwd)/$_path"
