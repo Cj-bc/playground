@@ -6,7 +6,7 @@ product' (x:xs) = x * product' xs
 
 take' _ []         = []       -- return [] whenever given list is empty
 take' n _ | n < 1  = []       -- Should consider n<1, not only n==1
-take' n (x:xs)     = x ++ take' (n-1) xs
+take' n (x:xs)     = x : take' (n-1) xs
 
 drop' _ []         = []       -- return [] whenever given list is empty
 drop' n xs | n < 1 = xs       -- Should consider n<1
