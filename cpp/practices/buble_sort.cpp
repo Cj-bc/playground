@@ -19,19 +19,16 @@ int main() {
     putArray(ls);
     std::cout << "size of it: " << lsLen << "\n";
 
-    for (std::size_t l_limit=0; l_limit >= lsLen; ++l_limit)
+    for (std::size_t i=0; i < lsLen-1;++i )
     {
-        for (std::size_t current=lsLen-l_limit-1; current != l_limit; ++current)
+        for (std::size_t j=lsLen-1; j >0; --j)
         {
-            if (ls.at(current) < ls.at(current -1))
+            if (ls.at(j) < ls.at(j-1))
             {
-                std::swap(ls.at(current), ls.at(current-1));
-            } else {
-                break;
+                std::swap(ls.at(j), ls.at(j-1));
             }
         }
     }
-
     std::cout << "sorted: ";
     putArray(ls);
 }
