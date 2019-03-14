@@ -1,4 +1,3 @@
-
 bswap :: [Int] -> [Int]
 bswap [x]       = [x]
 bswap (x:y:ys) | x < y      = y:bswap (x:ys)
@@ -6,7 +5,7 @@ bswap (x:y:ys) | x < y      = y:bswap (x:ys)
 
 bsort :: [Int] -> [Int]
 bsort [x] = [x]
-bsort x = bsort (init y) ++ [last y]
+bsort x = [last y] ++ bsort (init y)
   where
     y = bswap x
 
