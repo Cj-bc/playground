@@ -18,20 +18,18 @@ int main() {
     std::cout << "original: ";
     putArray(ls);
     std::cout << "size of it: " << lsLen << "\n";
-    for (std::size_t i=lsLen-1; i > 0; --i)
+
+    for (std::size_t l_limit=0; l_limit >= lsLen; ++l_limit)
     {
-      for (std::size_t shifted=0; i-shifted-1 >= 0; ++shifted)
-      {
-        std::cout << "i: " << i << ", shifted: " << shifted << "\n";
-        if (ls.at(i-shifted) < ls.at(i-shifted-1))
+        for (std::size_t current=lsLen-l_limit-1; current != l_limit; ++current)
         {
-            int tmp = ls.at(i-shifted);
-            ls.at(i-shifted) = ls.at(i-shifted-1);
-            ls.at(i-shifted-1) = tmp;
-        } else {
-            break;
+            if (ls.at(current) < ls.at(current -1))
+            {
+                std::swap(ls.at(current), ls.at(current-1));
+            } else {
+                break;
+            }
         }
-      }
     }
 
     std::cout << "sorted: ";
