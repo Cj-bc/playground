@@ -1,8 +1,8 @@
 #include <list>
-#include <array>
+#include <vector>
 #include <iostream>
 
-void putArray(std::array<int, 10> a) {
+void putArray(std::vector<int> a) {
     for (std::size_t i=0; i< a.size(); ++i) {
         std::cout << a.at(i) << ",";
     }
@@ -11,19 +11,23 @@ void putArray(std::array<int, 10> a) {
 
 
 int main() {
-    std::array<int, 10> ls;
+    std::vector<int> ls;
     ls= {0,2,3,562,6,23,6,3,1,40};
     std::size_t lsLen = ls.size();
 
     std::cout << "original: ";
     putArray(ls);
-    for (std::size_t i=lsLen; i < 0; --i)
+    std::cout << "size of it: " << lsLen << "\n";
+    for (std::size_t i=lsLen-1; i > 0; --i)
     {
-      for (std::size_t j=lsLen-1; j < 0; --j)
+      for (std::size_t shifted=0; i-shifted-1 >= 0; ++shifted)
       {
-        if (ls[i] < ls[j])
+        std::cout << "i: " << i << ", shifted: " << shifted << "\n";
+        if (ls.at(i-shifted) < ls.at(i-shifted-1))
         {
-            std::swap(ls[i], ls[j]);
+            int tmp = ls.at(i-shifted);
+            ls.at(i-shifted) = ls.at(i-shifted-1);
+            ls.at(i-shifted-1) = tmp;
         } else {
             break;
         }
