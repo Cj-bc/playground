@@ -4,5 +4,11 @@ merge _ []                      = []
 merge (x:xs) (y:ys) | x < y     = x:merge xs (y:ys)
                     | otherwise = y:merge (x:xs) ys
 
-main = print $ merge [1,3,5,1,6,4,7,84,6,3]
-                     [1,5,3,9,2,20,0,111,49]
+
+msort :: [Int] -> [Int]
+msort [x] = [x]
+msort x  = merge (msort first) (msort second)
+          where
+            (first, second) = splitAt ((length x) `div` 2) x
+
+main = print $ msort [3,5,1,6,4,7,84,6,3]
