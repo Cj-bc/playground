@@ -1,21 +1,27 @@
-class clock {
+interface baseClock {
+  void setClock(int h, int m, int s);
+  void setAlarm();
+  void unsetAlarm();
+}
+
+class clock implements baseClock {
   int hour;
   int minute;
   int second;
   boolean is_alarm_set;
 
 
-  void setClock(int h, int m, int s) {
+  public void setClock(int h, int m, int s) {
     hour = h;
     minute = m;
     second = s;
   }
 
-  void setAlarm() {
+  public void setAlarm() {
     is_alarm_set = true;
   }
 
-  void unsetAlarm() {
+  public void unsetAlarm() {
     is_alarm_set = false;
   }
 }
