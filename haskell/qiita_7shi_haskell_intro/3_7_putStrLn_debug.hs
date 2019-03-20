@@ -8,7 +8,6 @@ qsort (n:xs) = do
     putStrLn $ "qsort " ++ show (n:xs) ++ " = qsort " ++ show lt ++ " ++ " ++ show [n] ++ " ++ " ++ show gteq
     lt'   <- qsort lt
     gteq' <- qsort gteq
-    putStrLn $ "qsort " ++ show (n:xs) ++ " = qsort " ++ show lt ++ " ++ " ++ show [n] ++ " ++ " ++ show gteq
     return $ lt' ++ [n] ++ gteq'
 
 
