@@ -32,7 +32,7 @@ jmpBackList :: [Char] -> [Integer] -> [Integer]
 jmpBackList [] _                  = []
 jmpBackList (x:xs) lp | x == '['  = jmpBackList xs $ lp ++ [toInteger (length lp) +1]
                       | x == ']'  = [s] ++ jmpBackList xs lp'
-                      | otherwise = [0] ++ jmpBackList xs $ lp ++ [-1]
+                      | otherwise = [0] ++ jmpBackList xs (lp ++ [-1])
                           where
                               s   = last [n | n <- lp, n /= -1]
                               lp' = [n | n <- lp, n /= s] ++ [-1]
