@@ -4,7 +4,7 @@ import Data.Array.IO
 
 
 
--- Returns list of backbracket
+-- Returns list of jmpBackList {{{
 -- example input:
 --    jmpBackList "--[+[-.,.]<+->]" []
 -- expected return
@@ -28,6 +28,7 @@ import Data.Array.IO
 --    [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [5] ++ [0] ++ [0] ++ [0] ++ [0] ++ [3] ++ jmpBackList [] [-1, -1, 3, -1, -1, -1, -1, -1, -1, -1]
 --    [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [0] ++ [5] ++ [0] ++ [0] ++ [0] ++ [0] ++ [3] ++ []
 --    [0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 3]
+--    }}}
 jmpBackList :: [Char] -> [Integer] -> [Integer]
 jmpBackList [] _                  = []
 jmpBackList (x:xs) lp | x == '['  = jmpBackList xs $ lp ++ [toInteger (length lp) +1]
