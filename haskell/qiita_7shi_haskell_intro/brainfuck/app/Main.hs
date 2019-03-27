@@ -1,7 +1,20 @@
 module Main where
 
 import Data.Array.IO
+import Data.Char
+import Data.IORef
 
+data Order = Plus | Minus | Rshift | Lshift | Print | Input | Lstart | Lend deriving Eq
+
+convertOrder :: Char -> Order
+convertOrder '+' = Plus
+convertOrder '-' = Minus
+convertOrder '>' = Rshift
+convertOrder '<' = Lshift
+convertOrder '.' = Print
+convertOrder ',' = Input
+convertOrder '[' = Lstart
+convertOrder ']' = Lend
 
 
 -- Returns list of jmpBackList {{{
