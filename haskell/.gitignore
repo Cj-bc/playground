@@ -1,0 +1,26 @@
+### https://raw.github.com/github/gitignore/7eef17f37c63ce3cbddbdd154ff836f370d0ad70/Haskell.gitignore
+
+dist
+dist-*
+cabal-dev
+*.o
+*.hi
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.hpc
+.hsenv
+.cabal-sandbox/
+cabal.sandbox.config
+*.prof
+*.aux
+*.hp
+*.eventlog
+.stack-work/
+cabal.project.local
+cabal.project.local~
+.HTF/
+.ghc.environment.*
+
+
