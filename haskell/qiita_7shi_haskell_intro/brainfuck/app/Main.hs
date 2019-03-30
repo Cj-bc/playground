@@ -99,6 +99,7 @@ main = do
                 c_ptr     <- readIORef ptr
                 c_current <- readIORef current
                 c_mem     <- readArray mem c_ptr
+                writeIORef current $ c_current + 1
                 case convertOrder (bf !! c_current) of
                     Plus    -> writeArray mem c_ptr $ c_mem + 1
                     Minus   -> writeArray mem c_ptr $ c_mem - 1
