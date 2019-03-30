@@ -96,17 +96,18 @@ main = do
     current <- newIORef 0
 
     let loop = do
-        c_ptr     <- readIORef ptr
-        c_current <- readIORef current
-        c_mem     <- readArray mem c_ptr
-        case convertOrder (bf !! c_current) of
-            Plus    -> writeArray mem c_ptr $ c_mem + 1
-            Minus   -> writeArray mem c_ptr $ c_mem - 1
-            Rshift  -> writeIORef ptr $ c_ptr + 1
-            Lshift  -> writeIORef ptr $ c_ptr - 1
-            Print   -> putChar $ chr c_mem
---          Input   -> # not implemented yet
-            Lstart | c_mem == 0 -> writeIORef current $ fromIntegral $ jump !! c_current
-            Lend   | c_mem /= 0 -> writeIORef current $ fromIntegral $ jump !! c_current
-        if c_ptr <= length bf then loop else return ()
+                c_ptr     <- readIORef ptr
+                c_current <- readIORef current
+                c_mem     <- readArray mem c_ptr
+                case convertOrder (bf !! c_current) of
+                    Plus    -> writeArray mem c_ptr $ c_mem + 1
+                    Minus   -> writeArray mem c_ptr $ c_mem - 1
+                    Rshift  -> writeIORef ptr $ c_ptr + 1
+                    Lshift  -> writeIORef ptr $ c_ptr - 1
+                    Print   -> putChar $ chr c_mem
+--                  Input   -> # not implemented yet
+                    Lstart | c_mem == 0 -> writeIORef current $ fromIntegral $ jump !! c_current
+                    Lend   | c_mem /= 0 -> writeIORef current $ fromIntegral $ jump !! c_current
+                if c_ptr <= length bf then loop else return ()
+    loop
     putStrLn "END"
