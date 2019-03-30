@@ -74,9 +74,9 @@ jmpBackList (x:xs) lp | x == '['  = jmpBackList xs $ lp ++ [toInteger (length lp
 -- }}}
 jmpFrontList :: [Integer] -> [Integer]
 jmpFrontList [] = []
-jmpFrontList xs | last xs == 0          = (jmpFrontList xs') ++ [0]
+jmpFrontList xs | last xs == 0                      = (jmpFrontList xs') ++ [0]
                 | last xs >  toInteger (length xs)  = (jmpFrontList xs') ++ [last xs]
-                | otherwise             = (jmpFrontList modified) ++ [last xs]
+                | otherwise                         = (jmpFrontList modified) ++ [last xs]
                 where
                     xs' = init xs
                     modified = take foward xs' ++ [toInteger (length xs)] ++ drop (foward + 1) xs'
@@ -93,7 +93,8 @@ main = do
     let jump = jmpFrontList $ jmpBackList bf []
     mem     <- newArray (0, 30000) 0 :: IO (IOUArray Int Int)
     ptr     <- newIORef 0
-    current <-newIORef 0
+    current <- newIORef 0
+
     let loop = do
         c_ptr     <- readIORef ptr
         c_current <- readIORef current
