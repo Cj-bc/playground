@@ -108,7 +108,10 @@ main = do
                     Print   -> putChar $ chr c_mem
 --                  Input   -> # not implemented yet
                     Lstart | c_mem == 0 -> writeIORef current $ fromIntegral $ jump !! c_current
+                           | otherwise  -> return ()
                     Lend   | c_mem /= 0 -> writeIORef current $ fromIntegral $ jump !! c_current
-                if c_ptr <= length bf then loop else return ()
+                           | otherwise  -> return ()
+                    _       -> putStrLn $ "error: " ++ [bf !! c_current]
+                if c_current <= length bf then loop else return ()
     loop
     putStrLn "END"
