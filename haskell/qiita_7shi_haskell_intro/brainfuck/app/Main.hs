@@ -82,9 +82,6 @@ jmpFrontList xs | last xs == 0          = (jmpFrontList xs') ++ [0]
                     modified = take foward xs' ++ [toInteger (length xs)] ++ drop (foward + 1) xs'
                     foward   = fromIntegral $ last xs - 1 :: Int
 
-mkJmpList :: [Char] -> [Integer]
-mkJmpList xs = jmpFrontList $ jmpBackList xs []
-
 
 main = do
     let bf = ">+++++++++[<++++++++>-]<.>+++++++[<++++>" ++
@@ -93,7 +90,7 @@ main = do
              "-]<.+++.------.--------.[-]>++++++++[<++" ++
              "++>-]<+.[-]++++++++++."
 
-    let jump = mkJmpList bf
+    let jump = jmpFrontList $ jmpBackList bf []
     mem     <- newArray (0, 30000) 0 :: IO (IOUArray Int Int)
     ptr     <- newIORef 0
     current <-newIORef 0
