@@ -76,7 +76,7 @@ jmpBackList (x:xs) lp | x == '['  = jmpBackList xs $ lp ++ [toInteger (length lp
 jmpFrontList :: [Integer] -> [Integer]
 jmpFrontList [] = []
 jmpFrontList xs | last xs == 0                      = (jmpFrontList xs') ++ [0]
-                | last xs >  toInteger (length xs)  = (jmpFrontList xs') ++ [last xs]
+                | last xs >= toInteger (length xs)  = (jmpFrontList xs') ++ [last xs]
                 | otherwise                         = (jmpFrontList modified) ++ [last xs]
                 where
                     xs' = init xs
