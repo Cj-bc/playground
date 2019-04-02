@@ -3,6 +3,7 @@ module Main where
 import Data.Array.IO
 import Data.Char
 import Data.IORef
+import Debug.Trace
 
 data Order = Plus | Minus | Rshift | Lshift | Print | Input | Lstart | Lend deriving Eq
 
@@ -93,7 +94,7 @@ main = do
 
     let jump = jmpFrontList $ jmpBackList bf []
     mem     <- newArray (0, 30000) 0 :: IO (IOUArray Int Int)
-    ptr     <- newIORef 0
+    ptr     <- newIORef 0 -- when I change this to '1', it seems to be go better
     current <- newIORef 0
 
     let loop = do
@@ -104,8 +105,8 @@ main = do
                 case convertOrder (bf !! c_current) of
                     Plus    -> writeArray mem c_ptr $ c_mem + 1
                     Minus   -> writeArray mem c_ptr $ c_mem - 1
-                    Rshift  -> writeIORef ptr $ c_ptr + 1
-                    Lshift  -> writeIORef ptr $ c_ptr - 1
+                    Rshift  -> trace "Rshift" writeIORef ptr $ c_ptr + 1
+                    Lshift  -> trace "Lshift" writeIORef ptr $ c_ptr - 1
                     Print   -> putChar $ chr c_mem
 --                  Input   -> # not implemented yet
                     Lstart | c_mem == 0 -> writeIORef current $ fromIntegral $ jump !! c_current
