@@ -114,6 +114,6 @@ main = do
                     Lend   | c_mem /= 0 -> writeIORef current $ fromIntegral $ jump !! c_current
                            | otherwise  -> return ()
                     _       -> putStrLn $ "error: " ++ [bf !! c_current]
-                if c_current < length bf then loop else return ()
+                if c_current < (length bf - 1) then loop else return ()
     loop
     putStrLn "END"
