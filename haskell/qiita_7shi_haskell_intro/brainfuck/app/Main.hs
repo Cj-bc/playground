@@ -81,18 +81,20 @@ jmpFrontList xs | last xs == 0                      = (jmpFrontList xs') ++ [0]
                 | otherwise                         = (jmpFrontList modified) ++ [last xs]
                 where
                     xs' = init xs
-                    modified = take foward xs' ++ [toInteger (length xs)] ++ drop (foward + 1) xs'
-                    foward   = fromIntegral $ last xs - 1 :: Int
+                    modified = take foward xs' ++ [toInteger (length xs - 1) ] ++ drop (foward + 1) xs'
+                    foward   = fromIntegral $ last xs :: Int
 
 
 main = do
-    let bf = ">+++++++++[<++++++++>-]<.>+++++++[<++++>" ++
-             "-]<+.+++++++..+++.[-]>++++++++[<++++>-]<" ++
-             ".>+++++++++++[<+++++>-]<.>++++++++[<+++>" ++
-             "-]<.+++.------.--------.[-]>++++++++[<++" ++
-             "++>-]<+.[-]++++++++++."
+    let bf = ">+++++++++[<++++++++>-]<.>+++++++[<++++>-]<+."
+--    let bf = ">+++++++++[<++++++++>-]<.>+++++++[<++++>" ++
+--             "-]<+.+++++++..+++.[-]>++++++++[<++++>-]<" ++
+--             ".>+++++++++++[<+++++>-]<.>++++++++[<+++>" ++
+--             "-]<.+++.------.--------.[-]>++++++++[<++" ++
+--             "++>-]<+.[-]++++++++++."
 
     let jump = jmpFrontList $ jmpBackList bf []
+    print jump
     mem     <- newArray (0, 30000) 0 :: IO (IOUArray Int Int)
     ptr     <- newIORef 0 -- when I change this to '1', it seems to be go better
     current <- newIORef 0
@@ -105,13 +107,13 @@ main = do
                 case convertOrder (bf !! c_current) of
                     Plus    -> writeArray mem c_ptr $ c_mem + 1
                     Minus   -> writeArray mem c_ptr $ c_mem - 1
-                    Rshift  -> trace "Rshift" writeIORef ptr $ c_ptr + 1
-                    Lshift  -> trace "Lshift" writeIORef ptr $ c_ptr - 1
+                    Rshift  ->  (writeIORef ptr $ c_ptr + 1)
+                    Lshift  ->  (writeIORef ptr $ c_ptr - 1)
                     Print   -> putChar $ chr c_mem
 --                  Input   -> # not implemented yet
                     Lstart | c_mem == 0 -> writeIORef current $ fromIntegral $ jump !! c_current
                            | otherwise  -> return ()
-                    Lend   | c_mem /= 0 -> writeIORef current $ fromIntegral $ jump !! c_current
+                    Lend   | c_mem /= 0 -> trace ("Lend to " ++ (show (jump !! (c_current - 1))) ++ ", " ++ (show c_current)) writeIORef current $ fromIntegral $ jump !! (c_current - 1)
                            | otherwise  -> return ()
                     _       -> putStrLn $ "error: " ++ [bf !! c_current]
                 if c_current < (length bf - 1) then loop else return ()
