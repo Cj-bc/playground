@@ -1,4 +1,4 @@
-flip' :: (a -> a -> a) -> a -> a -> (a -> a -> a)
+flip' :: (a -> b -> c) -> b -> a -> c
 flip' fn first second = fn second first
 
 map' :: (a -> a) -> [a] -> [a]
