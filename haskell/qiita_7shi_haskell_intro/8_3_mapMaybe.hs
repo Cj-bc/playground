@@ -1,12 +1,18 @@
 import Control.Applicative
 
+-- mine {{{
+-- mapMaybe' :: (a -> Maybe b) -> [a] -> [b]
+-- mapMaybe' f []     = []
+-- mapMaybe' f (x:xs) = ret : mapMaybe' f xs
+--   where
+--     x'          = f x
+--     (Just ret)  = if x' == Nothing then Just [] else x'
+-- }}}
 mapMaybe' :: (a -> Maybe b) -> [a] -> [b]
-mapMaybe' f []     = []
-mapMaybe' f (x:xs) = ret : mapMaybe' f xs
-  where
-    x'          = f x
-    (Just ret)  = if x' == Nothing then Just [] else x'
-
+mapMaybe' _ [] = []
+mapMaybe' f (x:xs) = case f x of
+  Just y  -> y : mapMaybe' f xs
+  Nothing ->     mapMaybe' f xs
 
 fact 0 = Just 1
 fact n  | n > 0     = (n *) <$> fact (n - 1)
