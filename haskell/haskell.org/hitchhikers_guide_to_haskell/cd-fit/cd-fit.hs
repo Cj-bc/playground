@@ -19,12 +19,14 @@ data DirPack = DirPack {pack_size::Int, dirs::[Dir]} deriving Show
 media_size = 700*1024*1024
 
 -- Greedy packer tries to add directories one by one to initially empty 'DirPack'
+greedy_pack :: [Dir] -> DirPack
 greedy_pack dirs = foldl maybe_add_dir (DirPack 0 []) $ sortBy cmpSize dirs
         where
                 cmpSize d1 d2 = compare (dir_size d1) (dir_size d2)
 
 -- Helper function, which only adds directory "d" to the pack "p" when new
 -- total size does not exceed media_size
+maybe_add_dir :: DirPack -> Dir -> DirPack
 maybe_add_dir p d =
         let new_size = pack_size p + dir_size d
             new_dirs = d:(dirs p)
