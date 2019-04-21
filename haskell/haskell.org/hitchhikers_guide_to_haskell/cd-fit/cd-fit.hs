@@ -56,3 +56,5 @@ main = do
                 Right result -> result
         putStrLn "DEBUG: parsed"
         print dirs
+        putStrLn "Solution:"
+        print $ greedy_pack dirs
