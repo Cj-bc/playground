@@ -3,7 +3,6 @@
 --   Decide how to fit them on CD-Rs
 --   Print solution
 
-
 module Main where
 import Text.ParserCombinators.Parsec
 
@@ -29,3 +28,9 @@ dirAndSize = do
 main = do
         input <- getContents
         putStrLn ("DEBUG: get input " ++ input)
+        let dirs = case parse parseInput "stdin" input of
+                Left err -> error $ "Input:\n" ++ show input
+                                        ++ "\nError:\n" ++ show err
+                Right result -> result
+        putStrLn "DEBUG: parsed"
+        print dirs
