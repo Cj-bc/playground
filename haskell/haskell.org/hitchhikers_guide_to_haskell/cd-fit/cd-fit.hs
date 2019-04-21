@@ -6,6 +6,33 @@
 module Main where
 import Text.ParserCombinators.Parsec
 import Data.List (sortBy)
+-- For testing
+import Test.QuickCheck
+import Control.Monad (liftM2, replicateM)
+
+-- We must teach QuickCheck how to generate arbitrary "Dir"s
+instance Arbitrary Dir where
+        -- Let's just skip "coarbitrary" for now ok?
+        -- I promise, we will get back to it later ;)
+        coarbitrary = undefined
+        -- We generate arbitrary "Dir" by generating random side and random name
+        -- and stuffing them inside "Dir"
+        arbitrary = liftM2 Dir gen_size gen_name
+                -- Generate random size between 10 and 1400 Mb
+                where
+                        gen_size = do
+                                s <- chose (10,1400)
+                                return (s*1024*1024)
+                        -- Generate random name 1 to 300 chars long, consisting of symbol "fubar/"
+                        gen_name = do
+                                n <- chose (1, 300)
+                                return replicateM n (elements "fubar/")
+
+-- For convenience and tradition, all QuickCheck test begins with prefix "prop_".
+-- Assume that "ds" will be a random list of "Dir"s and code your test.
+prop_greedy_pack_is_fixpoint ds =
+        let pack = greedy_pack ds
+                in pack_size pack == pack_size (greedy_pack (dirs pack))
 
 -- Datatype Dir holds information about single directory - its size and name
 data Dir = Dir {dir_size::Int, dir_name::String} deriving Show
