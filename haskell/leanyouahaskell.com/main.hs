@@ -1,4 +1,5 @@
 import Shapes
+import Person
 
 main = do
         -- Shapes
@@ -10,3 +11,14 @@ main = do
         putStrLn $ "nudge them by (10, 10)"
         print $ nudge rec 10 10
         print $ nudge cir 10 10
+
+        -- Person
+        let person = Person { firstName="Mirei"
+                            , lastName ="Hayasaka"
+                            , age=14
+                            , height=147
+                            , phoneNumber="883-3010-0000"
+                            , flavor="Puppets"
+                            }
+
+        print person
