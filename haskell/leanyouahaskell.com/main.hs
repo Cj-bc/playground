@@ -27,3 +27,7 @@ main = do
         -- Locker
         putStrLn "Current Lockers:"
         print lockers
+        putStrLn "Knock! Can I use Locker num.102?"
+        print $ lockerLookup 102 lockers
+        putStrLn "Knock! How about num.105?"
+        print $ lockerLookup 105 lockers

@@ -1,6 +1,7 @@
 module Locker
 ( LockerState
 , LockerMap
+, lockerLookup
 , Code
 , lockers
 ) where
