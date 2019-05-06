@@ -39,3 +39,4 @@ main = do
         -- MyList
         putStrLn "=========================================="
         putStrLn "List [1,5,3,8,9]"
+        print (1 :-: (5 :-: (3 :-: (8 :-:  (9 :-: EmptyList)))))

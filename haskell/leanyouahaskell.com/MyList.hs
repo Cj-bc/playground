@@ -2,4 +2,5 @@ module MyList
 ( List(..)
 ) where
 
-data List a = EmptyList | Cons a (List a) deriving (Show, Read, Eq, Ord)
+infix 5 :-:
+data List a = EmptyList | a :-: (List a) deriving (Show, Read, Eq, Ord)
