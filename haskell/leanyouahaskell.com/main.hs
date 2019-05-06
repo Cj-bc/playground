@@ -1,5 +1,6 @@
 import Shapes
 import Person
+import Locker
 
 main = do
         -- Shapes
@@ -22,3 +23,7 @@ main = do
                             }
 
         print person
+
+        -- Locker
+        putStrLn "Current Lockers:"
+        print lockers
