@@ -53,6 +53,8 @@ main = do
         print $ 5 `treeElem` numTree
         putStrLn $ "Is '1' member of numTree?"
         print $ 1 `treeElem` numTree
+        putStrLn "fmap (*4) numTree"
+        print $ fmap (*4) numTree
 
 
         -- TrafficLight
