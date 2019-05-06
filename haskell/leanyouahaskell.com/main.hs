@@ -2,6 +2,7 @@ import Shapes
 import Person
 import Locker
 import MyList
+import Tree
 
 main = do
         -- Shapes
@@ -40,3 +41,13 @@ main = do
         putStrLn "=========================================="
         putStrLn "List [1,5,3,8,9]"
         print (1 :-: (5 :-: (3 :-: (8 :-:  (9 :-: EmptyList)))))
+
+
+        -- Tree
+        putStrLn "=========================================="
+        putStrLn $ "Tree of " ++ show [1,4,2,9,8]
+        print numTree
+        putStrLn $ "Is '5' member of numTree?"
+        print $ 5 `treeElem` numTree
+        putStrLn $ "Is '1' member of numTree?"
+        print $ 1 `treeElem` numTree
