@@ -4,6 +4,7 @@ import Locker
 import MyList
 import Tree
 import TrafficLight
+import YesNo
 
 main = do
         -- Shapes
@@ -62,3 +63,11 @@ main = do
         print $ Red == Yellow
         putStrLn $ "show Red:"
         print Red
+
+
+        -- YesNo
+        putStrLn "=========================================="
+        putStrLn "[]:"
+        print $ yesno []
+        putStrLn "\"hoge\":"
+        print $ yesno "hoge"
