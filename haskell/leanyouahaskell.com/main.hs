@@ -3,6 +3,7 @@ import Person
 import Locker
 import MyList
 import Tree
+import TrafficLight
 
 main = do
         -- Shapes
@@ -51,3 +52,13 @@ main = do
         print $ 5 `treeElem` numTree
         putStrLn $ "Is '1' member of numTree?"
         print $ 1 `treeElem` numTree
+
+
+        -- TrafficLight
+        putStrLn "=========================================="
+        putStrLn $ "Red == Red:"
+        print $ Red == Red
+        putStrLn $ "Red == Yellow:"
+        print $ Red == Yellow
+        putStrLn $ "show Red:"
+        print Red
