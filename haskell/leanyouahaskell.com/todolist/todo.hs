@@ -17,7 +17,7 @@ main = do
                   addTodo title
                 3 -> do
                   num <- prompt "Which to remove: "
-                  removeTodo num
+                  removeTodo (read num :: Int)
                 4 -> do
                   let isEnd = True
                   return ()
