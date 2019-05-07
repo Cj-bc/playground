@@ -1,5 +1,8 @@
 import Data.Char
 import System.IO
+import System.Directory
+import Data.List
+import Control.Monad
 
 main = do
         putStrLn $ unlines ["=============== TODO LIST ==============="
@@ -36,8 +39,16 @@ prompt message = do
 addTodo :: String -> IO ()
 addTodo title = appendFile "todo.txt" $ title ++ "\n"
 
-removeTodo :: String -> IO ()
-removeTodo number = putStrLn "Not implemented."
+removeTodo :: Int -> IO ()
+removeTodo number = do
+        contents <- readFile "todo.txt"
+        (tmpName, tmpHandler) <- openTempFile "." "tmp"
+        let todoTasks   = lines contents
+            newcontents = delete (todoTasks !! number) todoTasks
+        hPutStr tmpHandler $ unlines newcontents
+        hClose tmpHandler
+        removeFile "todo.txt"
+        renameFile tmpName "todo.txt"
 
 listTodo :: IO ()
 listTodo = do
