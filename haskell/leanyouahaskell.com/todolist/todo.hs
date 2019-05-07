@@ -13,18 +13,18 @@ main = do
         putStr "Your choice: "
         choice <- getLine
         let isEnd = False
-        case (read choice :: Int) of
-                1 -> listTodo
-                2 -> do
+        case choice of
+                "1" -> listTodo
+                "2" -> do
                   title <- prompt "Title: "
                   addTodo title
-                3 -> do
+                "3" -> do
                   num <- prompt "Which to remove: "
                   removeTodo (read num :: Int)
-                4 -> do
+                "4" -> do
                   let isEnd = True
                   return ()
-                _ -> return ()
+                _   -> return ()
 
         when (isEnd /= True) main
 
