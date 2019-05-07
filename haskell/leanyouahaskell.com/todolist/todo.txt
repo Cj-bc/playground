@@ -1,0 +1,3 @@
+add text to todo file
+complete haskell tutorial
+implement remove atsk
