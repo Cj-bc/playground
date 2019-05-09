@@ -12,21 +12,21 @@ main = do
                            ,"4) Quit"]
         putStr "Your choice: "
         choice <- getLine
-        let isEnd = False
         case choice of
-                "1" -> listTodo
+                "1" -> do
+                  listTodo
+                  main
                 "2" -> do
                   title <- prompt "Title: "
                   addTodo title
+                  main
                 "3" -> do
                   num <- prompt "Which to remove: "
                   removeTodo (read num :: Int)
+                  main
                 "4" -> do
-                  let isEnd = True
                   return ()
                 _   -> return ()
-
-        when (isEnd /= True) main
 
 
 prompt :: String -> IO String
