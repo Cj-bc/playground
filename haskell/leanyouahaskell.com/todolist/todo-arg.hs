@@ -1,5 +1,7 @@
 import System.Environment
+import System.IO
 import Data.List
+import System.Directory
 
 dispatch :: [(String, [String] -> IO ())]
 dispatch = [("ls", list)
