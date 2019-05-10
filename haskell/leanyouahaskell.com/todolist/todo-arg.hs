@@ -11,8 +11,10 @@ dispatch = [("ls", list)
 
 main = do
         (command:args) <- getArgs
-        let (Just action) = lookup command dispatch
-        action args
+        let action_ = lookup command dispatch
+        case action_ of
+                Just action -> action args
+                Nothing -> return ()
 
 
 list :: [String] -> IO ()
