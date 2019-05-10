@@ -18,6 +18,7 @@ main = do
 
 
 list :: [String] -> IO ()
+list [] = list ["todo.txt"]
 list [file] = do
         contents <- readFile file
         putStrLn contents
