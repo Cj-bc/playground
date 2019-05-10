@@ -32,7 +32,7 @@ remove [file, numStr] = do
         let prevTodo              = lines contents
             num                   = read numStr
             newTodo               = delete (prevTodo !! num) prevTodo
-            (tmpName, tmpHandler) = openTempFile "." "tmp"
+        (tmpName, tmpHandler) <- openTempFile "." "tmp"
         writeFile tmpName $ unlines newTodo
         hClose tmpHandler
         removeFile file
