@@ -5,6 +5,8 @@ import MyList
 import Tree
 import TrafficLight
 import YesNo
+import Die
+import System.Random
 
 main = do
         -- Shapes
@@ -73,3 +75,12 @@ main = do
         print $ yesno []
         putStrLn "\"hoge\":"
         print $ yesno "hoge"
+
+        -- die
+        putStrLn "=========================================="
+        putStrLn "Let's throw a die!"
+        gen <- getStdGen
+        print $ die gen
+        putStrLn "Let's throw 5 dies!"
+        gen <- getStdGen
+        print $ take 5 $ dies gen
