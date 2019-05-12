@@ -1,4 +1,5 @@
 import System.IO
+import System.IO.Error
 import System.Environment
 import Control.Exception
 
@@ -11,4 +12,5 @@ tryDo = do
         putStrLn $ "File '" ++ fileName ++ "' has " ++ show (length (lines contents)) ++ "lines"
 
 handler :: IOError -> IO ()
-handler e = putStrLn "Exception occured"
+handler e | isDoesNotExistError e = putStrLn "File does not exist"
+          | otherwise             = ioError e
