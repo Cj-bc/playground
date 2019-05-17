@@ -2,6 +2,7 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
+import String exposing (length)
 
 
 -- MAIN
@@ -60,7 +61,15 @@ viewInput t p v toMsg =
 
 viewValidation : Model -> Html msg
 viewValidation model =
-  if model.password == model.passwordAgain then
-    div [ style "color" "green" ] [ text "OK" ]
+  if length model.password < 8 then
+    viewError "Passwords should be more than 8 characters"
+  else if model.password /= model.passwordAgain then
+    viewError "Passwords do not match!"
   else
-    div [ style "color" "red" ] [ text "Passwords do not match!" ]
+    div [ style "color" "green" ] [ text "OK" ]
+
+
+viewError : String -> Html msg
+viewError error_str =
+  div [ style "color" "red" ] [text error_str ]
+

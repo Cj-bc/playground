@@ -4966,8 +4966,22 @@ var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
 var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
 var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var author$project$Main$viewError = function (error_str) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$style, 'color', 'red')
+			]),
+		_List_fromArray(
+			[
+				elm$html$Html$text(error_str)
+			]));
+};
+var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$String$length = _String_length;
 var author$project$Main$viewValidation = function (model) {
-	return _Utils_eq(model.password, model.passwordAgain) ? A2(
+	return (elm$core$String$length(model.password) < 8) ? author$project$Main$viewError('Passwords should be more than 8 characters') : ((!_Utils_eq(model.password, model.passwordAgain)) ? author$project$Main$viewError('Passwords do not match!') : A2(
 		elm$html$Html$div,
 		_List_fromArray(
 			[
@@ -4976,16 +4990,7 @@ var author$project$Main$viewValidation = function (model) {
 		_List_fromArray(
 			[
 				elm$html$Html$text('OK')
-			])) : A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				A2(elm$html$Html$Attributes$style, 'color', 'red')
-			]),
-		_List_fromArray(
-			[
-				elm$html$Html$text('Passwords do not match!')
-			]));
+			])));
 };
 var author$project$Main$view = function (model) {
 	return A2(
@@ -5114,7 +5119,6 @@ var elm$core$Task$perform = F2(
 			elm$core$Task$Perform(
 				A2(elm$core$Task$map, toMessage, task)));
 	});
-var elm$core$String$length = _String_length;
 var elm$core$String$slice = _String_slice;
 var elm$core$String$dropLeft = F2(
 	function (n, string) {
