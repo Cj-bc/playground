@@ -2,7 +2,7 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import String exposing (length, any)
+import String exposing (length, any, all)
 import Char exposing (isUpper, isLower, isDigit)
 
 -- MAIN
@@ -16,10 +16,11 @@ type alias Model =
   { name : String
   , password : String
   , passwordAgain : String
+  , age : String
   }
 
 init : Model
-init = Model "" "" ""
+init = Model "" "" "" ""
 
 
 -- UPDATE
@@ -28,6 +29,7 @@ type Msg
   = Name String
   | Password String
   | PasswordAgain String
+  | Age String
 
 update : Msg -> Model -> Model
 update msg model =
@@ -41,6 +43,9 @@ update msg model =
     PasswordAgain password ->
       { model | passwordAgain = password }
 
+    Age age ->
+      { model | age = age }
+
 
 -- VIEW
 
@@ -50,6 +55,7 @@ view model =
     [ viewInput"text" "Name" model.name Name
     , viewInput "password" "Password" model.password Password
     , viewInput "password" "Re-entetr Password" model.passwordAgain PasswordAgain
+    , viewInput "text" "Age" model.age Age
     , viewValidation model
     ]
 
@@ -75,8 +81,10 @@ viewValidation model =
     viewError "Password should contain upper case, lower case, and numeric characters."
 
   else if model.password /= model.passwordAgain then
-
     viewError "Passwords do not match!"
+
+  else if not (all isDigit model.age) then
+    viewError "Age should be number"
   else
     div [ style "color" "green" ] [ text "OK" ]
 
