@@ -4405,14 +4405,18 @@ var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$sub = _Basics_sub;
 var author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'Increment') {
-			return model + 1;
-		} else {
-			return model - 1;
+		switch (msg.$) {
+			case 'Increment':
+				return model + 1;
+			case 'Decrement':
+				return model - 1;
+			default:
+				return 0;
 		}
 	});
 var author$project$Main$Decrement = {$: 'Decrement'};
 var author$project$Main$Increment = {$: 'Increment'};
+var author$project$Main$Reset = {$: 'Reset'};
 var elm$core$Maybe$Just = function (a) {
 	return {$: 'Just', a: a};
 };
@@ -4878,6 +4882,16 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$text('+')
+					])),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$Reset)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('reset')
 					]))
 			]));
 };
