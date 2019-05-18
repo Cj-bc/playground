@@ -2,8 +2,8 @@ import Browser
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput)
-import String exposing (length)
-
+import String exposing (length, any)
+import Char exposing (isUpper, isLower, isDigit)
 
 -- MAIN
 main =
@@ -59,11 +59,23 @@ viewInput t p v toMsg =
   input [ type_ t, placeholder p, value v, onInput toMsg ] []
 
 
+
 viewValidation : Model -> Html msg
 viewValidation model =
-  if length model.password < 8 then
+   if length model.password < 8 then
     viewError "Passwords should be more than 8 characters"
+
+  else if not (any isUpper model.password) then
+    viewError "Password should contain upper case, lower case, and numeric characters."
+
+  else if not (any isLower model.password) then
+    viewError "Password should contain upper case, lower case, and numeric characters."
+
+  else if not (any isDigit model.password) then
+    viewError "Password should contain upper case, lower case, and numeric characters."
+
   else if model.password /= model.passwordAgain then
+
     viewError "Passwords do not match!"
   else
     div [ style "color" "green" ] [ text "OK" ]
@@ -73,3 +85,5 @@ viewError : String -> Html msg
 viewError error_str =
   div [ style "color" "red" ] [text error_str ]
 
+isContainsNum : String -> Bool
+isContainsNum str = any isDigit str

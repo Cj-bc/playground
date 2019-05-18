@@ -4979,9 +4979,11 @@ var author$project$Main$viewError = function (error_str) {
 			]));
 };
 var elm$core$Basics$neq = _Utils_notEqual;
+var elm$core$Basics$not = _Basics_not;
+var elm$core$String$any = _String_any;
 var elm$core$String$length = _String_length;
 var author$project$Main$viewValidation = function (model) {
-	return (elm$core$String$length(model.password) < 8) ? author$project$Main$viewError('Passwords should be more than 8 characters') : ((!_Utils_eq(model.password, model.passwordAgain)) ? author$project$Main$viewError('Passwords do not match!') : A2(
+	return (elm$core$String$length(model.password) < 8) ? author$project$Main$viewError('Passwords should be more than 8 characters') : ((!A2(elm$core$String$any, elm$core$Char$isUpper, model.password)) ? author$project$Main$viewError('Password should contain upper case, lower case, and numeric characters.') : ((!A2(elm$core$String$any, elm$core$Char$isLower, model.password)) ? author$project$Main$viewError('Password should contain upper case, lower case, and numeric characters.') : ((!A2(elm$core$String$any, elm$core$Char$isDigit, model.password)) ? author$project$Main$viewError('Password should contain upper case, lower case, and numeric characters.') : ((!_Utils_eq(model.password, model.passwordAgain)) ? author$project$Main$viewError('Passwords do not match!') : A2(
 		elm$html$Html$div,
 		_List_fromArray(
 			[
@@ -4990,7 +4992,7 @@ var author$project$Main$viewValidation = function (model) {
 		_List_fromArray(
 			[
 				elm$html$Html$text('OK')
-			])));
+			]))))));
 };
 var author$project$Main$view = function (model) {
 	return A2(
