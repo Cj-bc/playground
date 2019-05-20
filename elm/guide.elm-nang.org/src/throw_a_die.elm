@@ -1,7 +1,9 @@
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
+import Html.Attributes exposing (src)
 import Random
+import String
 
 
 -- MAIN
@@ -56,7 +58,7 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
   div [] [
-      h1 [] [text (String.fromInt model.dieFace)],
-      button [ onClick Roll ] [ text "Re throw die!" ]
+    img [src ("img/die_" ++ String.fromInt model.dieFace ++ ".png")] []
+    , button [ onClick Roll ] [ text "Re throw die!" ]
     ]
 
