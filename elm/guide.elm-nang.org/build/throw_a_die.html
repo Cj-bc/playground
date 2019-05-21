@@ -5083,25 +5083,371 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$html$Html$img = _VirtualDom_node('img');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$json$Json$Encode$string = _Json_wrap;
-var elm$html$Html$Attributes$stringProperty = F2(
-	function (key, string) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			elm$json$Json$Encode$string(string));
-	});
-var elm$html$Html$Attributes$src = function (url) {
-	return A2(
-		elm$html$Html$Attributes$stringProperty,
-		'src',
-		_VirtualDom_noJavaScriptOrHtmlUri(url));
+var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var elm$svg$Svg$circle = elm$svg$Svg$trustedNode('circle');
+var elm$svg$Svg$rect = elm$svg$Svg$trustedNode('rect');
+var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
+var elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
+var elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
+var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
+var elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
+var author$project$Main$dieFaceSvg = function (die) {
+	switch (die) {
+		case 1:
+			return A2(
+				elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$width('120'),
+						elm$svg$Svg$Attributes$height('120'),
+						elm$svg$Svg$Attributes$viewBox('0 0 120 120')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$x('0'),
+								elm$svg$Svg$Attributes$y('0'),
+								elm$svg$Svg$Attributes$width('120'),
+								elm$svg$Svg$Attributes$height('120'),
+								elm$svg$Svg$Attributes$stroke('black'),
+								elm$svg$Svg$Attributes$fill('none')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('60'),
+								elm$svg$Svg$Attributes$cy('60'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil)
+					]));
+		case 2:
+			return A2(
+				elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$width('120'),
+						elm$svg$Svg$Attributes$height('120'),
+						elm$svg$Svg$Attributes$viewBox('0 0 120 120')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$x('0'),
+								elm$svg$Svg$Attributes$y('0'),
+								elm$svg$Svg$Attributes$height('120'),
+								elm$svg$Svg$Attributes$width('120'),
+								elm$svg$Svg$Attributes$stroke('black'),
+								elm$svg$Svg$Attributes$fill('none')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil)
+					]));
+		case 3:
+			return A2(
+				elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$width('120'),
+						elm$svg$Svg$Attributes$height('120'),
+						elm$svg$Svg$Attributes$viewBox('0 0 120 120')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$x('0'),
+								elm$svg$Svg$Attributes$y('0'),
+								elm$svg$Svg$Attributes$height('120'),
+								elm$svg$Svg$Attributes$width('120'),
+								elm$svg$Svg$Attributes$stroke('black'),
+								elm$svg$Svg$Attributes$fill('none')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cy('60'),
+								elm$svg$Svg$Attributes$cx('60'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil)
+					]));
+		case 4:
+			return A2(
+				elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$width('120'),
+						elm$svg$Svg$Attributes$height('120'),
+						elm$svg$Svg$Attributes$viewBox('0 0 120 120')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$x('0'),
+								elm$svg$Svg$Attributes$y('0'),
+								elm$svg$Svg$Attributes$height('120'),
+								elm$svg$Svg$Attributes$width('120'),
+								elm$svg$Svg$Attributes$stroke('black'),
+								elm$svg$Svg$Attributes$fill('none')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil)
+					]));
+		case 5:
+			return A2(
+				elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$width('120'),
+						elm$svg$Svg$Attributes$height('120'),
+						elm$svg$Svg$Attributes$viewBox('0 0 120 120')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$x('0'),
+								elm$svg$Svg$Attributes$y('0'),
+								elm$svg$Svg$Attributes$height('120'),
+								elm$svg$Svg$Attributes$width('120'),
+								elm$svg$Svg$Attributes$stroke('black'),
+								elm$svg$Svg$Attributes$fill('none')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('60'),
+								elm$svg$Svg$Attributes$cy('60'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil)
+					]));
+		case 6:
+			return A2(
+				elm$svg$Svg$svg,
+				_List_fromArray(
+					[
+						elm$svg$Svg$Attributes$width('120'),
+						elm$svg$Svg$Attributes$height('120'),
+						elm$svg$Svg$Attributes$viewBox('0 0 120 120')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$svg$Svg$rect,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$x('0'),
+								elm$svg$Svg$Attributes$y('0'),
+								elm$svg$Svg$Attributes$height('120'),
+								elm$svg$Svg$Attributes$width('120'),
+								elm$svg$Svg$Attributes$stroke('black'),
+								elm$svg$Svg$Attributes$fill('none')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('20'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('100'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('100'),
+								elm$svg$Svg$Attributes$cy('60'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil),
+						A2(
+						elm$svg$Svg$circle,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$cx('20'),
+								elm$svg$Svg$Attributes$cy('60'),
+								elm$svg$Svg$Attributes$r('10')
+							]),
+						_List_Nil)
+					]));
+		default:
+			return A2(
+				elm$html$Html$h1,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(die))
+					]));
+	}
 };
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$Normal = function (a) {
 	return {$: 'Normal', a: a};
 };
@@ -5125,14 +5471,7 @@ var author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
-				A2(
-				elm$html$Html$img,
-				_List_fromArray(
-					[
-						elm$html$Html$Attributes$src(
-						'img/die_' + (elm$core$String$fromInt(model.dieFace) + '.png'))
-					]),
-				_List_Nil),
+				author$project$Main$dieFaceSvg(model.dieFace),
 				A2(
 				elm$html$Html$button,
 				_List_fromArray(

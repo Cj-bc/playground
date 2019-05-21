@@ -1,7 +1,8 @@
 import Browser
 import Html exposing (..)
 import Html.Events exposing (..)
-import Html.Attributes exposing (src)
+import Svg exposing (..)
+import Svg.Attributes exposing (..)
 import Random
 import String
 
@@ -58,7 +59,201 @@ subscriptions _ =
 view : Model -> Html Msg
 view model =
   div [] [
-    img [src ("img/die_" ++ String.fromInt model.dieFace ++ ".png")] []
-    , button [ onClick Roll ] [ text "Re throw die!" ]
+    dieFaceSvg model.dieFace
+    , button [ onClick Roll ] [ Html.text "Re throw die!" ]
     ]
 
+
+dieFaceSvg : Int -> Html Msg
+dieFaceSvg die =
+  case die of
+    1 ->
+      svg [ width "120"
+          , height "120"
+          , viewBox "0 0 120 120"
+          ]
+          [ rect
+            [ x "0"
+            , y "0"
+            , width "120"
+            , height "120"
+            , stroke "black"
+            , fill "none"
+            ] []
+          , circle
+            [ cx "60"
+            , cy "60"
+            , r "10"
+            ] []
+          ]
+    2 ->
+      svg [ width "120"
+          , height "120"
+          , viewBox "0 0 120 120"
+          ]
+          [ rect
+          [ x "0"
+          , y "0"
+          , height "120"
+          , width "120"
+          , stroke "black"
+          , fill "none"
+          ] []
+          , circle
+            [ cx "100"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "100"
+            , r "10"
+            ] []
+          ]
+    3 ->
+      svg [ width "120"
+          , height "120"
+          , viewBox "0 0 120 120"
+          ]
+          [ rect
+            [ x "0"
+            , y "0"
+            , height "120"
+            , width "120"
+            , stroke "black"
+            , fill "none"
+            ] []
+          , circle
+            [ cy "100"
+            , cx "20"
+            , r "10"
+            ] []
+          , circle
+            [ cy "20"
+            , cx "100"
+            , r "10"
+            ] []
+          , circle
+            [ cy "60"
+            , cx "60"
+            , r "10"
+            ] []
+          ]
+    4 ->
+      svg [ width "120"
+          , height "120"
+          , viewBox "0 0 120 120"
+          ]
+          [ rect
+            [ x "0"
+            , y "0"
+            , height "120"
+            , width "120"
+            , stroke "black"
+            , fill "none"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "100"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "100"
+            , r "10"
+            ] []
+          ]
+    5 ->
+      svg [ width "120"
+          , height "120"
+          , viewBox "0 0 120 120"
+          ]
+          [ rect
+            [ x "0"
+            , y "0"
+            , height "120"
+            , width "120"
+            , stroke "black"
+            , fill "none"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "100"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "100"
+            , r "10"
+            ] []
+          , circle
+            [ cx "60"
+            , cy "60"
+            , r "10"
+            ] []
+          ]
+    6 ->
+      svg [ width "120"
+          , height "120"
+          , viewBox "0 0 120 120"
+          ]
+          [ rect
+            [ x "0"
+            , y "0"
+            , height "120"
+            , width "120"
+            , stroke "black"
+            , fill "none"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "20"
+            , r "10"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "100"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "100"
+            , r "10"
+            ] []
+          , circle
+            [ cx "100"
+            , cy "60"
+            , r "10"
+            ] []
+          , circle
+            [ cx "20"
+            , cy "60"
+            , r "10"
+            ] []
+          ]
+    _ -> h1 [] [Html.text (String.fromInt die)]
