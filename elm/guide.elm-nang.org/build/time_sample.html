@@ -5463,42 +5463,13 @@ var author$project$Main$update = F2(
 		}
 	});
 var author$project$Main$TogglePause = {$: 'TogglePause'};
-var elm$json$Json$Decode$map = _Json_map1;
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$html$Html$button = _VirtualDom_node('button');
-var elm$html$Html$div = _VirtualDom_node('div');
-var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
+var author$project$Main$Coordinate = F2(
+	function (x, y) {
+		return {x: x, y: y};
 	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
+var author$project$Main$HourHand = {$: 'HourHand'};
+var author$project$Main$MinuteHand = {$: 'MinuteHand'};
+var author$project$Main$SecondHand = {$: 'SecondHand'};
 var elm$core$Basics$modBy = _Basics_modBy;
 var elm$time$Time$flooredDiv = F2(
 	function (numerator, denominator) {
@@ -5571,6 +5542,170 @@ var elm$time$Time$toSecond = F2(
 				elm$time$Time$posixToMillis(time),
 				1000));
 	});
+var author$project$Main$calcHandAngle = F2(
+	function (hand, model) {
+		var second = A2(elm$time$Time$toSecond, model.zone, model.time);
+		var minute = A2(elm$time$Time$toMinute, model.zone, model.time);
+		var hour = A2(elm$time$Time$toHour, model.zone, model.time);
+		switch (hand.$) {
+			case 'HourHand':
+				return (((360 / 12) | 0) * hour) + 90;
+			case 'MinuteHand':
+				return (2 * minute) + 90;
+			default:
+				return (2 * second) + 90;
+		}
+	});
+var elm$core$Basics$cos = _Basics_cos;
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$core$Basics$sin = _Basics_sin;
+var elm$core$String$fromFloat = _String_fromNumber;
+var elm$json$Json$Decode$map = _Json_map1;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var elm$svg$Svg$circle = elm$svg$Svg$trustedNode('circle');
+var elm$svg$Svg$line = elm$svg$Svg$trustedNode('line');
+var elm$svg$Svg$svg = elm$svg$Svg$trustedNode('svg');
+var elm$svg$Svg$Attributes$cx = _VirtualDom_attribute('cx');
+var elm$svg$Svg$Attributes$cy = _VirtualDom_attribute('cy');
+var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var elm$svg$Svg$Attributes$r = _VirtualDom_attribute('r');
+var elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var elm$svg$Svg$Attributes$strokeWidth = _VirtualDom_attribute('stroke-width');
+var elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
+var elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
+var elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
+var elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
+var elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
+var author$project$Main$svgClock = function (model) {
+	var secondHandAngle = A2(author$project$Main$calcHandAngle, author$project$Main$SecondHand, model);
+	var secondHand_ext = A2(
+		author$project$Main$Coordinate,
+		70 * elm$core$Basics$cos(secondHandAngle),
+		((-1) * 70) * elm$core$Basics$sin(secondHandAngle));
+	var minuteHandAngle = A2(author$project$Main$calcHandAngle, author$project$Main$MinuteHand, model);
+	var minuteHand_ext = A2(
+		author$project$Main$Coordinate,
+		80 * elm$core$Basics$cos(minuteHandAngle),
+		((-1) * 80) * elm$core$Basics$sin(minuteHandAngle));
+	var hourHandAngle = A2(author$project$Main$calcHandAngle, author$project$Main$HourHand, model);
+	var hourHand_ext = A2(
+		author$project$Main$Coordinate,
+		40 * elm$core$Basics$cos(hourHandAngle),
+		((-1) * 40) * elm$core$Basics$sin(hourHandAngle));
+	var clockBase = A2(author$project$Main$Coordinate, 100, 100);
+	var clockFrame = A2(
+		elm$svg$Svg$circle,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$cx(
+				elm$core$String$fromFloat(clockBase.x)),
+				elm$svg$Svg$Attributes$cy(
+				elm$core$String$fromFloat(clockBase.y)),
+				elm$svg$Svg$Attributes$r('100'),
+				elm$svg$Svg$Attributes$fill('none'),
+				elm$svg$Svg$Attributes$stroke('black')
+			]),
+		_List_Nil);
+	var hourHand = A2(
+		elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$x1(
+				elm$core$String$fromFloat(clockBase.x)),
+				elm$svg$Svg$Attributes$y1(
+				elm$core$String$fromFloat(clockBase.y)),
+				elm$svg$Svg$Attributes$x2(
+				elm$core$String$fromFloat(clockBase.x + hourHand_ext.x)),
+				elm$svg$Svg$Attributes$y2(
+				elm$core$String$fromFloat(clockBase.y + hourHand_ext.y)),
+				elm$svg$Svg$Attributes$stroke('red'),
+				elm$svg$Svg$Attributes$strokeWidth('5')
+			]),
+		_List_Nil);
+	var minuteHand = A2(
+		elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$x1(
+				elm$core$String$fromFloat(clockBase.x)),
+				elm$svg$Svg$Attributes$y1(
+				elm$core$String$fromFloat(clockBase.y)),
+				elm$svg$Svg$Attributes$x2(
+				elm$core$String$fromFloat(clockBase.x + minuteHand_ext.x)),
+				elm$svg$Svg$Attributes$y2(
+				elm$core$String$fromFloat(clockBase.y + minuteHand_ext.y)),
+				elm$svg$Svg$Attributes$stroke('black'),
+				elm$svg$Svg$Attributes$strokeWidth('3')
+			]),
+		_List_Nil);
+	var secondHand = A2(
+		elm$svg$Svg$line,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$x1(
+				elm$core$String$fromFloat(clockBase.x)),
+				elm$svg$Svg$Attributes$y1(
+				elm$core$String$fromFloat(clockBase.y)),
+				elm$svg$Svg$Attributes$x2(
+				elm$core$String$fromFloat(clockBase.x + secondHand_ext.x)),
+				elm$svg$Svg$Attributes$y2(
+				elm$core$String$fromFloat(clockBase.y + secondHand_ext.y)),
+				elm$svg$Svg$Attributes$stroke('black'),
+				elm$svg$Svg$Attributes$strokeWidth('1')
+			]),
+		_List_Nil);
+	return A2(
+		elm$svg$Svg$svg,
+		_List_fromArray(
+			[
+				elm$svg$Svg$Attributes$x('0'),
+				elm$svg$Svg$Attributes$y('0'),
+				elm$svg$Svg$Attributes$width('200'),
+				elm$svg$Svg$Attributes$height('200')
+			]),
+		_List_fromArray(
+			[clockFrame, hourHand, minuteHand, secondHand]));
+};
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$Main$view = function (model) {
 	var second = elm$core$String$fromInt(
 		A2(elm$time$Time$toSecond, model.zone, model.time));
@@ -5583,6 +5718,7 @@ var author$project$Main$view = function (model) {
 		_List_Nil,
 		_List_fromArray(
 			[
+				author$project$Main$svgClock(model),
 				elm$html$Html$text(hour + (' : ' + (minute + (' : ' + second)))),
 				A2(
 				elm$html$Html$button,
