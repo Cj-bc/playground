@@ -4369,10 +4369,11 @@ function _Browser_load(url)
 var author$project$Main$AdjustTimeZone = function (a) {
 	return {$: 'AdjustTimeZone', a: a};
 };
-var author$project$Main$Model = F2(
-	function (zone, time) {
-		return {time: time, zone: zone};
+var author$project$Main$Model = F3(
+	function (zone, time, pause) {
+		return {pause: pause, time: time, zone: zone};
 	});
+var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$identity = function (x) {
 	return x;
 };
@@ -4591,7 +4592,6 @@ var elm$core$Task$sequence = function (tasks) {
 		elm$core$Task$succeed(_List_Nil),
 		tasks);
 };
-var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
 	if (result.$ === 'Ok') {
@@ -5018,15 +5018,18 @@ var elm$time$Time$millisToPosix = elm$time$Time$Posix;
 var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
 var author$project$Main$init = function (_n0) {
 	return _Utils_Tuple2(
-		A2(
+		A3(
 			author$project$Main$Model,
 			elm$time$Time$utc,
-			elm$time$Time$millisToPosix(0)),
+			elm$time$Time$millisToPosix(0),
+			false),
 		A2(elm$core$Task$perform, author$project$Main$AdjustTimeZone, elm$time$Time$here));
 };
 var author$project$Main$Tick = function (a) {
 	return {$: 'Tick', a: a};
 };
+var elm$core$Platform$Sub$batch = _Platform_batch;
+var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
 var elm$time$Time$Every = F2(
 	function (a, b) {
 		return {$: 'Every', a: a, b: b};
@@ -5427,29 +5430,39 @@ var elm$time$Time$every = F2(
 		return elm$time$Time$subscription(
 			A2(elm$time$Time$Every, interval, tagger));
 	});
-var author$project$Main$subscriptions = function (_n0) {
-	return A2(elm$time$Time$every, 1000, author$project$Main$Tick);
+var author$project$Main$subscriptions = function (model) {
+	return model.pause ? elm$core$Platform$Sub$none : A2(elm$time$Time$every, 1000, author$project$Main$Tick);
 };
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
 var author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'Tick') {
-			var newTime = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{time: newTime}),
-				elm$core$Platform$Cmd$none);
-		} else {
-			var timeZone = msg.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{zone: timeZone}),
-				elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'Tick':
+				var newTime = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{time: newTime}),
+					elm$core$Platform$Cmd$none);
+			case 'AdjustTimeZone':
+				var timeZone = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{zone: timeZone}),
+					elm$core$Platform$Cmd$none);
+			default:
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							pause: model.pause ? false : true
+						}),
+					elm$core$Platform$Cmd$none);
 		}
 	});
+var author$project$Main$TogglePause = {$: 'TogglePause'};
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
@@ -5465,8 +5478,27 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var elm$core$Basics$modBy = _Basics_modBy;
 var elm$time$Time$flooredDiv = F2(
 	function (numerator, denominator) {
@@ -5546,7 +5578,23 @@ var author$project$Main$view = function (model) {
 		A2(elm$time$Time$toMinute, model.zone, model.time));
 	var hour = elm$core$String$fromInt(
 		A2(elm$time$Time$toHour, model.zone, model.time));
-	return elm$html$Html$text(hour + (' : ' + (minute + (' : ' + second))));
+	return A2(
+		elm$html$Html$div,
+		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$text(hour + (' : ' + (minute + (' : ' + second)))),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$TogglePause)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('pause')
+					]))
+			]));
 };
 var elm$browser$Browser$External = function (a) {
 	return {$: 'External', a: a};
