@@ -127,6 +127,24 @@ svgClock model =
 
 
 
+-- I'm using two different coordinate system.
+-- 1. The same thing used in clock (Top is 0, increase as clock goes. 0~360)
+-- 2. System used with trigonometric functions (Top is 90, Bottom is -90.-180~180)
+-- From now, I call 1. as 'clock c.s.' and 2. as 'trig c.s.'
+-- I should convert one to another to integrate with two systems.
+--
+-- First, I use 'clock c.s.' to imagine how clock looks like.
+-- Then, I should convert it into 'trig c.s.'
+--       to integrate with trigonometric functions(cos, sin)
+--
+-- How to convert clock c.s. into trig c.s.
+-- ```haskell
+--  convertClockCStoTrigCS : Float -> Float
+--  convertClockCStoTrigCS clockcs  | clockcs <= 90         = 90 - clockcs
+--                                  | 90 < clockcs <= 180   = -(clockcs - 90)
+--                                  | 180 < clockcs <= 270  = -(clockcs - 90)
+--                                  | 270 < clockcs         = (360 - clockcs) + 90
+-- ```
 calcHandAngle : ClockHand -> Model -> Float
 calcHandAngle hand model =
   let hour   = Time.toHour model.zone model.time
@@ -140,3 +158,6 @@ calcHandAngle hand model =
       toFloat ((2 * minute) + 90)
     SecondHand ->
       toFloat ((2 * second) + 90)
+
+
+
