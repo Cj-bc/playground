@@ -141,23 +141,21 @@ svgClock model =
 -- ```haskell
 --  convertClockCStoTrigCS : Float -> Float
 --  convertClockCStoTrigCS clockcs  | clockcs <= 90         = 90 - clockcs
---                                  | 90 < clockcs <= 180   = -(clockcs - 90)
---                                  | 180 < clockcs <= 270  = -(clockcs - 90)
+--                                  | 90 < clockcs <= 180   = -(clockcs - 90)     -- = 90 - clockcs
+--                                  | 180 < clockcs <= 270  = -(clockcs - 90)     -- = 90 - clockcs
 --                                  | 270 < clockcs         = (360 - clockcs) + 90
 -- ```
 calcHandAngle : ClockHand -> Model -> Float
 calcHandAngle hand model =
-  let hour   = Time.toHour model.zone model.time
-      minute = Time.toMinute model.zone model.time
-      second = Time.toSecond model.zone model.time
+  let hour   = toFloat (Time.toHour model.zone model.time)
+      minute = toFloat (Time.toMinute model.zone model.time)
+      second = toFloat (Time.toSecond model.zone model.time)
+      clockAngle = if hand == HourHand
+                   then (360 / 24) * hour
+                   else if hand == MinuteHand
+                      then (360 / 60) * minute
+                      else (360 / 60) * second
   in
-  case hand of
-    HourHand ->
-      toFloat (((360 // 12) * hour) + 90)
-    MinuteHand ->
-      toFloat ((2 * minute) + 90)
-    SecondHand ->
-      toFloat ((2 * second) + 90)
-
-
-
+    if 270 < clockAngle
+    then (360 - clockAngle) + 90
+    else 90 - clockAngle

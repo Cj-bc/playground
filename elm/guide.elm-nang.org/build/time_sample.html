@@ -5547,14 +5547,8 @@ var author$project$Main$calcHandAngle = F2(
 		var second = A2(elm$time$Time$toSecond, model.zone, model.time);
 		var minute = A2(elm$time$Time$toMinute, model.zone, model.time);
 		var hour = A2(elm$time$Time$toHour, model.zone, model.time);
-		switch (hand.$) {
-			case 'HourHand':
-				return (((360 / 12) | 0) * hour) + 90;
-			case 'MinuteHand':
-				return (2 * minute) + 90;
-			default:
-				return (2 * second) + 90;
-		}
+		var clockAngle = _Utils_eq(hand, author$project$Main$HourHand) ? ((360 / 24) * hour) : (_Utils_eq(hand, author$project$Main$MinuteHand) ? ((360 / 60) * minute) : ((360 / 60) * second));
+		return (270 < clockAngle) ? ((360 - clockAngle) + 90) : (90 - clockAngle);
 	});
 var elm$core$Basics$cos = _Basics_cos;
 var elm$core$Basics$negate = function (n) {
