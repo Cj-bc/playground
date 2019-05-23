@@ -5547,13 +5547,10 @@ var author$project$Main$calcHandAngle = F2(
 		var second = A2(elm$time$Time$toSecond, model.zone, model.time);
 		var minute = A2(elm$time$Time$toMinute, model.zone, model.time);
 		var hour = A2(elm$time$Time$toHour, model.zone, model.time);
-		var clockAngle = _Utils_eq(hand, author$project$Main$HourHand) ? ((360 / 24) * hour) : (_Utils_eq(hand, author$project$Main$MinuteHand) ? ((360 / 60) * minute) : ((360 / 60) * second));
+		var clockAngle = _Utils_eq(hand, author$project$Main$HourHand) ? ((360 / 12) * hour) : (_Utils_eq(hand, author$project$Main$MinuteHand) ? ((360 / 60) * minute) : ((360 / 60) * second));
 		return (270 < clockAngle) ? ((360 - clockAngle) + 90) : (90 - clockAngle);
 	});
 var elm$core$Basics$cos = _Basics_cos;
-var elm$core$Basics$negate = function (n) {
-	return -n;
-};
 var elm$core$Basics$sin = _Basics_sin;
 var elm$core$String$fromFloat = _String_fromNumber;
 var elm$json$Json$Decode$map = _Json_map1;
@@ -5593,18 +5590,18 @@ var author$project$Main$svgClock = function (model) {
 	var secondHandAngle = A2(author$project$Main$calcHandAngle, author$project$Main$SecondHand, model);
 	var secondHand_ext = A2(
 		author$project$Main$Coordinate,
-		70 * elm$core$Basics$cos(secondHandAngle),
-		((-1) * 70) * elm$core$Basics$sin(secondHandAngle));
+		100 * elm$core$Basics$cos(secondHandAngle),
+		100 * elm$core$Basics$sin(secondHandAngle));
 	var minuteHandAngle = A2(author$project$Main$calcHandAngle, author$project$Main$MinuteHand, model);
 	var minuteHand_ext = A2(
 		author$project$Main$Coordinate,
 		80 * elm$core$Basics$cos(minuteHandAngle),
-		((-1) * 80) * elm$core$Basics$sin(minuteHandAngle));
+		80 * elm$core$Basics$sin(minuteHandAngle));
 	var hourHandAngle = A2(author$project$Main$calcHandAngle, author$project$Main$HourHand, model);
 	var hourHand_ext = A2(
 		author$project$Main$Coordinate,
 		40 * elm$core$Basics$cos(hourHandAngle),
-		((-1) * 40) * elm$core$Basics$sin(hourHandAngle));
+		40 * elm$core$Basics$sin(hourHandAngle));
 	var clockBase = A2(author$project$Main$Coordinate, 100, 100);
 	var clockFrame = A2(
 		elm$svg$Svg$circle,

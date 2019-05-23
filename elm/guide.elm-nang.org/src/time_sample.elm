@@ -87,9 +87,9 @@ svgClock model =
   let hourHandAngle   = calcHandAngle HourHand model
       minuteHandAngle = calcHandAngle MinuteHand model
       secondHandAngle = calcHandAngle SecondHand model
-      hourHand_ext    = Coordinate (40 * (cos hourHandAngle)) (-1 * 40 * (sin hourHandAngle))
-      minuteHand_ext  = Coordinate (80 * (cos minuteHandAngle)) (-1 * 80 * (sin minuteHandAngle))
-      secondHand_ext  = Coordinate (70 * (cos secondHandAngle)) (-1 * 70 * (sin secondHandAngle))
+      hourHand_ext    = Coordinate (40 * (cos hourHandAngle)) (40 * (sin hourHandAngle))
+      minuteHand_ext  = Coordinate (80 * (cos minuteHandAngle)) (80 * (sin minuteHandAngle))
+      secondHand_ext  = Coordinate (100 * (cos secondHandAngle)) (100 * (sin secondHandAngle))
       clockBase   = Coordinate 100 100
       clockFrame  = circle [ cx (String.fromFloat clockBase.x)
                            , cy (String.fromFloat clockBase.y)
@@ -151,7 +151,7 @@ calcHandAngle hand model =
       minute = toFloat (Time.toMinute model.zone model.time)
       second = toFloat (Time.toSecond model.zone model.time)
       clockAngle = if hand == HourHand
-                   then (360 / 24) * hour
+                   then (360 / 12) * hour
                    else if hand == MinuteHand
                       then (360 / 60) * minute
                       else (360 / 60) * second
