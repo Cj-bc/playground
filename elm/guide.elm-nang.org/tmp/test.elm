@@ -1,9 +1,14 @@
-module Main exposing (main)
+module Main exposing (Model, Msg(..), init, main, subscriptions, update, view, viewLink)
 
 import Browser
 import Browser.Navigation as Nav
-import Html exposing (Html, text)
+import Html exposing (..)
+import Html.Attributes exposing (..)
 import Url
+
+
+
+-- MAIN
 
 
 main : Program () Model Msg
@@ -13,8 +18,8 @@ main =
         , view = view
         , update = update
         , subscriptions = subscriptions
-        , onUrlRequest = LinkClicked
         , onUrlChange = UrlChanged
+        , onUrlRequest = LinkClicked
         }
 
 
@@ -22,15 +27,15 @@ main =
 -- MODEL
 
 
-type Model
-    = Model Int
+type alias Model =
+    { key : Nav.Key
+    , url : Url.Url
+    }
 
 
-init : flag -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
-init _ url key =
-    ( Model 1
-    , Cmd.none
-    )
+init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
+init flags url key =
+    ( Model key url, Cmd.none )
 
 
 
@@ -44,10 +49,26 @@ type Msg
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        LinkClicked urlRequest ->
+            case urlRequest of
+                Browser.Internal url ->
+                    ( model, Nav.pushUrl model.key (Url.toString url) )
+
+                Browser.External href ->
+                    ( model, Nav.load href )
+
+        UrlChanged url ->
+            ( { model | url = url }
+            , Cmd.none
+            )
 
 
-subscriptions : model -> Sub Msg
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
 subscriptions _ =
     Sub.none
 
@@ -58,6 +79,21 @@ subscriptions _ =
 
 view : Model -> Browser.Document Msg
 view model =
-    { title = "test title"
-    , body = [ text "hello" ]
+    { title = "URL Interceptor"
+    , body =
+        [ text "The current URL is: "
+        , b [] [ text (Url.toString model.url) ]
+        , ul []
+            [ viewLink "/home"
+            , viewLink "/profile"
+            , viewLink "/reviews/the-century-of-the-self"
+            , viewLink "/reviews/public-opinion"
+            , viewLink "/reviews/shah-of-shahs"
+            ]
+        ]
     }
+
+
+viewLink : String -> Html msg
+viewLink path =
+    li [] [ a [ href path ] [ text path ] ]
