@@ -4962,11 +4962,18 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 		}
 	});
+var author$project$Main$Add = {$: 'Add'};
 var author$project$Main$EditDetail = function (a) {
 	return {$: 'EditDetail', a: a};
 };
 var author$project$Main$EditTitle = function (a) {
 	return {$: 'EditTitle', a: a};
+};
+var author$project$Main$MakeDone = function (a) {
+	return {$: 'MakeDone', a: a};
+};
+var author$project$Main$Remove = function (a) {
+	return {$: 'Remove', a: a};
 };
 var elm$core$Basics$identity = function (x) {
 	return x;
@@ -4986,10 +4993,65 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
-var elm$html$Html$h1 = _VirtualDom_node('h1');
-var elm$html$Html$input = _VirtualDom_node('input');
+var elm$html$Html$button = _VirtualDom_node('button');
+var elm$html$Html$p = _VirtualDom_node('p');
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
+var author$project$Main$viewEntry = function (e) {
+	var title = 'title: ' + (e.title + '\n');
+	var detail = 'detail: ' + (e.detail + '\n');
+	return A2(
+		elm$html$Html$p,
+		_List_Nil,
+		_List_fromArray(
+			[
+				elm$html$Html$text(title),
+				elm$html$Html$text(detail),
+				e.done ? elm$html$Html$text('done') : A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(
+						author$project$Main$MakeDone(e.id))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Mark as done')
+					])),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(
+						author$project$Main$Remove(e.id))
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('remove this')
+					]))
+			]));
+};
+var elm$core$Basics$not = _Basics_not;
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$h1 = _VirtualDom_node('h1');
+var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$textarea = _VirtualDom_node('textarea');
 var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
@@ -5006,7 +5068,6 @@ var elm$html$Html$Events$alwaysStop = function (x) {
 var elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 'MayStopPropagation', a: a};
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -5057,9 +5118,58 @@ var author$project$Main$view = function (model) {
 				elm$html$Html$textarea,
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onInput(author$project$Main$EditDetail)
+						elm$html$Html$Events$onInput(author$project$Main$EditDetail),
+						elm$html$Html$Attributes$placeholder('details')
 					]),
-				_List_Nil)
+				_List_Nil),
+				A2(
+				elm$html$Html$button,
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(author$project$Main$Add)
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text('Add todo')
+					])),
+				A2(
+				elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('Left todoes:'),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						A2(
+							elm$core$List$map,
+							author$project$Main$viewEntry,
+							A2(
+								elm$core$List$filter,
+								function (e) {
+									return !e.done;
+								},
+								model.entries)))
+					])),
+				A2(
+				elm$html$Html$p,
+				_List_Nil,
+				_List_fromArray(
+					[
+						elm$html$Html$text('Done todoes:'),
+						A2(
+						elm$html$Html$div,
+						_List_Nil,
+						A2(
+							elm$core$List$map,
+							author$project$Main$viewEntry,
+							A2(
+								elm$core$List$filter,
+								function (e) {
+									return e.done;
+								},
+								model.entries)))
+					]))
 			]),
 		title: 'TODO'
 	};

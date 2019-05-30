@@ -113,7 +113,7 @@ view model =
     , body =
         [ h1 [] [ text "Todo List" ]
         , input [ placeholder "title", onInput EditTitle ] []
-        , textarea [ onInput EditDetail ] []
+        , textarea [ onInput EditDetail, placeholder "details" ] []
         , button [ onClick Add ] [ text "Add todo" ]
         , p []
             [ text "Left todoes:"
