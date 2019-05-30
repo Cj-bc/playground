@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Entry exposing (Entry)
 import Html exposing (Html, button, div, h1, input, p, text, textarea)
-import Html.Attributes exposing (placeholder, type_)
+import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
 import List
 
@@ -112,8 +112,8 @@ view model =
     { title = "TODO"
     , body =
         [ h1 [] [ text "Todo List" ]
-        , input [ placeholder "title", onInput EditTitle ] []
-        , textarea [ onInput EditDetail, placeholder "details" ] []
+        , input [ placeholder "title", onInput EditTitle, value model.title_field ] []
+        , textarea [ onInput EditDetail, placeholder "details", value model.detail_field ] []
         , button [ onClick Add ] [ text "Add todo" ]
         , p []
             [ text "Left todoes:"

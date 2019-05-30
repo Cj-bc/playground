@@ -5062,6 +5062,7 @@ var elm$html$Html$Attributes$stringProperty = F2(
 			elm$json$Json$Encode$string(string));
 	});
 var elm$html$Html$Attributes$placeholder = elm$html$Html$Attributes$stringProperty('placeholder');
+var elm$html$Html$Attributes$value = elm$html$Html$Attributes$stringProperty('value');
 var elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
@@ -5111,7 +5112,8 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$Attributes$placeholder('title'),
-						elm$html$Html$Events$onInput(author$project$Main$EditTitle)
+						elm$html$Html$Events$onInput(author$project$Main$EditTitle),
+						elm$html$Html$Attributes$value(model.title_field)
 					]),
 				_List_Nil),
 				A2(
@@ -5119,7 +5121,8 @@ var author$project$Main$view = function (model) {
 				_List_fromArray(
 					[
 						elm$html$Html$Events$onInput(author$project$Main$EditDetail),
-						elm$html$Html$Attributes$placeholder('details')
+						elm$html$Html$Attributes$placeholder('details'),
+						elm$html$Html$Attributes$value(model.detail_field)
 					]),
 				_List_Nil),
 				A2(
