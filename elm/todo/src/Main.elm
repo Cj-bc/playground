@@ -2,9 +2,9 @@ module Main exposing (main)
 
 import Browser
 import Entry exposing (Entry)
-import Html exposing (Html, h1, input, text, textarea)
-import Html.Attributes exposing (placeholder)
-import Html.Events exposing (onInput)
+import Html exposing (Html, button, div, h1, input, p, text, textarea)
+import Html.Attributes exposing (placeholder, type_)
+import Html.Events exposing (onClick, onInput)
 import List
 
 
@@ -114,5 +114,35 @@ view model =
         [ h1 [] [ text "Todo List" ]
         , input [ placeholder "title", onInput EditTitle ] []
         , textarea [ onInput EditDetail ] []
+        , button [ onClick Add ] [ text "Add todo" ]
+        , p []
+            [ text "Left todoes:"
+            , div [] (List.map viewEntry (List.filter (\e -> not e.done) model.entries))
+            ]
+        , p []
+            [ text "Done todoes:"
+            , div [] (List.map viewEntry (List.filter (\e -> e.done) model.entries))
+            ]
         ]
     }
+
+
+viewEntry : Entry -> Html Msg
+viewEntry e =
+    let
+        title =
+            "title: " ++ e.title ++ "\n"
+
+        detail =
+            "detail: " ++ e.detail ++ "\n"
+    in
+    p []
+        [ text title
+        , text detail
+        , if e.done then
+            text "done"
+
+          else
+            button [ onClick (MakeDone e.id) ] [ text "Mark as done" ]
+        , button [ onClick (Remove e.id) ] [ text "remove this" ]
+        ]
