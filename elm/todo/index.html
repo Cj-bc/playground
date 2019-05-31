@@ -5,6 +5,13 @@
   <script src="build/main.js"></script>
 </head>
 <body>
-  <script>var app = Elm.Main.init();</script>
+  <script>
+    var storedState = localStorage.getItem('cache');
+    var startEntries = storedState ? JSON.parse(storedState) : null;
+    var app = Elm.Main.init({
+      flags: startEntries});
+    app.ports.storeTodo.subscribe(function(data) {
+    localStorage.setItem('cache', JSON.stringify(data))});
+  </script>
 </body>
 </html>
