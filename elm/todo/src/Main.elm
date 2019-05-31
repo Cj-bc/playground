@@ -81,22 +81,33 @@ update msg model =
             ( model, Cmd.none )
 
         Add ->
-            ( { model
-                | entries = model.entries ++ [ Entry.Entry model.uid model.title_field model.detail_field False ]
-                , uid = model.uid + 1
-                , title_field = ""
-                , detail_field = ""
-              }
-            , storeTodo (E.list entryEncoder model.entries)
+            let
+                new_entry =
+                    Entry.Entry model.uid model.title_field model.detail_field False
+
+                new_model =
+                    { model
+                        | entries = model.entries ++ [ new_entry ]
+                        , uid = model.uid + 1
+                        , title_field = ""
+                        , detail_field = ""
+                    }
+            in
+            ( new_model
+            , storeTodo (E.list entryEncoder new_model.entries)
             )
 
         MakeDone id ->
-            ( { model
-                | entries =
-                    List.filter (\e -> e.id /= id) model.entries
-                        ++ List.map (\e -> Entry e.id e.title e.detail True) (List.filter (\e -> e.id == id) model.entries)
-              }
-            , storeTodo (E.list entryEncoder model.entries)
+            let
+                new_model =
+                    { model
+                        | entries =
+                            List.filter (\e -> e.id /= id) model.entries
+                                ++ List.map (\e -> Entry e.id e.title e.detail True) (List.filter (\e -> e.id == id) model.entries)
+                    }
+            in
+            ( new_model
+            , storeTodo (E.list entryEncoder new_model.entries)
             )
 
         EditTitle title ->
@@ -110,8 +121,12 @@ update msg model =
             )
 
         Remove id ->
-            ( { model | entries = List.filter (\e -> e.id /= id) model.entries }
-            , storeTodo (E.list entryEncoder model.entries)
+            let
+                new_model =
+                    { model | entries = List.filter (\e -> e.id /= id) model.entries }
+            in
+            ( new_model
+            , storeTodo (E.list entryEncoder new_model.entries)
             )
 
 

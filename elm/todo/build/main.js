@@ -4395,6 +4395,42 @@ var elm$core$Set$toList = function (_n0) {
 	return elm$core$Dict$keys(dict);
 };
 var author$project$Main$emptyModel = A4(author$project$Main$Model, _List_Nil, '', '', 0);
+var elm$core$Basics$add = _Basics_add;
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return elm$core$Maybe$Just(x);
+	} else {
+		return elm$core$Maybe$Nothing;
+	}
+};
+var elm$core$List$foldl = F3(
+	function (func, acc, list) {
+		foldl:
+		while (true) {
+			if (!list.b) {
+				return acc;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				var $temp$func = func,
+					$temp$acc = A2(func, x, acc),
+					$temp$list = xs;
+				func = $temp$func;
+				acc = $temp$acc;
+				list = $temp$list;
+				continue foldl;
+			}
+		}
+	});
+var elm$core$List$reverse = function (list) {
+	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
+};
 var elm$core$Basics$False = {$: 'False'};
 var elm$core$Basics$True = {$: 'True'};
 var elm$core$Result$isOk = function (result) {
@@ -4427,28 +4463,6 @@ var elm$core$Array$SubTree = function (a) {
 	return {$: 'SubTree', a: a};
 };
 var elm$core$Elm$JsArray$initializeFromList = _JsArray_initializeFromList;
-var elm$core$List$foldl = F3(
-	function (func, acc, list) {
-		foldl:
-		while (true) {
-			if (!list.b) {
-				return acc;
-			} else {
-				var x = list.a;
-				var xs = list.b;
-				var $temp$func = func,
-					$temp$acc = A2(func, x, acc),
-					$temp$list = xs;
-				func = $temp$func;
-				acc = $temp$acc;
-				list = $temp$list;
-				continue foldl;
-			}
-		}
-	});
-var elm$core$List$reverse = function (list) {
-	return A3(elm$core$List$foldl, elm$core$List$cons, _List_Nil, list);
-};
 var elm$core$Array$compressNodes = F2(
 	function (nodes, acc) {
 		compressNodes:
@@ -4496,7 +4510,6 @@ var elm$core$Array$treeFromBuilder = F2(
 			}
 		}
 	});
-var elm$core$Basics$add = _Basics_add;
 var elm$core$Basics$apL = F2(
 	function (f, x) {
 		return f(x);
@@ -4575,10 +4588,6 @@ var elm$core$Array$initialize = F2(
 			return A5(elm$core$Array$initializeHelp, fn, initialFromIndex, len, _List_Nil, tail);
 		}
 	});
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
-var elm$core$Maybe$Nothing = {$: 'Nothing'};
 var elm$core$Result$Err = function (a) {
 	return {$: 'Err', a: a};
 };
@@ -4792,8 +4801,33 @@ var elm$json$Json$Decode$errorToStringHelp = F2(
 	});
 var elm$core$Platform$Cmd$batch = _Platform_batch;
 var elm$core$Platform$Cmd$none = elm$core$Platform$Cmd$batch(_List_Nil);
-var author$project$Main$init = function (_n0) {
-	return _Utils_Tuple2(author$project$Main$emptyModel, elm$core$Platform$Cmd$none);
+var author$project$Main$init = function (d) {
+	var last = function (list) {
+		return elm$core$List$head(
+			elm$core$List$reverse(list));
+	};
+	var n_uid = function (entries) {
+		var _n1 = last(entries);
+		if (_n1.$ === 'Nothing') {
+			return 0;
+		} else {
+			var e = _n1.a;
+			return e.id + 1;
+		}
+	};
+	if (d.$ === 'Nothing') {
+		return _Utils_Tuple2(author$project$Main$emptyModel, elm$core$Platform$Cmd$none);
+	} else {
+		var entries = d.a;
+		return _Utils_Tuple2(
+			A4(
+				author$project$Main$Model,
+				entries,
+				'',
+				'',
+				n_uid(entries)),
+			elm$core$Platform$Cmd$none);
+	}
 };
 var elm$core$Platform$Sub$batch = _Platform_batch;
 var elm$core$Platform$Sub$none = elm$core$Platform$Sub$batch(_List_Nil);
@@ -4804,6 +4838,44 @@ var author$project$Entry$Entry = F4(
 	function (id, title, detail, done) {
 		return {detail: detail, done: done, id: id, title: title};
 	});
+var elm$json$Json$Encode$bool = _Json_wrap;
+var elm$json$Json$Encode$int = _Json_wrap;
+var elm$json$Json$Encode$object = function (pairs) {
+	return _Json_wrap(
+		A3(
+			elm$core$List$foldl,
+			F2(
+				function (_n0, obj) {
+					var k = _n0.a;
+					var v = _n0.b;
+					return A3(_Json_addField, k, v, obj);
+				}),
+			_Json_emptyObject(_Utils_Tuple0),
+			pairs));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var author$project$Entry$entryEncoder = function (e) {
+	return elm$json$Json$Encode$object(
+		_List_fromArray(
+			[
+				_Utils_Tuple2(
+				'id',
+				elm$json$Json$Encode$int(e.id)),
+				_Utils_Tuple2(
+				'title',
+				elm$json$Json$Encode$string(e.title)),
+				_Utils_Tuple2(
+				'detail',
+				elm$json$Json$Encode$string(e.detail)),
+				_Utils_Tuple2(
+				'done',
+				elm$json$Json$Encode$bool(e.done))
+			]));
+};
+var elm$core$Basics$identity = function (x) {
+	return x;
+};
+var author$project$Main$storeTodo = _Platform_outgoingPort('storeTodo', elm$core$Basics$identity);
 var elm$core$Basics$neq = _Utils_notEqual;
 var elm$core$List$foldrHelper = F4(
 	function (fn, acc, ctr, ls) {
@@ -4885,53 +4957,65 @@ var elm$core$List$map = F2(
 			_List_Nil,
 			xs);
 	});
+var elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(_Utils_Tuple0),
+				entries));
+	});
 var author$project$Main$update = F2(
 	function (msg, model) {
 		switch (msg.$) {
 			case 'NoOp':
 				return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 			case 'Add':
+				var new_entry = A4(author$project$Entry$Entry, model.uid, model.title_field, model.detail_field, false);
+				var new_model = _Utils_update(
+					model,
+					{
+						detail_field: '',
+						entries: _Utils_ap(
+							model.entries,
+							_List_fromArray(
+								[new_entry])),
+						title_field: '',
+						uid: model.uid + 1
+					});
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							detail_field: '',
-							entries: _Utils_ap(
-								model.entries,
-								_List_fromArray(
-									[
-										A4(author$project$Entry$Entry, model.uid, model.title_field, model.detail_field, false)
-									])),
-							title_field: '',
-							uid: model.uid + 1
-						}),
-					elm$core$Platform$Cmd$none);
+					new_model,
+					author$project$Main$storeTodo(
+						A2(elm$json$Json$Encode$list, author$project$Entry$entryEncoder, new_model.entries)));
 			case 'MakeDone':
 				var id = msg.a;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							entries: _Utils_ap(
+				var new_model = _Utils_update(
+					model,
+					{
+						entries: _Utils_ap(
+							A2(
+								elm$core$List$filter,
+								function (e) {
+									return !_Utils_eq(e.id, id);
+								},
+								model.entries),
+							A2(
+								elm$core$List$map,
+								function (e) {
+									return A4(author$project$Entry$Entry, e.id, e.title, e.detail, true);
+								},
 								A2(
 									elm$core$List$filter,
 									function (e) {
-										return !_Utils_eq(e.id, id);
+										return _Utils_eq(e.id, id);
 									},
-									model.entries),
-								A2(
-									elm$core$List$map,
-									function (e) {
-										return A4(author$project$Entry$Entry, e.id, e.title, e.detail, true);
-									},
-									A2(
-										elm$core$List$filter,
-										function (e) {
-											return _Utils_eq(e.id, id);
-										},
-										model.entries)))
-						}),
-					elm$core$Platform$Cmd$none);
+									model.entries)))
+					});
+				return _Utils_Tuple2(
+					new_model,
+					author$project$Main$storeTodo(
+						A2(elm$json$Json$Encode$list, author$project$Entry$entryEncoder, new_model.entries)));
 			case 'EditTitle':
 				var title = msg.a;
 				return _Utils_Tuple2(
@@ -4948,18 +5032,20 @@ var author$project$Main$update = F2(
 					elm$core$Platform$Cmd$none);
 			default:
 				var id = msg.a;
+				var new_model = _Utils_update(
+					model,
+					{
+						entries: A2(
+							elm$core$List$filter,
+							function (e) {
+								return !_Utils_eq(e.id, id);
+							},
+							model.entries)
+					});
 				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							entries: A2(
-								elm$core$List$filter,
-								function (e) {
-									return !_Utils_eq(e.id, id);
-								},
-								model.entries)
-						}),
-					elm$core$Platform$Cmd$none);
+					new_model,
+					author$project$Main$storeTodo(
+						A2(elm$json$Json$Encode$list, author$project$Entry$entryEncoder, new_model.entries)));
 		}
 	});
 var author$project$Main$Add = {$: 'Add'};
@@ -4974,9 +5060,6 @@ var author$project$Main$MakeDone = function (a) {
 };
 var author$project$Main$Remove = function (a) {
 	return {$: 'Remove', a: a};
-};
-var elm$core$Basics$identity = function (x) {
-	return x;
 };
 var elm$json$Json$Decode$map = _Json_map1;
 var elm$json$Json$Decode$map2 = _Json_map2;
@@ -5053,7 +5136,6 @@ var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h1 = _VirtualDom_node('h1');
 var elm$html$Html$input = _VirtualDom_node('input');
 var elm$html$Html$textarea = _VirtualDom_node('textarea');
-var elm$json$Json$Encode$string = _Json_wrap;
 var elm$html$Html$Attributes$stringProperty = F2(
 	function (key, string) {
 		return A2(
@@ -5404,7 +5486,43 @@ var elm$url$Url$fromString = function (str) {
 		A2(elm$core$String$dropLeft, 8, str)) : elm$core$Maybe$Nothing);
 };
 var elm$browser$Browser$document = _Browser_document;
+var elm$json$Json$Decode$andThen = _Json_andThen;
+var elm$json$Json$Decode$bool = _Json_decodeBool;
+var elm$json$Json$Decode$int = _Json_decodeInt;
+var elm$json$Json$Decode$list = _Json_decodeList;
+var elm$json$Json$Decode$null = _Json_decodeNull;
+var elm$json$Json$Decode$oneOf = _Json_oneOf;
 var author$project$Main$main = elm$browser$Browser$document(
 	{init: author$project$Main$init, subscriptions: author$project$Main$subscriptions, update: author$project$Main$update, view: author$project$Main$view});
 _Platform_export({'Main':{'init':author$project$Main$main(
-	elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
+	elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				elm$json$Json$Decode$null(elm$core$Maybe$Nothing),
+				A2(
+				elm$json$Json$Decode$map,
+				elm$core$Maybe$Just,
+				elm$json$Json$Decode$list(
+					A2(
+						elm$json$Json$Decode$andThen,
+						function (title) {
+							return A2(
+								elm$json$Json$Decode$andThen,
+								function (id) {
+									return A2(
+										elm$json$Json$Decode$andThen,
+										function (done) {
+											return A2(
+												elm$json$Json$Decode$andThen,
+												function (detail) {
+													return elm$json$Json$Decode$succeed(
+														{detail: detail, done: done, id: id, title: title});
+												},
+												A2(elm$json$Json$Decode$field, 'detail', elm$json$Json$Decode$string));
+										},
+										A2(elm$json$Json$Decode$field, 'done', elm$json$Json$Decode$bool));
+								},
+								A2(elm$json$Json$Decode$field, 'id', elm$json$Json$Decode$int));
+						},
+						A2(elm$json$Json$Decode$field, 'title', elm$json$Json$Decode$string))))
+			])))(0)}});}(this));
