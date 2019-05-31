@@ -1,14 +1,15 @@
-module Main exposing (main)
+port module Main exposing (Model, Msg(..), emptyModel, init, main, subscriptions, update, view, viewEntry)
 
 import Browser
-import Entry exposing (Entry)
+import Entry exposing (Entry, entryEncoder)
 import Html exposing (Html, button, div, h1, input, p, text, textarea)
 import Html.Attributes exposing (placeholder, type_, value)
 import Html.Events exposing (onClick, onInput)
+import Json.Encode as E
 import List
 
 
-main : Program () Model Msg
+main : Program (Maybe (List Entry)) Model Msg
 main =
     Browser.document
         { init = init
@@ -18,12 +19,15 @@ main =
         }
 
 
+port storeTodo : E.Value -> Cmd msg
+
+
 
 -- Model
 
 
 type alias Model =
-    { entries : List Entry.Entry
+    { entries : List Entry
     , title_field : String
     , detail_field : String
     , uid : Int
@@ -35,9 +39,26 @@ emptyModel =
     Model [] "" "" 0
 
 
-init : flag -> ( Model, Cmd Msg )
-init _ =
-    ( emptyModel, Cmd.none )
+init : Maybe (List Entry) -> ( Model, Cmd Msg )
+init d =
+    let
+        last list =
+            List.head (List.reverse list)
+
+        n_uid entries =
+            case last entries of
+                Nothing ->
+                    0
+
+                Just e ->
+                    e.id + 1
+    in
+    case d of
+        Nothing ->
+            ( emptyModel, Cmd.none )
+
+        Just entries ->
+            ( Model entries "" "" (n_uid entries), Cmd.none )
 
 
 
@@ -66,7 +87,7 @@ update msg model =
                 , title_field = ""
                 , detail_field = ""
               }
-            , Cmd.none
+            , storeTodo (E.list entryEncoder model.entries)
             )
 
         MakeDone id ->
@@ -75,7 +96,7 @@ update msg model =
                     List.filter (\e -> e.id /= id) model.entries
                         ++ List.map (\e -> Entry e.id e.title e.detail True) (List.filter (\e -> e.id == id) model.entries)
               }
-            , Cmd.none
+            , storeTodo (E.list entryEncoder model.entries)
             )
 
         EditTitle title ->
@@ -90,7 +111,7 @@ update msg model =
 
         Remove id ->
             ( { model | entries = List.filter (\e -> e.id /= id) model.entries }
-            , Cmd.none
+            , storeTodo (E.list entryEncoder model.entries)
             )
 
 
