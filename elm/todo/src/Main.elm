@@ -2,8 +2,8 @@ port module Main exposing (Model, Msg(..), emptyModel, init, main, subscriptions
 
 import Browser
 import Entry exposing (Entry, entryEncoder)
-import Html exposing (Html, button, div, h1, input, p, text, textarea)
-import Html.Attributes exposing (placeholder, type_, value)
+import Html exposing (Html, button, details, div, h1, input, li, p, summary, text, textarea, ul)
+import Html.Attributes exposing (class, placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode as E
 import List
@@ -148,37 +148,59 @@ view model =
     { title = "TODO"
     , body =
         [ h1 [] [ text "Todo List" ]
-        , input [ placeholder "title", onInput EditTitle, value model.title_field ] []
-        , textarea [ onInput EditDetail, placeholder "details", value model.detail_field ] []
-        , button [ onClick Add ] [ text "Add todo" ]
-        , p []
-            [ text "Left todoes:"
-            , div [] (List.map viewEntry (List.filter (\e -> not e.done) model.entries))
-            ]
-        , p []
-            [ text "Done todoes:"
-            , div [] (List.map viewEntry (List.filter (\e -> e.done) model.entries))
-            ]
+        , viewNewEntry model
+        , viewActiveTodo model
+        , viewDoneTodo model
         ]
     }
+
+
+viewNewEntry : Model -> Html Msg
+viewNewEntry model =
+    div [ class "todo-new" ]
+        [ input [ placeholder "title", onInput EditTitle, value model.title_field, class "title" ]
+            []
+        , textarea
+            [ onInput EditDetail, placeholder "details", value model.detail_field, class "details" ]
+            []
+        , button
+            [ onClick Add, class "submit" ]
+            [ text "Add todo" ]
+        ]
+
+
+viewDoneTodo : Model -> Html Msg
+viewDoneTodo model =
+    div [ class "todo-done" ]
+        [ text "Done todoes:"
+        , ul [] (List.map viewEntry (List.filter (\e -> e.done) model.entries))
+        ]
+
+
+viewActiveTodo : Model -> Html Msg
+viewActiveTodo model =
+    div [ class "todo-active" ]
+        [ text "Active todoes:"
+        , ul [] (List.map viewEntry (List.filter (\e -> not e.done) model.entries))
+        ]
 
 
 viewEntry : Entry -> Html Msg
 viewEntry e =
     let
         title =
-            "title: " ++ e.title ++ "\n"
+            "title: " ++ e.title
 
         detail =
-            "detail: " ++ e.detail ++ "\n"
+            "detail: " ++ e.detail
     in
-    p []
-        [ text title
-        , text detail
+    li [ class "entry", style "background-color" "#A4A4a4" ]
+        [ div [ class "entry-title" ] [ text title ]
+        , div [ class "entry-detail" ] [ text detail ]
         , if e.done then
-            text "done"
+            div [ class "entry-done-button" ] [ text "done" ]
 
           else
-            button [ onClick (MakeDone e.id) ] [ text "Mark as done" ]
-        , button [ onClick (Remove e.id) ] [ text "remove this" ]
+            button [ class "entry-done-button", onClick (MakeDone e.id) ] [ text "Mark as done" ]
+        , button [ class "entry-remove-button", onClick (Remove e.id) ] [ text "remove this" ]
         ]
