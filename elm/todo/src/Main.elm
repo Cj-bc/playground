@@ -173,7 +173,7 @@ viewDoneTodo : Model -> Html Msg
 viewDoneTodo model =
     div [ class "todo-done" ]
         [ text "Done todoes:"
-        , ul [] (List.map viewEntry (List.filter (\e -> e.done) model.entries))
+        , ul [ class "entries-container" ] (List.map viewEntry (List.filter (\e -> e.done) model.entries))
         ]
 
 
@@ -181,7 +181,7 @@ viewActiveTodo : Model -> Html Msg
 viewActiveTodo model =
     div [ class "todo-active" ]
         [ text "Active todoes:"
-        , ul [] (List.map viewEntry (List.filter (\e -> not e.done) model.entries))
+        , ul [ class "entries-container" ] (List.map viewEntry (List.filter (\e -> not e.done) model.entries))
         ]
 
 
