@@ -7,6 +7,7 @@ import Html.Attributes exposing (class, placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode as E
 import List
+import String
 
 
 main : Program (Maybe (List Entry)) Model Msg
@@ -82,6 +83,18 @@ update msg model =
 
         Add ->
             let
+                new_title =
+                    if model.title_field == "" then
+                        case List.head (String.lines model.detail_field) of
+                            Nothing ->
+                                ""
+
+                            Just s ->
+                                s
+
+                    else
+                        model.title_field
+
                 new_entry =
                     Entry.Entry model.uid model.title_field model.detail_field False
 
