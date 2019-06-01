@@ -1,0 +1,37 @@
+body {
+  background-color: #4a4a4a
+}
+
+
+div.todo-new {
+  display: flex;
+  flex-flow: column;
+}
+
+
+div.todo-new input.title {
+  width: 30%;
+}
+
+
+div.todo-new textarea.details {
+  width: 30%;
+}
+
+div.todo-new button.submit {
+  width: 10%;
+}
+
+ul.entries-container {
+  display: flex;
+  flex-flow: column;
+
+}
+
+div.entry {
+  background-color: #6a6a6a;
+  border-radius: 30px 30px 30px 30px;
+}
+
+li.entry > div.entry-title {
+}
