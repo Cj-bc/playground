@@ -2,7 +2,7 @@ port module Main exposing (Model, Msg(..), emptyModel, init, main, subscriptions
 
 import Browser
 import Entry exposing (Entry, entryEncoder)
-import Html exposing (Html, button, details, div, h1, input, li, p, summary, text, textarea, ul)
+import Html exposing (Html, b, button, details, div, h1, input, li, p, summary, text, textarea, ul)
 import Html.Attributes exposing (class, placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode as E
@@ -187,16 +187,9 @@ viewActiveTodo model =
 
 viewEntry : Entry -> Html Msg
 viewEntry e =
-    let
-        title =
-            "title: " ++ e.title
-
-        detail =
-            "detail: " ++ e.detail
-    in
-    li [ class "entry", style "background-color" "#A4A4a4" ]
-        [ div [ class "entry-title" ] [ text title ]
-        , div [ class "entry-detail" ] [ text detail ]
+    div [ class "entry" ]
+        [ div [ class "entry-title" ] [ b [] [ text ("title: " ++ e.title) ] ]
+        , div [ class "entry-detail" ] [ text e.detail ]
         , if e.done then
             div [ class "entry-done-button" ] [ text "done" ]
 
