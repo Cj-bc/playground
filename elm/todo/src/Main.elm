@@ -2,7 +2,7 @@ port module Main exposing (Model, Msg(..), emptyModel, init, main, subscriptions
 
 import Browser
 import Entry exposing (Entry, entryEncoder)
-import Html exposing (Html, b, button, details, div, h1, input, li, p, summary, text, textarea, ul)
+import Html exposing (Html, b, button, details, div, h1, input, li, p, pre, summary, text, textarea, ul)
 import Html.Attributes exposing (class, placeholder, style, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Json.Encode as E
@@ -202,7 +202,7 @@ viewEntry : Entry -> Html Msg
 viewEntry e =
     div [ class "entry" ]
         [ div [ class "entry-title" ] [ b [] [ text ("title: " ++ e.title) ] ]
-        , div [ class "entry-detail" ] [ text e.detail ]
+        , div [ class "entry-detail" ] [ pre [] [ text e.detail ] ]
         , if e.done then
             div [ class "entry-done-button" ] [ text "done" ]
 
