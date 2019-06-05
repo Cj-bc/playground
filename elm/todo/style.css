@@ -31,7 +31,14 @@ ul.entries-container {
 div.entry {
   background-color: #6a6a6a;
   border-radius: 30px 30px 30px 30px;
+  position: relative;
 }
 
-li.entry > div.entry-title {
+div.entry-title, div.entry-detail, button.entry-done-button, button.entry-remove-button {
+  position: relative;
+  left: 30px;
+}
+
+button.entry-done-button, button.entry-remove-button {
+  bottom: 10px;
 }
