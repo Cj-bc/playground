@@ -5137,7 +5137,7 @@ var author$project$Main$viewEntry = function (e) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								elm$html$Html$text('title: ' + e.title)
+								elm$html$Html$text(e.title)
 							]))
 					])),
 				A2(

@@ -201,7 +201,7 @@ viewActiveTodo model =
 viewEntry : Entry -> Html Msg
 viewEntry e =
     div [ class "entry" ]
-        [ div [ class "entry-title" ] [ b [] [ text ("title: " ++ e.title) ] ]
+        [ div [ class "entry-title" ] [ b [] [ text e.title ] ]
         , div [ class "entry-detail" ] [ pre [] [ text e.detail ] ]
         , if e.done then
             div [ class "entry-done-button" ] [ text "done" ]
