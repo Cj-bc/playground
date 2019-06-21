@@ -27,6 +27,7 @@ dependencies:
 - microlens
 - microlens-th
 - random
+- vty
 
 library:
   source-dirs: src

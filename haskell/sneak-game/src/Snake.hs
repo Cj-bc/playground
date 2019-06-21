@@ -15,7 +15,7 @@ import System.Random (Random(..), newStdGen)
 data Game = Game { _snake :: Snake         -- ^ Snake as a sequence of points in R2
                  , _dir   :: Direction     -- ^ Direction
                  , _food  :: Coord         -- ^ Location of the food
-                 , _foods :: Stream Coord
+                 , _foods :: Stream Coord  -- ^ Infinity list of random foods
                  , _dead  :: Bool          -- ^ Game over flag
                  , _paused :: Bool         -- ^ Paused flag
                  , _score :: Int           -- ^ Score
@@ -48,7 +48,6 @@ die :: Game -> Maybe Game
 -- | Possibly eat food if next head position is food
 eatFood :: Game -> Maybe Game
 
-
 -- | Move snake along in a marquee fashion
 move :: Game -> Game
 
@@ -61,6 +60,3 @@ turn :: Direction -> Game -> Game
 
 -- | Initialize a paused game with random food location
 initGame :: IO Game
-
-main :: IO ()
-main = return ()
