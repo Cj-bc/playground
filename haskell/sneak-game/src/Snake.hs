@@ -44,19 +44,54 @@ step g = fromMaybe g $ do
 
 -- | Possibly die if next head position is disallowed
 die :: Game -> Maybe Game
+-- die g =
 
 -- | Possibly eat food if next head position is food
+-- TODO: Should generate next food
 eatFood :: Game -> Maybe Game
+eatFood g = if nextCoord g^.dir g^.coord == g^.food
+              then Just setNextFood . setNewFood . setNewSnake g
+              else Nothing
+            where
+              (head, tail)  = g^.foods
+              setNextFood g = g&food~.head
+              setNewFoods g = g&foods~.tail
+              setNewSnake g = g&snake |> g^.coord
 
 -- | Move snake along in a marquee fashion
 move :: Game -> Game
-
+move g =
+  g&snake.~ (fmap (nextCoord g^.dir) g^.snake)
 
 -- | Turn game direction (only turns orthogonally)
 --
 -- Implicitly unpauses yet freezes game
 turn :: Direction -> Game -> Game
+turn d g = g&dir.~d
+
+
+nextCoord :: Direction -> Coord -> Coord
+nextCoord d c = case d of
+  North -> c + Coord  0 -1
+  South -> c + Coord  0  1
+  East  -> c + Coord -1  0
+  West  -> c + Coord  1  0
+
 
 
 -- | Initialize a paused game with random food location
 initGame :: IO Game
+initGame = do
+  fx <- getStdRandom $ randomR(0,50)
+  fy <- getStdRandom $ randomR(0,50)
+  let firstfood = Coord fx fy
+  
+  return Game { _snake  = Snake (Coord 0 0)
+              , _dir    = South
+              , _food   = firstFood
+              , _foods  = foods
+              , _dead   = False
+              , _paused = False
+              , _score  = 0
+              , _frozen = False
+              }
