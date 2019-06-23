@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module UI where
+module UI (initGame, app, Tick(..))
+where
 
 import Control.Monad.IO.Class (liftIO)
 import Data.Maybe (fromMaybe)
@@ -18,13 +19,13 @@ import Brick
   , attrMap, withAttr, emptyWidget, AttrName, on, fg
   , (<+>)
   )
+import qualified Graphics.Vty as V
+import Control.Lens ((^.))
 import qualified Brick.Widgets.Border as B
 import qualified Brick.Widgets.Border.Style as BS
 import qualified Brick.Widgets.Center as C
-import Data.Sequence (seq)
-import qualified Data.Sequence as S
 import Linear.V2 (V2(..))
-import Lens.Micro ((^.))
+
 
 
 -- Types
@@ -54,7 +55,6 @@ app = App { appDraw = drawUI
 -- Handling events
 
 handleEvent :: Game -> BrickEvent Name Tick -> EventM Name (Next Game)
-handleEvent =
 handleEvent g (AppEvent Tick) = continue $ step g
 handleEvent g (VtyEvent (V.EvKey V.KUp [])) = continue $ turn North g
 handleEvent g (VtyEvent (V.EvKey V.KDown [])) = continue $ turn South g
@@ -64,9 +64,9 @@ handleEvent g (VtyEvent (V.EvKey (V.KChar 'k') [])) = continue $ turn North g
 handleEvent g (VtyEvent (V.EvKey (V.KChar 'j') [])) = continue $ turn South g
 handleEvent g (VtyEvent (V.EvKey (V.KChar 'l') [])) = continue $ turn East g
 handleEvent g (VtyEvent (V.EvKey (V.KChar 'h') [])) = continue $ turn West g
-handleEvent g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO $ initGame >>= continue
+handleEvent g (VtyEvent (V.EvKey (V.KChar 'r') [])) = liftIO initGame >>= continue
 handleEvent g (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt g
-handleEvent g (VtyEvent (V.EvKey (V.KEsc)))         = halt g
+handleEvent g (VtyEvent (V.EvKey V.KEsc []))      = halt g
 handleEvent g _ = continue g
 
 
@@ -82,9 +82,9 @@ drawUI g =
 
 drawStats :: Game -> Widget Name
 drawStats g = hLimit 11
-  vBox [ drawScore (g ^. score)
-       , padTop (Pad 2) $ drawGameOver (g ^. dead)
-       ]
+  $ vBox [ drawScore (g ^. score)
+         , padTop (Pad 2) $ drawGameOver (g ^. dead)
+         ]
 
 drawScore :: Int -> Widget Name
 drawScore n = withBorderStyle BS.unicodeBold
@@ -94,7 +94,7 @@ drawScore n = withBorderStyle BS.unicodeBold
   $ str $ show n
 
 drawGameOver :: Bool -> Widget Name
-drawGameOver True = withAttr $ gameOverAttr $ C.hCenter $ str "Game Over"
+drawGameOver True = withAttr gameOverAttr $ C.hCenter $ str "Game Over"
 drawGameOver False = emptyWidget
 
 gameOverAttr :: AttrName
@@ -102,11 +102,11 @@ gameOverAttr = "gameOver"
 
 
 drawGrid :: Game -> Widget Name
-drawGrid = withBorderStyle BS.unicodeBold
+drawGrid g = withBorderStyle BS.unicodeBold
   $ B.borderWithLabel (str "Snake")
   $ vBox rows
   where
-    rows = [hBox $ cellsInRow r | r <- [height-1,height-2...0]]
+    rows = [hBox $ cellsInRow r | r <- [height-1,height-2..0]]
     cellsInRow y = [drawCoord (V2 x y) | x <- [0..width-1]]
     drawCoord    = drawCell . cellAt
     cellAt c

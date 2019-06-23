@@ -24,10 +24,11 @@ dependencies:
 - brick
 - containers
 - linear
-- microlens
-- microlens-th
+- lens
 - random
+- transformers
 - vty
+- extra
 
 library:
   source-dirs: src
