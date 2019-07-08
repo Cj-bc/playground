@@ -25,6 +25,8 @@ dependencies:
 - vty
 - random
 - lens
+- transformers
+- linear
 
 library:
   source-dirs: src
