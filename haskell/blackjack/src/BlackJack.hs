@@ -9,7 +9,7 @@ module BlackJack (Card(..), Game, Action, getPoint)
 where
 
 import Data.List (sort)
-import 
+import System.Random
 
 data Card = A | Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | J | Q | K deriving (Eq, Ord)
 data Game = Game { player :: [Card]
@@ -53,3 +53,30 @@ getPoint cs | A `elem` cs           = if restOfAP <= 10
         where
             restOfAP = getPoint $ tail $ sort cs
 
+
+-- | Shuffled(randomly picked) deck.
+--
+-- prop> shuffleDeck g /= shuffleDeck g'
+--
+-- prop> shuffleDeck g == shuffleDeck g
+shuffleDeck :: (RandomGen g) => g -> [Card]
+shuffleDeck g = flip shuffle g $ concat $
+                  replicate 4 [A, Two, Three, Four, Five, Six, Seven
+                              , Eight, Nine, Ten, J, Q, K]
+
+
+
+-- | Shuffle list (I hope)
+--
+-- prop> shuffle xs g /= xs
+--
+-- prop> shuffle xs g /= shuffle xs g'
+--
+-- prop> shuffle xs g == shuffle xs g
+shuffle :: (RandomGen g) => [a] -> g -> [a]
+shuffle x _ | length x == 1 = x
+shuffle xs g = picked : shuffle rest g'
+  where
+    (n, g') = randomR (1, length xs) g
+    picked  = xs !! (n - 1)
+    rest     = take (n - 1) xs ++ drop n xs
