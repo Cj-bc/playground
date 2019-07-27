@@ -34,10 +34,10 @@ data Action = Hit | Stand
 -- >>> getPoint [J, K, A]
 -- 21
 getPoint :: [Card] -> Int
-getPoint []                  = 0
-getPoint cs | A `elem` cs           = if restOfAP <= 10
-                                      then 11 + restOfAP
-                                      else  1 + restOfAP
+getPoint []                    = 0
+getPoint cs | A `elem` cs      = if restOfAP <= 10
+                                 then 11 + restOfAP
+                                 else  1 + restOfAP
             | head cs == Two   = 2  + getPoint (tail cs)
             | head cs == Three = 3  + getPoint (tail cs)
             | head cs == Four  = 4  + getPoint (tail cs)
