@@ -23,8 +23,14 @@ data Game = Game { player :: [Card] -- ^ Player's hand
 data Action = Hit | Stand | BustCheck
 -- ^ All actions that should be happened in game.
 
+-- | Cycle Phase Cycle
+-- If you call this again and again, it'll continue game automatically.
+--
+-- >>> doPhase (Game [] [] [A, Two, Three, Four, Five, Six] DealCard)
+-- Game [A, Two] [Three, Four] [Five, Six] PlayerTurn
+-- >>> doPhase (Game [] [] [A, Two, Three, Four, Five, Six])
 doPhase :: Game -> IO Game
-doPhase g@(Game p d _deck DealCard) = let g' =  g {player = take 2 _deck,
+doPhase g@(Game _ _ _deck DealCard) = let g' =  g {player = take 2 _deck,
                                                    dealer = drop 2 $ take 4 _deck,
                                                    deck   = drop 4 _deck,
                                                    phase  = PlayerTurn }
@@ -60,7 +66,7 @@ doPhase g@(Game p d _ ComparePoints) = let Just g' = doAction g' BustCheck
 -- Nothing
 -- >>> doAction (Game [A, Two] [Three, Four] [J, K, Q] PlayerTurn) Hit
 -- Just (Game {player = [A,Two,J], dealer = [Three,Four], deck = [K,Q], phase = PlayerTurn})
--- >>> doAction (Game [A, Two] [Three, Four] [J, k, Q] DealerTurn) Hit
+-- >>> doAction (Game [A, Two] [Three, Four] [J, K, Q] DealerTurn) Hit
 -- Just (Game {player = [A,Two], dealer = [Three,Four,J], deck = [K,Q], phase = DealerTurn})
 -- >>> doAction (Game [A, Two] [Three, Four] [J, K, Q] PlayerTurn) Stand
 -- Just (Game {player = [A,Two], dealer = [Three,Four], deck = [J,K,Q], phase = DealerTurn})
