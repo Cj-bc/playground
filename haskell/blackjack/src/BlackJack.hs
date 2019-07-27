@@ -30,12 +30,21 @@ doPhase g@(Game p d _deck DealCard) = let g' =  g {player = take 2 _deck,
                                                    phase  = PlayerTurn }
                                           Just checked = doAction g' BustCheck
                                       in return checked
-doPhase g@(Game p d _deck PlayerTurn) = case doAction g <$> askAction of
-                                          Nothing -> g {phase = DealerTurn}
-                                          Just g' -> g'
+doPhase g@(Game _ _ _ PlayerTurn) = do
+                                      chosen <- askAction
+                                      case doAction g chosen of
+                                        Nothing -> return g {phase = DealerTurn}
+                                        Just g' -> return g'
+        where
+          askAction = do
+                        print "hit? stand?('hit'/'stand')\n> "
+                        ans <- getLine
+                        case ans of
+                          "hit" -> return Hit
+                          "stand" -> return Stand
 doPhase g@(Game p d _deck DealerTurn) | getPoint d < 17 = case doAction g Hit of
-                                                            Nothing -> g {phase = ComparePoints}
-                                                            Just g' -> g'
+                                                            Nothing -> return g {phase = ComparePoints}
+                                                            Just g' -> return g'
                                       | otherwise       = let Just g' = doAction g Stand
                                                           in return g'
 doPhase g@(Game p d _ ComparePoints) = let Just g' = doAction g' BustCheck
