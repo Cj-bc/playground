@@ -1,6 +1,6 @@
-name:                blackjack
+name:                BlackJack
 version:             0.1.0.0
-github:              "Cj-bc/blackjack"
+github:              "Cj-bc/playground"
 license:             BSD3
 author:              "Cj.bc_sd a.k.a Cj-bc"
 maintainer:          "cj.bc-sd@outlook.jp"
@@ -17,17 +17,18 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/Cj-bc/blackjack#readme>
+description:         Please see the README on GitHub at <https://github.com/Cj-bc/playground#readme>
 
 dependencies:
 - base >= 4.7 && < 5
 - random
+- hspec
 
 library:
   source-dirs: src
 
 executables:
-  blackjack-exe:
+  BlackJack-exe:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
@@ -35,15 +36,17 @@ executables:
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - blackjack
+    - BlackJack
 
 tests:
-  blackjack-test:
-    main:                Spec.hs
+  BlackJack-test:
+    main:                BlackJackSpec.hs
     source-dirs:         test
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
-    - blackjack
+    - BlackJack
+    - hspec
+    - QuickCheck

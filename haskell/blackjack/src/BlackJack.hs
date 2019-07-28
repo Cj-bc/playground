@@ -5,7 +5,7 @@ Description: simplest blackjack module.
 This module uses rules found in [wikipedia](https://ja.wikipedia.org/wiki/ブラックジャック)
 -}
 
-module BlackJack (Card(..), Game, Action, getPoint)
+module BlackJack (Card(..), Player(..), Phase(..), Action(..), Game(..), doPhase, doAction, getPoint)
 where
 
 import Data.List (sort)
@@ -28,7 +28,19 @@ data Action = Hit | Stand | BustCheck
 --
 -- >>> doPhase (Game [] [] [A, Two, Three, Four, Five, Six] DealCard)
 -- Game [A, Two] [Three, Four] [Five, Six] PlayerTurn
--- >>> doPhase (Game [] [] [A, Two, Three, Four, Five, Six])
+--
+-- I have no idea how to test PlayerTurn as it use IO
+--
+-- >>> doPhase (Game [] [Three, Four] [Five, Six] DealerTurn)
+-- Game [] [Three,Four,Five] [Six] DealerTurn
+-- >>> doPhase (Game [] [Seven, Ten] [Five, Six] DealerTurn)
+-- Game [] [Seven,Ten] [Five,Six] ComparePoints
+-- >>> doPhase (Game [] [Seven, Ten] [] DealerTurn)
+-- Game [] [Seven,Ten] [Five,Six] ComparePoints-
+-- >>> doPhase (Game [A, Ten] [Two, Three] [] ComparePoints)
+-- Game [A,Ten] [Two,Three] [] (GameEnd Player)
+-- >>> doPhase (Game [Two, Three], [A, Ten] [] ComparePoints)
+-- Game [Two,Three] [A,Ten] [] (GameEnd Dealer)
 doPhase :: Game -> IO Game
 doPhase g@(Game _ _ _deck DealCard) = let g' =  g {player = take 2 _deck,
                                                    dealer = drop 2 $ take 4 _deck,
@@ -53,10 +65,13 @@ doPhase g@(Game p d _deck DealerTurn) | getPoint d < 17 = case doAction g Hit of
                                                             Just g' -> return g'
                                       | otherwise       = let Just g' = doAction g Stand
                                                           in return g'
-doPhase g@(Game p d _ ComparePoints) = let Just g' = doAction g' BustCheck
-                                       in if getPoint p > getPoint d
-                                          then return g' {phase = GameEnd Player}
-                                          else return g' {phase = GameEnd Dealer}
+doPhase g@(Game p d _ ComparePoints) =
+        case doAction g BustCheck of
+          Just g'@(Game _ _ _ (GameEnd _)) -> return g'
+          otherwise -> if getPoint p > getPoint d
+                       then return g {phase = GameEnd Player}
+                       else return g {phase = GameEnd Dealer}
+
 
 
 -- | Change game state based on current Game and occurred Action
