@@ -5,7 +5,7 @@ Description: simplest blackjack module.
 This module uses rules found in [wikipedia](https://ja.wikipedia.org/wiki/ブラックジャック)
 -}
 
-module BlackJack (Card(..), Player(..), Phase(..), Action(..), Game(..), doPhase, doAction, getPoint)
+module BlackJack (Card(..), Player(..), Phase(..), Action(..), Game(..), doPhase, doAction, getPoint, shuffleDeck)
 where
 
 import Data.List (sort)
@@ -55,7 +55,7 @@ doPhase g@(Game _ _ _ PlayerTurn) = do
                                         Just g' -> return g'
         where
           askAction = do
-                        print "hit? stand?('hit'/'stand')\n> "
+                        putStr "hit? stand?('hit'/'stand')\n> "
                         ans <- getLine
                         case ans of
                           "hit" -> return Hit
