@@ -14,7 +14,6 @@ namespace FaceDataServer {
 
     static readonly grpc::Marshaller<global::FaceDataServer.VoidCom> __Marshaller_FaceDataServer_VoidCom = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::FaceDataServer.VoidCom.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::FaceDataServer.Status> __Marshaller_FaceDataServer_Status = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::FaceDataServer.Status.Parser.ParseFrom);
-    static readonly grpc::Marshaller<global::FaceDataServer.ReqCommand> __Marshaller_FaceDataServer_ReqCommand = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::FaceDataServer.ReqCommand.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::FaceDataServer.FaceData> __Marshaller_FaceDataServer_FaceData = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::FaceDataServer.FaceData.Parser.ParseFrom);
 
     static readonly grpc::Method<global::FaceDataServer.VoidCom, global::FaceDataServer.Status> __Method_init = new grpc::Method<global::FaceDataServer.VoidCom, global::FaceDataServer.Status>(
@@ -24,11 +23,11 @@ namespace FaceDataServer {
         __Marshaller_FaceDataServer_VoidCom,
         __Marshaller_FaceDataServer_Status);
 
-    static readonly grpc::Method<global::FaceDataServer.ReqCommand, global::FaceDataServer.FaceData> __Method_startStream = new grpc::Method<global::FaceDataServer.ReqCommand, global::FaceDataServer.FaceData>(
+    static readonly grpc::Method<global::FaceDataServer.VoidCom, global::FaceDataServer.FaceData> __Method_startStream = new grpc::Method<global::FaceDataServer.VoidCom, global::FaceDataServer.FaceData>(
         grpc::MethodType.ServerStreaming,
         __ServiceName,
         "startStream",
-        __Marshaller_FaceDataServer_ReqCommand,
+        __Marshaller_FaceDataServer_VoidCom,
         __Marshaller_FaceDataServer_FaceData);
 
     static readonly grpc::Method<global::FaceDataServer.VoidCom, global::FaceDataServer.Status> __Method_stopStream = new grpc::Method<global::FaceDataServer.VoidCom, global::FaceDataServer.Status>(
@@ -53,7 +52,7 @@ namespace FaceDataServer {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
-      public virtual global::System.Threading.Tasks.Task startStream(global::FaceDataServer.ReqCommand request, grpc::IServerStreamWriter<global::FaceDataServer.FaceData> responseStream, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task startStream(global::FaceDataServer.VoidCom request, grpc::IServerStreamWriter<global::FaceDataServer.FaceData> responseStream, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -104,11 +103,11 @@ namespace FaceDataServer {
       {
         return CallInvoker.AsyncUnaryCall(__Method_init, null, options, request);
       }
-      public virtual grpc::AsyncServerStreamingCall<global::FaceDataServer.FaceData> startStream(global::FaceDataServer.ReqCommand request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::FaceDataServer.FaceData> startStream(global::FaceDataServer.VoidCom request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return startStream(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
-      public virtual grpc::AsyncServerStreamingCall<global::FaceDataServer.FaceData> startStream(global::FaceDataServer.ReqCommand request, grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::FaceDataServer.FaceData> startStream(global::FaceDataServer.VoidCom request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncServerStreamingCall(__Method_startStream, null, options, request);
       }
@@ -152,7 +151,7 @@ namespace FaceDataServer {
     public static void BindService(grpc::ServiceBinderBase serviceBinder, FaceDataServerBase serviceImpl)
     {
       serviceBinder.AddMethod(__Method_init, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::FaceDataServer.VoidCom, global::FaceDataServer.Status>(serviceImpl.init));
-      serviceBinder.AddMethod(__Method_startStream, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::FaceDataServer.ReqCommand, global::FaceDataServer.FaceData>(serviceImpl.startStream));
+      serviceBinder.AddMethod(__Method_startStream, serviceImpl == null ? null : new grpc::ServerStreamingServerMethod<global::FaceDataServer.VoidCom, global::FaceDataServer.FaceData>(serviceImpl.startStream));
       serviceBinder.AddMethod(__Method_stopStream, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::FaceDataServer.VoidCom, global::FaceDataServer.Status>(serviceImpl.stopStream));
     }
 

@@ -26,21 +26,18 @@ namespace FaceDataServer {
           string.Concat(
             "ChRmYWNlRGF0YVNlcnZlci5wcm90bxIORmFjZURhdGFTZXJ2ZXIiCQoHVm9p",
             "ZENvbSIrCgZTdGF0dXMSDwoHc3VjY2VzcxgBIAEoCBIQCghleGl0Q29kZRgC",
-            "IAEoBSIyCgpSZXFDb21tYW5kIiQKA21zZxIJCgVTVEFSVBAAEggKBFNUT1AQ",
-            "ARIICgRFWElUEAIiKwoIRmFjZURhdGESCQoBeBgBIAEoAhIJCgF5GAIgASgC",
-            "EgkKAXoYAyABKAIy1QEKDkZhY2VEYXRhU2VydmVyEjkKBGluaXQSFy5GYWNl",
-            "RGF0YVNlcnZlci5Wb2lkQ29tGhYuRmFjZURhdGFTZXJ2ZXIuU3RhdHVzIgAS",
-            "RwoLc3RhcnRTdHJlYW0SGi5GYWNlRGF0YVNlcnZlci5SZXFDb21tYW5kGhgu",
-            "RmFjZURhdGFTZXJ2ZXIuRmFjZURhdGEiADABEj8KCnN0b3BTdHJlYW0SFy5G",
-            "YWNlRGF0YVNlcnZlci5Wb2lkQ29tGhYuRmFjZURhdGFTZXJ2ZXIuU3RhdHVz",
-            "IgBiBnByb3RvMw=="));
+            "IAEoBSIrCghGYWNlRGF0YRIJCgF4GAEgASgCEgkKAXkYAiABKAISCQoBehgD",
+            "IAEoAjLSAQoORmFjZURhdGFTZXJ2ZXISOQoEaW5pdBIXLkZhY2VEYXRhU2Vy",
+            "dmVyLlZvaWRDb20aFi5GYWNlRGF0YVNlcnZlci5TdGF0dXMiABJECgtzdGFy",
+            "dFN0cmVhbRIXLkZhY2VEYXRhU2VydmVyLlZvaWRDb20aGC5GYWNlRGF0YVNl",
+            "cnZlci5GYWNlRGF0YSIAMAESPwoKc3RvcFN0cmVhbRIXLkZhY2VEYXRhU2Vy",
+            "dmVyLlZvaWRDb20aFi5GYWNlRGF0YVNlcnZlci5TdGF0dXMiAGIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.VoidCom), global::FaceDataServer.VoidCom.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.Status), global::FaceDataServer.Status.Parser, new[]{ "Success", "ExitCode" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.ReqCommand), global::FaceDataServer.ReqCommand.Parser, null, null, new[]{ typeof(global::FaceDataServer.ReqCommand.Types.msg) }, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.FaceData), global::FaceDataServer.FaceData.Parser, new[]{ "X", "Y", "Z" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.VoidCom), global::FaceDataServer.VoidCom.Parser, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.Status), global::FaceDataServer.Status.Parser, new[]{ "Success", "ExitCode" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.FaceData), global::FaceDataServer.FaceData.Parser, new[]{ "X", "Y", "Z" }, null, null, null)
           }));
     }
     #endregion
@@ -305,129 +302,6 @@ namespace FaceDataServer {
 
   }
 
-  public sealed partial class ReqCommand : pb::IMessage<ReqCommand> {
-    private static readonly pb::MessageParser<ReqCommand> _parser = new pb::MessageParser<ReqCommand>(() => new ReqCommand());
-    private pb::UnknownFieldSet _unknownFields;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pb::MessageParser<ReqCommand> Parser { get { return _parser; } }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static pbr::MessageDescriptor Descriptor {
-      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[2]; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    pbr::MessageDescriptor pb::IMessage.Descriptor {
-      get { return Descriptor; }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ReqCommand() {
-      OnConstruction();
-    }
-
-    partial void OnConstruction();
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ReqCommand(ReqCommand other) : this() {
-      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public ReqCommand Clone() {
-      return new ReqCommand(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override bool Equals(object other) {
-      return Equals(other as ReqCommand);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool Equals(ReqCommand other) {
-      if (ReferenceEquals(other, null)) {
-        return false;
-      }
-      if (ReferenceEquals(other, this)) {
-        return true;
-      }
-      return Equals(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override int GetHashCode() {
-      int hash = 1;
-      if (_unknownFields != null) {
-        hash ^= _unknownFields.GetHashCode();
-      }
-      return hash;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public override string ToString() {
-      return pb::JsonFormatter.ToDiagnosticString(this);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void WriteTo(pb::CodedOutputStream output) {
-      if (_unknownFields != null) {
-        _unknownFields.WriteTo(output);
-      }
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int CalculateSize() {
-      int size = 0;
-      if (_unknownFields != null) {
-        size += _unknownFields.CalculateSize();
-      }
-      return size;
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(ReqCommand other) {
-      if (other == null) {
-        return;
-      }
-      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-    }
-
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void MergeFrom(pb::CodedInputStream input) {
-      uint tag;
-      while ((tag = input.ReadTag()) != 0) {
-        switch(tag) {
-          default:
-            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-            break;
-        }
-      }
-    }
-
-    #region Nested types
-    /// <summary>Container for nested types declared in the ReqCommand message type.</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public static partial class Types {
-      public enum msg {
-        /// <summary>
-        /// Start Face-Data-Server
-        /// </summary>
-        [pbr::OriginalName("START")] Start = 0,
-        /// <summary>
-        /// Stop sending FaceData while server is still on
-        /// </summary>
-        [pbr::OriginalName("STOP")] Stop = 1,
-        /// <summary>
-        /// Stop server itself
-        /// </summary>
-        [pbr::OriginalName("EXIT")] Exit = 2,
-      }
-
-    }
-    #endregion
-
-  }
-
   public sealed partial class FaceData : pb::IMessage<FaceData> {
     private static readonly pb::MessageParser<FaceData> _parser = new pb::MessageParser<FaceData>(() => new FaceData());
     private pb::UnknownFieldSet _unknownFields;
@@ -436,7 +310,7 @@ namespace FaceDataServer {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[3]; }
+      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
