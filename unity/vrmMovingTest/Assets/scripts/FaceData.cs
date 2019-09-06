@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 public class FaceData : MonoBehaviour
 {
     private Transform neck_trans;
+    private FaceDataServer.FaceDataServer.FaceDataServerClient client;
     // Start is called before the first frame update
     void Start()
     {
-        Channel ch = new Channel("127.0.0.1:50052");
-        var client = new FaceDataServer.FaceDataServerClient(channel);
+        Channel channel = new Channel("127.0.0.1:50052", ChannelCredentials.Insecure);
+        client = new FaceDataServer.FaceDataServer.FaceDataServerClient(channel);
         neck_trans = transform;
 
         InitFaceDataServer();
