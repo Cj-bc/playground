@@ -28,7 +28,7 @@ public class FaceData : MonoBehaviour
     {
       VoidCom vc = new VoidCom();
       Status st = client.init(vc);
-      if (!st.success)
+      if (!st.Success)
       {
         throw new Exception(st.exitCode);
       }
