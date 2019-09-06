@@ -4,7 +4,7 @@ package FaceDataServer;
 
 service FaceDataServer {
   rpc init(VoidCom) returns (Status) {}
-  rpc startStream(ReqCommand) returns (stream FaceData) {}
+  rpc startStream(VoidCom) returns (stream FaceData) {}
   rpc stopStream(VoidCom) returns (Status) {}
 }
 
@@ -15,17 +15,6 @@ message Status {
   int32 exitCode = 2;
 }
 
-message ReqCommand {
-  enum msg {
-    // Start Face-Data-Server
-    START = 0;
-    // Stop sending FaceData while server is still on
-    STOP  = 1;
-    // Stop server itself
-    EXIT  = 2;
-  }
-
-}
 message FaceData {
   float x = 1;
   float y = 2;
