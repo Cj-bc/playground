@@ -26,8 +26,8 @@ public class FaceData : MonoBehaviour
 
     public void InitFaceDataServer()
     {
-      VoidCom vc = new VoidCom();
-      Status st = client.init(vc);
+      FaceDataServer.VoidCom vc = new FaceDataServer.VoidCom();
+      FaceDataServer.Status st = client.init(vc);
       if (!st.Success)
       {
         throw new Exception(st.ExitCode.ToString());
@@ -38,14 +38,14 @@ public class FaceData : MonoBehaviour
     {
       try
       {
-        VoidCom vc = new VoidCom();
+        FaceDataServer.VoidCom vc = new FaceDataServer.VoidCom();
         using (var call = client.startStream(vc))
         {
           var stream = call.ResponseStream;
 
           while (await stream.MoveNext())
           {
-            FaceData fd = stream.Current;
+            FaceDataServer.FaceData fd = stream.Current;
             float angleX = fd.x * Mathf.Rad2Deg;
             float angleY = fd.y * Mathf.Rad2Deg;
             float angleZ = fd.z * Mathf.Rad2Deg;
