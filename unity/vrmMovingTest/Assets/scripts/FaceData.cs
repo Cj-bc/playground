@@ -12,11 +12,14 @@ public class FaceData : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("------ Top of FaceData.Start()");
         Channel channel = new Channel("127.0.0.1:50052", ChannelCredentials.Insecure);
         client = new FaceDataServer.FaceDataServer.FaceDataServerClient(channel);
         neck_trans = transform;
 
+        Debug.Log("----- Before InitFaceDataServer -----");
         InitFaceDataServer();
+        Debug.Log("----- After InitFaceDataServer -----");
 
         ApplyFaceDataToModel();
     }
