@@ -30,7 +30,7 @@ public class FaceData : MonoBehaviour
       Status st = client.init(vc);
       if (!st.Success)
       {
-        throw new Exception(st.exitCode);
+        throw new Exception(st.ExitCode.ToString());
       }
     }
 
