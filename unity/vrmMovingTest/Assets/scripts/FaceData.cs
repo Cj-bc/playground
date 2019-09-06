@@ -48,9 +48,9 @@ public class FaceData : MonoBehaviour
           while (await stream.MoveNext())
           {
             FaceDataServer.FaceData fd = stream.Current;
-            float angleX = fd.x * Mathf.Rad2Deg;
-            float angleY = fd.y * Mathf.Rad2Deg;
-            float angleZ = fd.z * Mathf.Rad2Deg;
+            float angleX = fd.X * Mathf.Rad2Deg;
+            float angleY = fd.Y * Mathf.Rad2Deg;
+            float angleZ = fd.Z * Mathf.Rad2Deg;
             transform.Rotate(angleX, angleY, angleZ);
           }
         }
