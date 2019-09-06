@@ -27,7 +27,9 @@ public class FaceData : MonoBehaviour
     public void InitFaceDataServer()
     {
       FaceDataServer.VoidCom vc = new FaceDataServer.VoidCom();
+      Debug.Log("-- Before CLIENT.INIT call");
       FaceDataServer.Status st = client.init(vc);
+      Debug.Log("-- After CLIENT.INIT call");
       if (!st.Success)
       {
         throw new Exception(st.ExitCode.ToString());
