@@ -53,7 +53,7 @@ public class FaceData : MonoBehaviour
             float angleX = fd.X * Mathf.Rad2Deg;
             float angleY = fd.Y * Mathf.Rad2Deg;
             float angleZ = fd.Z * Mathf.Rad2Deg;
-            transform.Rotate(angleX, angleY, angleZ);
+            transform.rotation = Quaternion.Euler(angleX, angleY, angleZ);
           }
         }
       }
