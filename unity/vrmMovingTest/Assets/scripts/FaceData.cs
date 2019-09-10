@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 public class FaceData : MonoBehaviour
 {
+    public static string currentFaceData;
     private FaceDataServer.FaceDataServer.FaceDataServerClient client;
     // Start is called before the first frame update
     void Start()
     {
+        currentFaceData = "X: 0.0, Y: 0.0, Z: 0.0";
         Debug.Log("------ Top of FaceData.Start()");
         Channel channel = new Channel("127.0.0.1:50052", ChannelCredentials.Insecure);
         client = new FaceDataServer.FaceDataServer.FaceDataServerClient(channel);
@@ -47,6 +49,7 @@ public class FaceData : MonoBehaviour
           while (await stream.MoveNext())
           {
             FaceDataServer.FaceData fd = stream.Current;
+            currentFaceData = $"X: {fd.X}, Y: {fd.Y}, Z: {fd.Z}";
             float angleX = fd.X * Mathf.Rad2Deg;
             float angleY = fd.Y * Mathf.Rad2Deg;
             float angleZ = fd.Z * Mathf.Rad2Deg;
