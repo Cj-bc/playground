@@ -20,6 +20,7 @@ public class FaceData : MonoBehaviour
         Debug.Log("----- After InitFaceDataServer -----");
 
         ApplyFaceDataToModel();
+        channel.ShutdownAsync().Wait();
     }
 
     public void InitFaceDataServer()
