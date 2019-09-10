@@ -62,4 +62,9 @@ public class FaceData : MonoBehaviour
         throw;
       }
     }
+
+    public void onApplicationQuit()
+    {
+      client.stopStream(new FaceDataServer.VoidCom());
+    }
 }
