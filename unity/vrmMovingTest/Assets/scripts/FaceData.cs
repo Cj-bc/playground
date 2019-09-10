@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 
 public class FaceData : MonoBehaviour
 {
-    private Transform neck_trans;
     private FaceDataServer.FaceDataServer.FaceDataServerClient client;
     // Start is called before the first frame update
     void Start()
@@ -15,7 +14,6 @@ public class FaceData : MonoBehaviour
         Debug.Log("------ Top of FaceData.Start()");
         Channel channel = new Channel("127.0.0.1:50052", ChannelCredentials.Insecure);
         client = new FaceDataServer.FaceDataServer.FaceDataServerClient(channel);
-        neck_trans = transform;
 
         Debug.Log("----- Before InitFaceDataServer -----");
         InitFaceDataServer();
@@ -59,12 +57,5 @@ public class FaceData : MonoBehaviour
       {
         throw;
       }
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }
