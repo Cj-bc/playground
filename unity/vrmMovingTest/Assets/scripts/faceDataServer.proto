@@ -4,15 +4,21 @@ package FaceDataServer;
 
 service FaceDataServer {
   rpc init(VoidCom) returns (Status) {}
-  rpc startStream(VoidCom) returns (stream FaceData) {}
-  rpc stopStream(VoidCom) returns (Status) {}
+  rpc startStream(Token) returns (stream FaceData) {}
+  rpc stopStream(Token) returns (Status) {}
+  rpc shutdown(VoidCom) returns (Status) {}
 }
 
 message VoidCom {}
 
+message Token {
+  string token = 1;
+}
+
 message Status {
   bool success = 1;
   int32 exitCode = 2;
+  Token token = 3;
 }
 
 message FaceData {

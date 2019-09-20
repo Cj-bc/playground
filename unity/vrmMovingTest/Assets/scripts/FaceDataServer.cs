@@ -25,18 +25,22 @@ namespace FaceDataServer {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChRmYWNlRGF0YVNlcnZlci5wcm90bxIORmFjZURhdGFTZXJ2ZXIiCQoHVm9p",
-            "ZENvbSIrCgZTdGF0dXMSDwoHc3VjY2VzcxgBIAEoCBIQCghleGl0Q29kZRgC",
-            "IAEoBSIrCghGYWNlRGF0YRIJCgF4GAEgASgCEgkKAXkYAiABKAISCQoBehgD",
-            "IAEoAjLSAQoORmFjZURhdGFTZXJ2ZXISOQoEaW5pdBIXLkZhY2VEYXRhU2Vy",
-            "dmVyLlZvaWRDb20aFi5GYWNlRGF0YVNlcnZlci5TdGF0dXMiABJECgtzdGFy",
-            "dFN0cmVhbRIXLkZhY2VEYXRhU2VydmVyLlZvaWRDb20aGC5GYWNlRGF0YVNl",
-            "cnZlci5GYWNlRGF0YSIAMAESPwoKc3RvcFN0cmVhbRIXLkZhY2VEYXRhU2Vy",
-            "dmVyLlZvaWRDb20aFi5GYWNlRGF0YVNlcnZlci5TdGF0dXMiAGIGcHJvdG8z"));
+            "ZENvbSIWCgVUb2tlbhINCgV0b2tlbhgBIAEoCSJRCgZTdGF0dXMSDwoHc3Vj",
+            "Y2VzcxgBIAEoCBIQCghleGl0Q29kZRgCIAEoBRIkCgV0b2tlbhgDIAEoCzIV",
+            "LkZhY2VEYXRhU2VydmVyLlRva2VuIisKCEZhY2VEYXRhEgkKAXgYASABKAIS",
+            "CQoBeRgCIAEoAhIJCgF6GAMgASgCMo0CCg5GYWNlRGF0YVNlcnZlchI5CgRp",
+            "bml0EhcuRmFjZURhdGFTZXJ2ZXIuVm9pZENvbRoWLkZhY2VEYXRhU2VydmVy",
+            "LlN0YXR1cyIAEkIKC3N0YXJ0U3RyZWFtEhUuRmFjZURhdGFTZXJ2ZXIuVG9r",
+            "ZW4aGC5GYWNlRGF0YVNlcnZlci5GYWNlRGF0YSIAMAESPQoKc3RvcFN0cmVh",
+            "bRIVLkZhY2VEYXRhU2VydmVyLlRva2VuGhYuRmFjZURhdGFTZXJ2ZXIuU3Rh",
+            "dHVzIgASPQoIc2h1dGRvd24SFy5GYWNlRGF0YVNlcnZlci5Wb2lkQ29tGhYu",
+            "RmFjZURhdGFTZXJ2ZXIuU3RhdHVzIgBiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.VoidCom), global::FaceDataServer.VoidCom.Parser, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.Status), global::FaceDataServer.Status.Parser, new[]{ "Success", "ExitCode" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.Token), global::FaceDataServer.Token.Parser, new[]{ "Token_" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.Status), global::FaceDataServer.Status.Parser, new[]{ "Success", "ExitCode", "Token" }, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::FaceDataServer.FaceData), global::FaceDataServer.FaceData.Parser, new[]{ "X", "Y", "Z" }, null, null, null)
           }));
     }
@@ -145,6 +149,135 @@ namespace FaceDataServer {
 
   }
 
+  public sealed partial class Token : pb::IMessage<Token> {
+    private static readonly pb::MessageParser<Token> _parser = new pb::MessageParser<Token>(() => new Token());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Token> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[1]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Token() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Token(Token other) : this() {
+      token_ = other.token_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Token Clone() {
+      return new Token(this);
+    }
+
+    /// <summary>Field number for the "token" field.</summary>
+    public const int Token_FieldNumber = 1;
+    private string token_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Token_ {
+      get { return token_; }
+      set {
+        token_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Token);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Token other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Token_ != other.Token_) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Token_.Length != 0) hash ^= Token_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Token_.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Token_);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Token_.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Token_);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Token other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Token_.Length != 0) {
+        Token_ = other.Token_;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Token_ = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+
+  }
+
   public sealed partial class Status : pb::IMessage<Status> {
     private static readonly pb::MessageParser<Status> _parser = new pb::MessageParser<Status>(() => new Status());
     private pb::UnknownFieldSet _unknownFields;
@@ -153,7 +286,7 @@ namespace FaceDataServer {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[1]; }
+      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[2]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -172,6 +305,7 @@ namespace FaceDataServer {
     public Status(Status other) : this() {
       success_ = other.success_;
       exitCode_ = other.exitCode_;
+      token_ = other.token_ != null ? other.token_.Clone() : null;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -202,6 +336,17 @@ namespace FaceDataServer {
       }
     }
 
+    /// <summary>Field number for the "token" field.</summary>
+    public const int TokenFieldNumber = 3;
+    private global::FaceDataServer.Token token_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::FaceDataServer.Token Token {
+      get { return token_; }
+      set {
+        token_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as Status);
@@ -217,6 +362,7 @@ namespace FaceDataServer {
       }
       if (Success != other.Success) return false;
       if (ExitCode != other.ExitCode) return false;
+      if (!object.Equals(Token, other.Token)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -225,6 +371,7 @@ namespace FaceDataServer {
       int hash = 1;
       if (Success != false) hash ^= Success.GetHashCode();
       if (ExitCode != 0) hash ^= ExitCode.GetHashCode();
+      if (token_ != null) hash ^= Token.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -246,6 +393,10 @@ namespace FaceDataServer {
         output.WriteRawTag(16);
         output.WriteInt32(ExitCode);
       }
+      if (token_ != null) {
+        output.WriteRawTag(26);
+        output.WriteMessage(Token);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -259,6 +410,9 @@ namespace FaceDataServer {
       }
       if (ExitCode != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(ExitCode);
+      }
+      if (token_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Token);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -276,6 +430,12 @@ namespace FaceDataServer {
       }
       if (other.ExitCode != 0) {
         ExitCode = other.ExitCode;
+      }
+      if (other.token_ != null) {
+        if (token_ == null) {
+          Token = new global::FaceDataServer.Token();
+        }
+        Token.MergeFrom(other.Token);
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -296,6 +456,13 @@ namespace FaceDataServer {
             ExitCode = input.ReadInt32();
             break;
           }
+          case 26: {
+            if (token_ == null) {
+              Token = new global::FaceDataServer.Token();
+            }
+            input.ReadMessage(Token);
+            break;
+          }
         }
       }
     }
@@ -310,7 +477,7 @@ namespace FaceDataServer {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[2]; }
+      get { return global::FaceDataServer.FaceDataServerReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
