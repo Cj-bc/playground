@@ -10,6 +10,8 @@ public class FaceData : MonoBehaviour
 {
     public static string currentFaceData;
     private FaceDataServer.FaceDataServer.FaceDataServerClient client;
+    private FaceDataServer.Token token;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,14 +37,15 @@ public class FaceData : MonoBehaviour
       {
         throw new Exception(st.ExitCode.ToString());
       }
+
+      token = st.Token;
     }
 
     public async Task ApplyFaceDataToModel()
     {
       try
       {
-        FaceDataServer.VoidCom vc = new FaceDataServer.VoidCom();
-        using (var call = client.startStream(vc))
+        using (var call = client.startStream(token))
         {
           var stream = call.ResponseStream;
 
@@ -65,6 +68,7 @@ public class FaceData : MonoBehaviour
 
     public void onApplicationQuit()
     {
-      client.stopStream(new FaceDataServer.VoidCom());
+      client.stopStream(token);
+      client.shutdown(new FaceDataServer.VoidCom());
     }
 }
