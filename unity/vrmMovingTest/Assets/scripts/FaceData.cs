@@ -52,10 +52,10 @@ public class FaceData : MonoBehaviour
           while (await stream.MoveNext())
           {
             FaceDataServer.FaceData fd = stream.Current;
-            currentFaceData = $"X: {fd.X * Mathf.Rad2Deg}, Y: {fd.Y * Mathf.Rad2Deg}, Z: {fd.Z * Mathf.Rad2Deg}";
             float angleX = fd.X * Mathf.Rad2Deg;
             float angleY = fd.Y * Mathf.Rad2Deg;
             float angleZ = fd.Z * Mathf.Rad2Deg;
+            currentFaceData = $"X: {angleX}, Y: {angleY}, Z: {angleZ}";
             transform.rotation = Quaternion.Euler(angleX, angleY, angleZ);
           }
         }
