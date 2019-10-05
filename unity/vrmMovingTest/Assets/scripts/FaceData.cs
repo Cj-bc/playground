@@ -45,13 +45,16 @@ public class FaceData : MonoBehaviour
     {
       try
       {
+        Debug.Log("Attempting connect to server with 'startStream' call...");
         using (var call = client.startStream(token))
         {
+          Debug.Log("Connected to server with 'startStream' call");
           var stream = call.ResponseStream;
 
           while (await stream.MoveNext())
           {
             FaceDataServer.FaceData fd = stream.Current;
+            Debug.Log($"[{DateTime.Now}] Got stream.Current: {fd.ToString()}");
             float angleX = fd.X * Mathf.Rad2Deg;
             float angleY = fd.Y * Mathf.Rad2Deg;
             float angleZ = fd.Z * Mathf.Rad2Deg;
