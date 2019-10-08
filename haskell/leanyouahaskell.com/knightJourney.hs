@@ -13,3 +13,6 @@ moveKnight (c, r) = do
                 ,(c+2, r+1), (c+2, r-1), (c-2, r+1), (c-2, r-1)]
     guard (c' `elem` [0..8] && r' `elem` [0..8])
     return (c', r')
+
+canReachIn3 :: KnightPos -> KnightPos -> Bool
+canReachIn3 s e = e `elem` (moveKnight s >>= moveKnight >>= moveKnight)
