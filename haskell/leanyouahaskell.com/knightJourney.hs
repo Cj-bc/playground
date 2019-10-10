@@ -27,9 +27,8 @@ routeIn3 s e = do
     guard (e == third)
     return [first, second, third]
 
-canReachIn3Writer :: KnightPos -> KnightPos -> Writer [[KnightPos]] Bool
-canReachIn3Writer s e = do
-    let possibility = routeIn3 s e
-    case possibility of
-        [] -> writer (False, [])
-        _ -> writer (True, possibility)
+canReachIn3Writer :: KnightPos -> KnightPos -> Writer [Route] Bool
+canReachIn3Writer s e = writer (flag, possibility)
+    where
+      possibility = routeIn3 s e
+      flag = possibility /= []
