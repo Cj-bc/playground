@@ -26,3 +26,10 @@ routeIn3 s e = do
     third <- moveKnight second
     guard (e == third)
     return [first, second, third]
+
+canReachIn3Writer :: KnightPos -> KnightPos -> Writer [[KnightPos]] Bool
+canReachIn3Writer s e = do
+    let possibility = routeIn3 s e
+    case possibility of
+        [] -> writer (False, [])
+        _ -> writer (True, possibility)
