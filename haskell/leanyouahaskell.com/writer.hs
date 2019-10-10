@@ -16,6 +16,6 @@ addDrink "Bread"     = ("Cocoa", Sum 100)
 addDrink _           = ("Water", Sum 10)
 
 
-gcd' :: Int -> Int -> Writer Int
+gcd' :: Int -> Int -> Int
 gcd' x y | y == 0 = x
          | otherwise = gcd' y (x `mod` y)
