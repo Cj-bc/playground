@@ -19,3 +19,9 @@ addDrink _           = ("Water", Sum 10)
 gcd' :: Int -> Int -> Int
 gcd' x y | y == 0 = x
          | otherwise = gcd' y (x `mod` y)
+
+gcdWriter :: Int -> Int -> Writer [String] Int
+gcdWriter a b | b == 0 = return a
+              | otherwise = do
+                  tell [show a ++ " div " ++ show b]
+                  gcdWriter b (a `mod` b)
