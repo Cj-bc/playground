@@ -1,4 +1,5 @@
 import Control.Monad hiding (guard)
+import Control.Monad.Writer hiding (guard)
 
 
 type KnightPos = (Int, Int)
@@ -16,3 +17,12 @@ moveKnight (c, r) = do
 
 canReachIn3 :: KnightPos -> KnightPos -> Bool
 canReachIn3 s e = e `elem` (moveKnight s >>= moveKnight >>= moveKnight)
+
+
+routeIn3 :: KnightPos -> KnightPos -> [[KnightPos]]
+routeIn3 s e = do
+    first <- moveKnight s
+    second <- moveKnight first
+    third <- moveKnight second
+    guard (e == third)
+    return [first, second, third]
