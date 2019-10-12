@@ -2,6 +2,21 @@ newtype State s a = State { runState :: s -> (a, s) }
 
 instance Functor (State s) where
     -- prop> fmap id s == s
+    -- prop> fmap (f . g) s == fmap f (fmap g s)
+    -- fmap (f . g) c = fmap ((\a -> b) . (\c -> a)) c
+    --                = fmap (\c -> b) c
+    --                = b
+    --
+    -- fmap f (fmap g c) = fmap (\a -> b) (fmap (\c -> a) c)
+    --                   = fmap (\a -> b) a
+    --                   = b
+    --
+    -- fmap f (fmap g (State c)) = fmap f (fmap g (State (\s -> (c, s'))))
+    --                           = fmap f (State \s -> (g c, s'))
+    --                           = State \s -> (f . g c, s')
+    --
+    -- fmap (f . g) (State c) = fmap (f . g) (State (\s -> (c, s')))
+    --                        = State \s -> (f . g c, s')
     fmap h (State f) = State $ \s ->
                             let (a, newState) = f s
                                 g = h a
