@@ -23,6 +23,19 @@ instance Functor (State s) where
                             in (g, newState)
 
 instance Applicative (State s) where
+    -- prop> pure f <*> x = fmap f x
+    --
+    --   pure f <*> x = (State \s -> (f, s)) <*> x
+    --                = fmap 
+    --
+    --
+    -- prop> pure id <*> v = v
+    --
+    -- prop> pure (.) <*> u <*> v <*> w = u <*> (v <*>)
+    --
+    -- prop> pure f <*> pure x = pure (f x)
+    --
+    -- prop> u <*> pure y = pure ($ y) <*> u
     pure a = State $ \s -> (a, s)
     State h <*> s = fmap h s
 
