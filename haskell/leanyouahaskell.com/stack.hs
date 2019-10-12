@@ -24,9 +24,7 @@ instance Functor (State s) where
 
 instance Applicative (State s) where
     pure a = State $ \s -> (a, s)
-    State h <*> State f = State $ \s ->
-                            let g = h f
-                            in ()
+    State h <*> s = fmap h s
 
 
 instance Monad (State s) where
