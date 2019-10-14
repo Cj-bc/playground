@@ -212,10 +212,9 @@ instance Applicative (State s) where
 
 instance Monad (State s) where
     return x = State $ \s -> (x, s)
-    (State h) >>= f = State $ \s ->
-                        let (a, newState) = h s
-                            (State g) = f a
-                        in (g, newState)
+    h >>= f = State $ \s ->
+                let (g, newState) = runState h s
+                in runState (f g) $ newState
 
 type Stack = [Int]
 
