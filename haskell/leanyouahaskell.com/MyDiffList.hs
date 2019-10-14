@@ -7,9 +7,7 @@ toDiffList :: [a] -> DiffList a
 toDiffList xs = DiffList (xs ++)
 
 instance Semigroup (DiffList a) where
-    (DiffList a) <> (DiffList b) = let in_a = a []
-                                       in_b = b []
-                                   in DiffList (\xs -> in_a ++ in_b ++ xs)
+    (DiffList a) <> (DiffList b) = DiffList (\xs -> (a . b) xs)
 
 instance Monoid (DiffList a) where
     mempty = DiffList ([] ++)
