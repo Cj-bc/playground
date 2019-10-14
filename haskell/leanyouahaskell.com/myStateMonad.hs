@@ -211,6 +211,105 @@ instance Applicative (State s) where
                 in (f' h', newState')
 
 instance Monad (State s) where
+    -- prop: return x >>= f == f x {{{
+    -- prop> return x >>= f == f x
+    --
+    --  return x >>= $ \a -> (State (\s -> (a, s)))
+    --      = (State (\s -> (x, s))) >>= $ \a -> (State (\s -> (a, s)))
+    --      = State $ \s ->
+    --              let (g, newState) = runState (State (\s -> (x, s))) s
+    --              in runState ((\a -> (State (\s -> (a, s)))) g) $ newState
+    --      = State $ \s ->
+    --              let (g, newState) = (x, s)
+    --              in runState (State (\s -> (g, s))) $ newState
+    --      = State $ \s -> runState (State \s -> (x, s)) s
+    --      = State $ \s -> (x, s)
+    --
+    --  (\a -> (State (\s -> (a, s)))) x
+    --      = State $ \s -> (x, s)
+    --
+    --  }}}
+    --
+    -- prop: m >>= return == m {{{
+    -- prop> m >>= return == m
+    --
+    --  (State (\s -> (a, s))) >>= return
+    --      = State $ \s ->
+    --              let (g, newState) = runState (State (\s -> (a, s))) s
+    --              in runState (return g) $ newState
+    --      = State $ \s ->
+    --              let (g, newState) = (a, s)
+    --              in runState (State (\s -> (g, s))) $ newState
+    --      = State $ \s -> runState (State (\s -> (a, s))) $ s
+    --      = State $ \s -> (a, s)
+    --  }}}
+    --
+    -- prop: (m >>= f) >>= g == m >>= (\x -> f x >>= g) {{{
+    -- prop> (m >>= f) >>= g == m >>= (\x -> f x >>= g)
+    --
+    --  ((State (\s -> (a, s))) >>= (\b -> (State (\s -> (b, s)))))
+    --          >>= \c -> (State (\s -> (c, s)))
+    --      = (State (\s ->
+    --          let (g, newState) = runState (State (\s -> (a, s))) s
+    --          in runState ((\b -> (State (\s -> (b, s)))) g) newState))
+    --          >>= \c -> (State (\s -> (c, s)))
+    --      = (State (\s ->
+    --          let (g, newState) = (a, s)
+    --          in runState (State (\s -> (g, s))) newState))
+    --          >>= \c -> (State (\s -> (c, s)))
+    --      = (State (\s ->
+    --          let (g, newState) = (a, s)
+    --          in (g, newState)))
+    --          >>= \c -> (State (\s -> (c, s)))
+    --      = (State (\s -> (a, s)))
+    --          >>= \c -> (State (\s -> (c, s)))
+    --      = State $ \s ->
+    --          let (g, newState) = runState (State (\s -> (a, s))) s
+    --          in runState ((\c -> (State (\s -> (c, s)))) g) newState
+    --      = State $ \s ->
+    --          let (g, newState) = (a, s)
+    --          in runState (State (\s -> (g, s))) newState
+    --
+    --      = State $ \s ->
+    --          let (g, newState) = (a, s)
+    --          in (g, newState)
+    --      = State $ \s -> (a, s)
+    --
+    --
+    --
+    -- (State (\s -> (a, s)))
+    --      >>= (\x -> (\b -> (State (\s -> (b, s)))) x
+    --              >>= (\c -> State (\s -> (c, s))))
+    --      = (State (\s -> (a, s)))
+    --          >>= (\x -> (State \s -> (x, s)) >>= (\c -> State (\s -> (c, s))))
+    --      = (State (\s -> (a, s)))
+    --          >>= \x -> (State $ \s ->
+    --                      let (g, newState) = runState (State (\s -> (x, s))) s
+    --                      in runState ((\c -> State (\s -> (c, s))) g) newState)
+    --      = (State (\s -> (a, s)))
+    --          >>= \x -> (State $ \s ->
+    --                      let (g, newState) = (x, s)
+    --                      in runState (State (\s -> (g, s))) newState)
+    --      = (State (\s -> (a, s)))
+    --          >>= \x -> (State $ \s ->
+    --                      let (g, newState) = (x, s)
+    --                      in (g, newState)
+    --      = (State (\s -> (a, s)))
+    --          >>= \x -> (State $ \s -> (x, s)
+    --      = State $ \s ->
+    --          let (g, newState) = runState (State (\s -> (a, s))) s
+    --              in runState ((\x -> (State (\s -> (x, s)))) g) $ newState
+    --      = State $ \s ->
+    --          let (g, newState) = (a, s)
+    --              in runState (State (\s -> (g, s))) newState
+    --      = State $ \s ->
+    --          let (g, newState) = (a, s)
+    --              in (g, newState)
+    --      = State $ \s -> (a, s)
+    --
+    --
+    -- }}}
+
     return = pure
     h >>= f = State $ \s ->
                 let (g, newState) = runState h s
