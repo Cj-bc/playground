@@ -37,8 +37,10 @@ instance Applicative (State s) where
     --
     -- prop> u <*> pure y = pure ($ y) <*> u
     pure a = State $ \s -> (a, s)
-    State h <*> s = fmap h s
-
+    f <*> h = State $ \s ->
+                let (f', newState) = runState f s
+                    (h', newState') = runState h newState
+                in (f' h', newState')
 
 instance Monad (State s) where
     return x = State $ \s -> (x, s)
