@@ -211,7 +211,7 @@ instance Applicative (State s) where
                 in (f' h', newState')
 
 instance Monad (State s) where
-    return x = State $ \s -> (x, s)
+    return = pure
     h >>= f = State $ \s ->
                 let (g, newState) = runState h s
                 in runState (f g) $ newState
