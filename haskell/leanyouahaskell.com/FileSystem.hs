@@ -39,5 +39,8 @@ fsRename :: Name -> FSZipper -> FSZipper
 fsRename n (Directory _ items, bs) = (Directory n items, bs)
 fsRename n (File _ c, bs) = (File n c, bs)
 
+fsNewFile :: FSItem -> FSZipper -> FSZipper
+fsNewFile item (Directory dirname cs, bs) = (Directory dirname (item:cs), bs)
+
 (-:) :: a -> (a -> b) -> b
 x -: f = f x
