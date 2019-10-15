@@ -72,14 +72,15 @@ elemAt (R:xs) (Node _ _ r) = elemAt xs r
 data Crumb a = LeftCrumb a (Tree a)
              | RightCrumb a (Tree a) deriving (Show)
 type Breadcrumbs a = [Crumb a]
+type Zipper a = (Tree a, Breadcrumbs a)
 
-goLeft :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+goLeft :: Zipper a -> Zipper a
 goLeft (Node a l r, bs) = (l, LeftCrumb a r:bs)
 
-goRight :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+goRight :: Zipper a -> Zipper a
 goRight (Node a l r, bs) = (r, RightCrumb a l:bs)
 
-goUp :: (Tree a, Breadcrumbs a) -> (Tree a, Breadcrumbs a)
+goUp :: Zipper a -> Zipper a
 goUp (now, LeftCrumb px pr:bs) = (Node px now pr, bs)
 goUp (now, RightCrumb px pl:bs) = (Node px pl now, bs)
 
