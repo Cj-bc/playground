@@ -32,3 +32,17 @@ treeElem x (Node a left right)
 
 numTree :: Tree Int
 numTree = foldr treeInsert EmptyTree [1,4,2,9,8]
+
+
+data Direction = R | L deriving (Show)
+type Directions = [Direction]
+
+changeToP :: Directions -> Tree String -> Tree String
+changeToP [] (Node _ l r) = Node "P" l r
+changeToP (L:xs) (Node a l r) = Node a (changeToP xs l) r
+changeToP (R:xs) (Node a l r) = Node a l (changeToP xs r)
+
+elemAt :: Directions -> Tree a -> a
+elemAt [] (Node a l r)  = a
+elemAt (L:xs) (Node _ l _) = elemAt xs l
+elemAt (R:xs) (Node _ _ r) = elemAt xs r
