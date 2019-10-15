@@ -25,3 +25,15 @@ type FSZipper = (FSItem, [FSCrumb])
 fsUp :: FSZipper -> FSZipper
 fsUp (i, FSCrumb name prevItems nextItems:cs)
     = (Directory name (prevItems ++ [i] ++ nextItems), cs)
+
+fsTo :: Name -> FSZipper -> FSZipper
+fsTo target (Directory basename items, bs)
+    = let (before, i:after) = break (nameIs target) items
+      in (i, FSCrumb basename before after:bs)
+
+nameIs :: Name -> FSItem -> Bool
+nameIs target (Directory name _) = name == target
+nameIs target (File name _) = name == target
+
+(-:) :: a -> (a -> b) -> b
+x -: f = f x
