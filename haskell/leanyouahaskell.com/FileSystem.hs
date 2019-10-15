@@ -19,4 +19,9 @@ sampleDisk = Directory "root"
                     ]
                 ]
 
+data FSCrumb = FSCrumb Name [FSItem] [FSItem] deriving (Show)
+type FSZipper = (FSItem, [FSCrumb])
 
+fsUp :: FSZipper -> FSZipper
+fsUp (i, FSCrumb name prevItems nextItems:cs)
+    = (Directory name (prevItems ++ [i] ++ nextItems), cs)
