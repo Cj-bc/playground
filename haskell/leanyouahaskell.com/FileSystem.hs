@@ -35,5 +35,9 @@ nameIs :: Name -> FSItem -> Bool
 nameIs target (Directory name _) = name == target
 nameIs target (File name _) = name == target
 
+fsRename :: Name -> FSZipper -> FSZipper
+fsRename n (Directory _ items, bs) = (Directory n items, bs)
+fsRename n (File _ c, bs) = (File n c, bs)
+
 (-:) :: a -> (a -> b) -> b
 x -: f = f x
