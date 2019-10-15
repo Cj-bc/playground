@@ -74,15 +74,18 @@ data Crumb a = LeftCrumb a (Tree a)
 type Breadcrumbs a = [Crumb a]
 type Zipper a = (Tree a, Breadcrumbs a)
 
-goLeft :: Zipper a -> Zipper a
-goLeft (Node a l r, bs) = (l, LeftCrumb a r:bs)
+goLeft :: Zipper a -> Maybe (Zipper a)
+goLeft (EmptyTree, _) = Nothing
+goLeft (Node a l r, bs) =  Just (l, LeftCrumb a r:bs)
 
-goRight :: Zipper a -> Zipper a
-goRight (Node a l r, bs) = (r, RightCrumb a l:bs)
+goRight :: Zipper a -> Maybe (Zipper a)
+goRight (EmptyTree, _) = Nothing
+goRight (Node a l r, bs) = Just (r, RightCrumb a l:bs)
 
-goUp :: Zipper a -> Zipper a
-goUp (now, LeftCrumb px pr:bs) = (Node px now pr, bs)
-goUp (now, RightCrumb px pl:bs) = (Node px pl now, bs)
+goUp :: Zipper a -> Maybe (Zipper a)
+goUp (_, []) = Nothing
+goUp (now, LeftCrumb px pr:bs) = Just (Node px now pr, bs)
+goUp (now, RightCrumb px pl:bs) = Just (Node px pl now, bs)
 
 modify :: (a -> a) -> Zipper a -> Zipper a
 modify f (Node x l r, bs) = (Node (f x) l r, bs)
@@ -91,9 +94,9 @@ modify f (EmptyTree, bs) = (EmptyTree, bs)
 attach :: Tree a -> Zipper a -> Zipper a
 attach t (_, bbs) = (t, bbs)
 
-topMost :: Zipper a -> Zipper a
-topMost (t, []) = (t, [])
-topMost z = topMost (goUp z)
+topMost :: Zipper a -> Maybe (Zipper a)
+topMost (t, []) = Just (t, [])
+topMost z = goUp z >>= topMost
 
 
 a -: f = f a
