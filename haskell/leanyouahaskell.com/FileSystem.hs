@@ -1,6 +1,6 @@
 type Name = String
 type Data = String
-data FSItem = Directory Name [Entry]
+data FSItem = Directory Name [FSItem]
             | File Name Data deriving (Show)
 
 sampleDisk :: FSItem
