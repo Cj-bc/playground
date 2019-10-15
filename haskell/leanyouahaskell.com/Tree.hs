@@ -33,6 +33,28 @@ treeElem x (Node a left right)
 numTree :: Tree Int
 numTree = foldr treeInsert EmptyTree [1,4,2,9,8]
 
+freeTree :: Tree Char
+freeTree = Node 'P'
+                (Node 'O'
+                      (Node 'L'
+                            (Node 'N' EmptyTree EmptyTree)
+                            (Node 'T' EmptyTree EmptyTree)
+                      )
+                      (Node 'Y'
+                            (Node 'S' EmptyTree EmptyTree)
+                            (Node 'A' EmptyTree EmptyTree)
+                      )
+                )
+                (Node 'L'
+                      (Node 'W'
+                            (Node 'C' EmptyTree EmptyTree)
+                            (Node 'R' EmptyTree EmptyTree)
+                      )
+                      (Node 'A'
+                            (Node 'A' EmptyTree EmptyTree)
+                            (Node 'C' EmptyTree EmptyTree)
+                      )
+                )
 
 data Direction = R | L deriving (Show)
 type Directions = [Direction]
