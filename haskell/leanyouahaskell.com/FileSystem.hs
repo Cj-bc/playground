@@ -1,5 +1,8 @@
+import  Data.List.Split (splitOn)
+
 type Name = String
 type Data = String
+type Path = String
 data FSItem = Directory Name [FSItem]
             | File Name Data deriving (Show)
 
@@ -49,3 +52,8 @@ fsNewFile item (Directory dirname cs, bs) = (Directory dirname (item:cs), bs)
 
 (-:) :: a -> (a -> b) -> b
 x -: f = f x
+
+
+cd :: Path -> FSZipper -> Maybe FSZipper
+cd ".." z = fsUp z
+cd ('/':ps) z = mapM (flip fsTo z) (splitOn '/' ps)
