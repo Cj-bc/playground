@@ -91,4 +91,9 @@ modify f (EmptyTree, bs) = (EmptyTree, bs)
 attach :: Tree a -> Zipper a -> Zipper a
 attach t (_, bbs) = (t, bbs)
 
+topMost :: Zipper a -> Zipper a
+topMost (t, []) = (t, [])
+topMost z = topMost (goUp z)
+
+
 a -: f = f a
