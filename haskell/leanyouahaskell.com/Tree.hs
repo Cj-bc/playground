@@ -68,3 +68,13 @@ elemAt :: Directions -> Tree a -> a
 elemAt [] (Node a l r)  = a
 elemAt (L:xs) (Node _ l _) = elemAt xs l
 elemAt (R:xs) (Node _ _ r) = elemAt xs r
+
+type Breadcrumbs = Directions
+
+goLeft :: (Tree a, Breadcrumbs) -> (Tree a, Breadcrumbs)
+goLeft (Node _ l _, bs) = (l, L:bs)
+
+goRight :: (Tree a, Breadcrumbs) -> (Tree a, Breadcrumbs)
+goRight (Node _ _ r, bs) = (r, R:bs)
+
+a -: f = f a
