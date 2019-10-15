@@ -84,4 +84,8 @@ goUp :: Zipper a -> Zipper a
 goUp (now, LeftCrumb px pr:bs) = (Node px now pr, bs)
 goUp (now, RightCrumb px pl:bs) = (Node px pl now, bs)
 
+modify :: (a -> a) -> Zipper a -> Zipper a
+modify f (Node x l r, bs) = (Node (f x) l r, bs)
+modify f (EmptyTree, bs) = (EmptyTree, bs)
+
 a -: f = f a
