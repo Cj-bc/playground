@@ -73,3 +73,10 @@ cd ps z             = cdTo (splitOn "/" ps) z
         cdTo (x:xs) z = fsTo x z >>= cdTo xs
 
 
+-- | Shows entries in current directory
+--
+ls :: FSZipper -> IO ()
+ls (Directory _ fs, _) = mapM_ putStrLn $ map showItem fs
+    where
+        showItem (Directory name _) = "d " ++ name
+        showItem (File name _) = name
