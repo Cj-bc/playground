@@ -1,4 +1,11 @@
-module My.Playground.FileSystem where
+module My.Playground.FileSystem
+( sampleDisk
+, FSItem(..)
+, ls
+, cd
+, mkdir
+)
+where
 
 import  Data.List.Split (splitOn)
 
