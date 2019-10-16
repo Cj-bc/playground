@@ -1,3 +1,5 @@
+module My.Playground.ListZipper where
+
 type ListZipper a =([a], [a])
 
 goFoward :: ListZipper a -> ListZipper a

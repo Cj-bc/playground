@@ -1,4 +1,4 @@
-module MyList
+module My.Playground.MyList
 ( List(..)
 ) where
 

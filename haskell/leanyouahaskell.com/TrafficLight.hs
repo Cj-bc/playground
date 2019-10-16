@@ -1,4 +1,4 @@
-module TrafficLight
+module My.Playground.TrafficLight
 ( TrafficLight(..)
 ) where
 

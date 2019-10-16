@@ -1,3 +1,5 @@
+module My.Playground.DiffList where
+
 newtype DiffList a = DiffList {getDiffList :: [a] -> [a]}
 
 fromDiffList :: DiffList a -> [a]

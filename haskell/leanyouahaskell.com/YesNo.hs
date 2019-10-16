@@ -1,4 +1,4 @@
-module YesNo
+module My.Playground.YesNo
 ( YesNo
 , yesno
 ) where

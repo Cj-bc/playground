@@ -1,3 +1,5 @@
+module My.Playground.KnightJourney where
+
 import Control.Monad hiding (guard)
 import Control.Monad.Writer hiding (guard)
 

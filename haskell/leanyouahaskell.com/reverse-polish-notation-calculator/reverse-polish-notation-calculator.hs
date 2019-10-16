@@ -1,3 +1,5 @@
+module My.Playground.RPN where
+
 main = do
         formula <- getLine
         print $ calcRevPolish formula

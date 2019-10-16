@@ -1,3 +1,5 @@
+module My.Playground.Writer where
+
 import Data.Monoid
 import Control.Monad.Writer
 

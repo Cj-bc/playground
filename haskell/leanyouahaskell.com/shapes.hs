@@ -1,4 +1,4 @@
-module Shapes
+module My.Playground.Shapes
 (Point(..)
 ,Shape(..)
 ,surface

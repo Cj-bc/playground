@@ -1,4 +1,4 @@
-module Die
+module My.Playground.Die
 ( die
 , dies
 ) where

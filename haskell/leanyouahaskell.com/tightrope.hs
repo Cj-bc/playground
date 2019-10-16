@@ -1,3 +1,5 @@
+module My.Playground.Tightrope where
+
 type Birds = Int
 type Pole = (Birds, Birds)
 

@@ -1,4 +1,4 @@
-module Person
+module My.Playground.Person
 (Person(..)
 ) where
 

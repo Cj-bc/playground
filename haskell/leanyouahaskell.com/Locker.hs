@@ -1,4 +1,4 @@
-module Locker
+module My.Playground.Locker
 ( LockerState
 , LockerMap
 , lockerLookup

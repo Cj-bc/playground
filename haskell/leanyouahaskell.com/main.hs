@@ -1,11 +1,11 @@
-import Shapes
-import Person
-import Locker
-import MyList
-import Tree
-import TrafficLight
-import YesNo
-import Die
+import My.Playground.Shapes
+import My.Playground.Person
+import My.Playground.Locker
+import My.Playground.MyList
+import My.Playground.Tree
+import My.Playground.TrafficLight
+import My.Playground.YesNo
+import My.Playground.Die
 import System.Random
 
 main = do

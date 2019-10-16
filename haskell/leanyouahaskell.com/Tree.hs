@@ -1,4 +1,4 @@
-module Tree
+module My.Playground.Tree
 ( Tree(..)
 , singleton
 , treeInsert
