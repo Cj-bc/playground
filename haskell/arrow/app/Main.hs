@@ -26,5 +26,10 @@ instance Arrow Circuit where
         let (cir', c) = cir a
         in (first cir', (c, b))
 
+runCircuit :: Circuit a b -> [a] -> [b]
+runCircuit _ []      = []
+runCircuit cr (x:xs) = let (cr', x') = unCircuit cr $ x
+                       in (x':runCircuit cr' xs)
+
 main :: IO ()
 main = return ()
