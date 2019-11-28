@@ -1,11 +1,11 @@
 module Collision where
 
+import Data.Vector3
 
 data Collision = Collision { }
 
 data CollisionWorld = CollisionWorld [Collision]
 
-data Vector3 = Vector3 Int Int Int
 
 data Transform = Transform_Sphere { center :: Vector3 }
 
