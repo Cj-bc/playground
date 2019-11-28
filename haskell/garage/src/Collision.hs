@@ -9,8 +9,8 @@ data CollisionWorld = CollisionWorld [Collision]
 
 data Transform = Transform_Sphere { center :: Vector3 }
 
-data Shape = Sphere { sphere_radius :: Int }
-           | Capsule { capsule_radius :: Int }
+data Shape = Sphere { sphere_radius :: Float }
+           | Capsule { capsule_radius :: Float }
            | AABB { aabb_min :: Vector3
                   , aabb_max :: Vector3 }
            | OBB
