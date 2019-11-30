@@ -28,9 +28,8 @@ library:
   source-dirs: src
 
 executables:
-  BlackJack-exe:
-    main:                Main.hs
-    source-dirs:         app
+  BlackJack-CLI:
+    main:                app/CLI.hs
     ghc-options:
     - -threaded
     - -rtsopts
