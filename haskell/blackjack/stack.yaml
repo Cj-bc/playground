@@ -39,7 +39,14 @@ packages:
 # - git: https://github.com/commercialhaskell/stack.git
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
-# extra-deps: []
+extra-deps:
+  - brick-0.50.1@sha256:69096f79fae62d26a9fc216427840fa795ee0d2ffd93fa52718d81a7333e1c66,13919
+  - config-ini-0.2.4.0@sha256:38a6d484d471c6fac81445de2eac8c4e8c82760962fca5491ae1c3bfca9c4047,3232
+  - data-clist-0.1.2.3@sha256:0a4ad5f045c285eb533c2baa228581d2ff3ee123a4da7ca84e95a74aea9fb058,936
+  - text-zipper-0.10.1@sha256:8b73a97a3717a17df9b0a722b178950c476ff2268ca5c583e99d010c94af849e,1471
+  - word-wrap-0.4.1@sha256:f72233b383ef569c557bfd9812cbb8e306c415ce509082c0bd15ee51c0239ccc,1606
+
+
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
