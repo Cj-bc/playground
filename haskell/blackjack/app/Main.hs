@@ -8,15 +8,12 @@ main = do
   putStrLn "===Black Jack==="
   initDeck <- shuffleDeck <$> getStdGen
 
-  result <- runGame (Game [] [] initDeck DealCard)
-  case phase result of
-    GameEnd Player -> putStrLn "winner: player"
-    GameEnd Dealer -> putStrLn "winner: dealer"
-    otherwise -> putStrLn "an unknown error ocured"
+  (result, winner) <- runGame (Game [] [] initDeck DealCard)
+  putStrLn $ "Winner: " <> (show winner)
 
 
-runGame :: Game -> IO Game
-runGame g@(Game _ _ _ (GameEnd winner)) = return g
+runGame :: Game -> IO (Game, Player)
+runGame g@(Game _ _ _ (GameEnd winner)) = return (g, winner)
 runGame g@(Game _ _ _ DealCard) = do
                                     g' <- doPhase g
                                     putStrLn $ "Your hand: " ++ show (player g')
