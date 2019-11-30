@@ -38,6 +38,10 @@ ui (AppState g _) = [vCenter $ vBox [dealerCards
         deckClickable = clickable HitClicked   $ border $ vBox $ replicate 5 $ str "##########"
 
 
+askAction :: Action -> IO Action
+askAction Hit   = pure Hit
+askAction Stand = pure Stand
+
 eHandler :: AppState -> BrickEvent Name e -> EventM Name (Next AppState)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') []))     = halt s
 eHandler s@(AppState g a) (VtyEvent (Vty.EvKey (Vty.KEnter) []))
@@ -49,10 +53,12 @@ eHandler s@(AppState g a) (VtyEvent (Vty.EvKey (Vty.KChar 's') []))
                                                            then continue =<< (liftIO $ flip AppState a <$> doPhase s)
                                                            else continue s
 eHandler s@(AppState g a) (MouseDown HitClicked _ _ _)   = if (phase g) == PlayerTurn
-                                                           then continue =<< (liftIO $ flip AppState a <$> doPhase s)
+                                                           then continue =<< (liftIO $ flip AppState a <$> doPhase (AppState g
+                                                                                                                    (askAction Hit)))
                                                            else continue s
 eHandler s@(AppState g a) (MouseDown StandClicked _ _ _) = if (phase g) == PlayerTurn
-                                                           then continue =<< (liftIO $ flip AppState a <$> doPhase s)
+                                                           then continue =<< (liftIO $ flip AppState a <$> doPhase (AppState g
+                                                                                                                    (askAction Stand)))
                                                            else continue s
 eHandler s@(AppState g a) _ | (phase g) == PlayerTurn    = continue s
                             | (phase g) == PlayerTurn    = continue s
