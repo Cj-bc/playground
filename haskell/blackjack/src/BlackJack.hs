@@ -9,70 +9,58 @@ module BlackJack (Card(..), Player(..), Phase(..), Action(..), Game(..), doPhase
 where
 
 import Data.List (sort)
-import Data.Maybe (fromMaybe)
+import Data.Maybe (fromMaybe, fromJust)
 import System.Random
+import BlackJack.Types
 
-data Card = A | Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | J | Q | K deriving (Eq, Ord, Show)
-data Player = Player | Dealer deriving (Show)
-data Phase = DealCard | PlayerTurn | DealerTurn | ComparePoints | GameEnd Player deriving(Show)
-data Game = Game { player :: [Card] -- ^ Player's hand
-                 , dealer :: [Card] -- ^ Dealer's hand
-                 , deck :: [Card]   -- ^ Cards of deck
-                 , phase :: Phase   -- ^ Describe what to do next
-                 } deriving (Show)
 
-data Action = Hit | Stand | BustCheck
--- ^ All actions that should be happened in game.
 
 -- | Cycle Phase Cycle
 -- If you call this again and again, it'll continue game automatically.
 --
--- >>> doPhase (Game [] [] [A, Two, Three, Four, Five, Six] DealCard)
+-- >>> doPhase $ AppState (Game [] [] [A, Two, Three, Four, Five, Six] DealCard) (\_ -> return Hit)
 -- Game [A, Two] [Three, Four] [Five, Six] PlayerTurn
+-- >>> doPhase $ AppState (Game [A, Two] [] [Three, Four] PlayerTurn) (\_ -> return Hit)
+-- Game [A, Two, Three] [] [Four] PlayerTurn
+-- >>> doPhase $ AppState (Game [A, Two] [] [Three, Four] PlayerTurn) (\_ -> return Stand)
+-- Game [A, Two] [] [Three, Four] PlayerTurn
 --
--- I have no idea how to test PlayerTurn as it use IO
---
--- >>> doPhase (Game [] [Three, Four] [Five, Six] DealerTurn)
+-- >>> doPhase $ AppState (Game [] [Three, Four] [Five, Six] DealerTurn) (\_ -> return Hit)
 -- Game [] [Three,Four,Five] [Six] DealerTurn
--- >>> doPhase (Game [] [Seven, Ten] [Five, Six] DealerTurn)
+-- >>> doPhase $ AppState (Game [] [Seven, Ten] [Five, Six] DealerTurn) (\_ -> return Hit)
 -- Game [] [Seven,Ten] [Five,Six] ComparePoints
--- >>> doPhase (Game [] [Seven, Ten] [] DealerTurn)
+-- >>> doPhase $ AppState (Game [] [Seven, Ten] [] DealerTurn) (\_ -> return Hit)
 -- Game [] [Seven,Ten] [Five,Six] ComparePoints-
--- >>> doPhase (Game [A, Ten] [Two, Three] [] ComparePoints)
+-- >>> doPhase $ AppState (Game [A, Ten] [Two, Three] [] ComparePoints) (\_ -> return Hit)
 -- Game [A,Ten] [Two,Three] [] (GameEnd Player)
--- >>> doPhase (Game [Two, Three], [A, Ten] [] ComparePoints)
+-- >>> doPhase $ AppState (Game [Two, Three], [A, Ten] [] ComparePoints) (\_ -> return Hit)
 -- Game [Two,Three] [A,Ten] [] (GameEnd Dealer)
-doPhase :: Game -> IO Game
-doPhase g@(Game _ _ _deck DealCard) = let g' =  g {player = take 2 _deck,
-                                                   dealer = drop 2 $ take 4 _deck,
-                                                   deck   = drop 4 _deck,
-                                                   phase  = PlayerTurn }
-                                          Just checked = doAction g' BustCheck
-                                      in return checked
-doPhase g@(Game _ _ _ PlayerTurn) = do
+doPhase :: AppState -> IO Game
+doPhase (AppState g askAction) | phase g == DealCard =
+                                    let g' =  g {player = take 2 (deck g),
+                                                dealer = drop 2 $ take 4 (deck g),
+                                                deck   = drop 4 (deck g),
+                                                phase  = PlayerTurn }
+                                        Just checked = doAction g' BustCheck
+                                    in return checked
+                               | phase g == PlayerTurn = do
                                       chosen <- askAction
                                       case doAction g chosen of
-                                        Nothing -> return g {phase = DealerTurn}
-                                        Just g' -> return $ fromMaybe g' (doAction g' BustCheck)
-        where
-          askAction = do
-                        putStr "hit? stand?('hit'/'stand')\n> "
-                        ans <- getLine
-                        case ans of
-                          "hit" -> return Hit
-                          "stand" -> return Stand
-doPhase g@(Game p d _deck DealerTurn) | getPoint d < 17 = case doAction g Hit of
-                                                            Nothing -> return g {phase = ComparePoints}
-                                                            Just g' -> return g'
-                                      | otherwise       = let Just g' = doAction g Stand
-                                                          in return g'
-doPhase g@(Game p d _ ComparePoints) =
-        case doAction g BustCheck of
-          Just g'@(Game _ _ _ (GameEnd _)) -> return g'
-          otherwise -> if getPoint p > getPoint d
-                       then return g {phase = GameEnd Player}
-                       else return g {phase = GameEnd Dealer}
-
+                                        Nothing -> return (g {phase = DealerTurn})
+                                        Just g' -> return (fromMaybe g' (doAction g' BustCheck))
+                               | phase g == DealerTurn =
+                                    let newGame = if getPoint (dealer g) < 17
+                                                  then fromMaybe (g {phase = ComparePoints}) $ doAction g Hit
+                                                  else fromJust (doAction g Stand)
+                                    in return newGame
+                               | phase g == ComparePoints =
+                                    let Just g' = doAction g BustCheck
+                                        hasMorePoint = if getPoint (player g) > getPoint (dealer g)
+                                                       then Player
+                                                       else Dealer
+                                    in if (phase g' == GameEnd Player || phase g' == GameEnd Dealer)
+                                        then return g'
+                                        else return g { phase = GameEnd hasMorePoint}
 
 
 -- | Change game state based on current Game and occurred Action
