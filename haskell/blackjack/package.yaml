@@ -23,6 +23,8 @@ dependencies:
 - base >= 4.7 && < 5
 - random
 - hspec
+- brick
+- vty
 
 library:
   source-dirs: src
@@ -36,6 +38,15 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - BlackJack
+  BlackJack-CUI:
+    main:                app/CUI.hs
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - BlackJack
+
 
 tests:
   BlackJack-test:
