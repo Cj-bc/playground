@@ -6,6 +6,7 @@ import Brick.Widgets.Border (border)
 import Brick
 import qualified Graphics.Vty as Vty
 import Control.Monad.IO.Class (liftIO)
+import Control.Monad (when)
 
 import BlackJack
 import BlackJack.Types
@@ -85,7 +86,12 @@ eHandler s@(AppState g a) _                              = continue =<< (liftIO 
 app :: App AppState e Name
 app = App { appDraw = ui
           , appHandleEvent = eHandler
-          , appStartEvent = return
+          , appStartEvent = \s -> do
+              vty <- getVtyHandle
+              let output = Vty.outputIface vty
+              when (Vty.supportsMode output Vty.Mouse) $
+                  liftIO $ Vty.setMode output Vty.Mouse True
+              return s
           , appChooseCursor = neverShowCursor
           , appAttrMap = const $ attrMap Vty.defAttr []
           }
