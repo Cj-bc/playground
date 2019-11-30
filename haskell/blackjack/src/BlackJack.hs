@@ -9,6 +9,7 @@ module BlackJack (Card(..), Player(..), Phase(..), Action(..), Game(..), doPhase
 where
 
 import Data.List (sort)
+import Data.Maybe (fromMaybe)
 import System.Random
 
 data Card = A | Two | Three | Four | Five | Six | Seven | Eight | Nine | Ten | J | Q | K deriving (Eq, Ord, Show)
@@ -52,7 +53,7 @@ doPhase g@(Game _ _ _ PlayerTurn) = do
                                       chosen <- askAction
                                       case doAction g chosen of
                                         Nothing -> return g {phase = DealerTurn}
-                                        Just g' -> return g'
+                                        Just g' -> return $ fromMaybe g' (doAction g' BustCheck)
         where
           askAction = do
                         putStr "hit? stand?('hit'/'stand')\n> "
