@@ -27,12 +27,15 @@ informationBox (GameEnd p) = border $ vBox [str "Game End", str ("winner: " <> (
 informationBox _           = border $ str ""
 
 ui :: AppState -> [Widget Name]
-ui (AppState g _) = [vCenter $ vBox [dealerCards, hBox [hCenter deckClickable, standBox], playerCards, informationBox (phase g)]]
+ui (AppState g _) = [vCenter $ vBox [dealerCards
+                                    , hCenter (hBox [deckClickable, standBox])
+                                    , playerCards
+                                    , informationBox (phase g)]]
     where
         dealerCards   = hCenter $ hBox $ (str "dealer: ") : map card (dealer g)
         playerCards   = hCenter $ hBox $ (str "   you: ") : map card (player g)
-        standBox      = hCenter $ clickable StandClicked $ vBox [str "Stand"]
-        deckClickable = hCenter $ clickable HitClicked   $ border $ vBox $ replicate 5 $ str "##########"
+        standBox      = clickable StandClicked $ border $ str "Stand"
+        deckClickable = clickable HitClicked   $ border $ vBox $ replicate 5 $ str "##########"
 
 
 eHandler :: AppState -> BrickEvent Name e -> EventM Name (Next AppState)
