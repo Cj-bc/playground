@@ -61,6 +61,8 @@ doPhase (AppState g askAction) | phase g == DealCard =
                                     in if (phase g' == GameEnd Player || phase g' == GameEnd Dealer)
                                         then return g'
                                         else return g { phase = GameEnd hasMorePoint}
+                              | phase g == GameEnd Player ||
+                                phase g == GameEnd Dealer = return g
 
 
 -- | Change game state based on current Game and occurred Action
