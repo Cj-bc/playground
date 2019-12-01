@@ -18,7 +18,7 @@ data Name = Deck
           | StandClicked deriving (Ord, Eq)
 
 card :: Card -> Widget Name
-card c = border $ str (show c)
+card c = border $ padAll 5 $ str (show c)
 
 informationBox :: Phase -> Widget Name
 informationBox PlayerTurn  = border $ vBox [str "Click deck/press 'Enter': Hit", str "Click stand/press 's': stand"]
@@ -28,14 +28,14 @@ informationBox _           = border $ str ""
 
 ui :: AppState -> [Widget Name]
 ui (AppState g _) = [vCenter $ vBox [dealerCards
-                                    , hCenter (hBox [deckClickable, standBox])
+                                    , padTopBottom 4 $ hCenter (hBox [deckClickable, standBox])
                                     , playerCards
                                     , informationBox (phase g)]]
     where
-        dealerCards   = hCenter $ hBox $ (str "dealer: ") : map card (dealer g)
-        playerCards   = hCenter $ hBox $ (str "   you: ") : map card (player g)
-        standBox      = clickable StandClicked $ border $ str "Stand"
-        deckClickable = clickable HitClicked   $ border $ vBox $ replicate 5 $ str "##########"
+        dealerCards   = hCenter $ vBox [hBox $ map card (dealer g), str ("dealer: " <> (show $ getPoint (dealer g)))]
+        playerCards   = hCenter $ vBox [hBox $ map card (player g), str ("player: " <> (show $ getPoint (player g)))]
+        standBox      = padTopBottom 2 $ clickable StandClicked $ border $ str "Stand"
+        deckClickable = clickable HitClicked   $ border $ vBox $ replicate 11 $ str $ concat $ replicate 11 "#"
 
 
 askAction :: Action -> IO Action
