@@ -9,6 +9,6 @@ import UI.CUI
 main :: IO ()
 main = do
   initDeck <- shuffleDeck <$> getStdGen
-  let initState = AppState (Game [] [] initDeck DealCard) (return Hit :: IO Action)
+  let initState = AppState (Game [] [] initDeck DealCard) Nothing
   finalState <- defaultMain app initState
   putStrLn "finishied"

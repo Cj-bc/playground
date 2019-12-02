@@ -35,34 +35,32 @@ import BlackJack.Types
 -- Game [A,Ten] [Two,Three] [] (GameEnd Player)
 -- >>> doPhase $ AppState (Game [Two, Three], [A, Ten] [] ComparePoints) (\_ -> return Hit)
 -- Game [Two,Three] [A,Ten] [] (GameEnd Dealer)
-doPhase :: AppState -> IO Game
-doPhase (AppState g askAction) | phase g == DealCard =
+doPhase :: AppState -> Game
+doPhase (AppState g action) | phase g == DealCard =
                                     let g' =  g {player = take 2 (deck g),
                                                 dealer = drop 2 $ take 4 (deck g),
                                                 deck   = drop 4 (deck g),
                                                 phase  = PlayerTurn }
                                         Just checked = doAction g' BustCheck
-                                    in return checked
-                               | phase g == PlayerTurn = do
-                                      chosen <- askAction
-                                      case doAction g chosen of
-                                        Nothing -> return (g {phase = DealerTurn})
-                                        Just g' -> return (fromMaybe g' (doAction g' BustCheck))
+                                    in checked
+                               | phase g == PlayerTurn = case doAction g (fromJust action) of
+                                                            Nothing -> (g {phase = DealerTurn})
+                                                            Just g' -> (fromMaybe g' (doAction g' BustCheck))
                                | phase g == DealerTurn =
                                     let newGame = if getPoint (dealer g) < 17
                                                   then fromMaybe (g {phase = ComparePoints}) $ doAction g Hit
                                                   else fromJust (doAction g Stand)
-                                    in return newGame
+                                    in newGame
                                | phase g == ComparePoints =
                                     let Just g' = doAction g BustCheck
                                         hasMorePoint = if getPoint (player g) > getPoint (dealer g)
                                                        then Player
                                                        else Dealer
                                     in if (phase g' == GameEnd Player || phase g' == GameEnd Dealer)
-                                        then return g'
-                                        else return g { phase = GameEnd hasMorePoint}
+                                        then g'
+                                        else g { phase = GameEnd hasMorePoint}
                               | phase g == GameEnd Player ||
-                                phase g == GameEnd Dealer = return g
+                                phase g == GameEnd Dealer =  g
 
 
 -- | Change game state based on current Game and occurred Action

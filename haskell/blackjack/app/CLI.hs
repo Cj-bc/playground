@@ -3,7 +3,7 @@ module Main where
 import System.Random
 import BlackJack
 import BlackJack.Types (AppState(..))
-import UI.CLI (askAction, runGame)
+import UI.CLI (runGame)
 
 main :: IO ()
 main = do

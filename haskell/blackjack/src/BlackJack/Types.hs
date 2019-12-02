@@ -11,7 +11,7 @@ data Game = Game { player :: [Card] -- ^ Player's hand
                  } deriving (Show)
 
 data AppState = AppState { app_game :: Game
-                         , app_askAction :: IO Action }
+                         , app_action :: Maybe Action }
 
 data Action = Hit | Stand | BustCheck
 -- ^ All actions that should be happened in game.
