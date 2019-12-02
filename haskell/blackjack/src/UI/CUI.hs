@@ -48,13 +48,14 @@ eHandler s@(AppState g a) (VtyEvent (Vty.EvKey (Vty.KEnter) []))
                                                          = if (phase g) == PlayerTurn
                                                            then continue =<< (liftIO $ flip AppState a <$> doPhase s)
                                                            else continue s
-eHandler s@(AppState g a) (VtyEvent (Vty.EvKey (Vty.KChar 's') []))
-                                                         = if (phase g) == PlayerTurn
-                                                           then continue =<< (liftIO $ flip AppState a <$> doPhase s)
-                                                           else continue s
+
 eHandler s@(AppState g a) (MouseDown HitClicked _ _ _)   = if (phase g) == PlayerTurn
                                                            then continue =<< (liftIO $ flip AppState a <$> doPhase (AppState g
                                                                                                                     (askAction Hit)))
+                                                           else continue s
+eHandler s@(AppState g a) (VtyEvent (Vty.EvKey (Vty.KChar 's') []))
+                                                         = if (phase g) == PlayerTurn
+                                                           then continue =<< (liftIO $ flip AppState a <$> doPhase s)
                                                            else continue s
 eHandler s@(AppState g a) (MouseDown StandClicked _ _ _) = if (phase g) == PlayerTurn
                                                            then continue =<< (liftIO $ flip AppState a <$> doPhase (AppState g
@@ -63,33 +64,6 @@ eHandler s@(AppState g a) (MouseDown StandClicked _ _ _) = if (phase g) == Playe
 eHandler s@(AppState g a) _ | (phase g) == PlayerTurn    = continue s
                             | (phase g) == PlayerTurn    = continue s
 eHandler s@(AppState g a) _                              = continue =<< (liftIO $ flip AppState a <$> doPhase s)
-
-
-
--- runGame g@(Game _ _ _ (GameEnd winner)) = return (g, winner)
--- runGame g@(Game _ _ _ DealCard) = do
---                                     g' <- doPhase $ AppState g askAction
---                                     putStrLn $ "Your hand: " ++ show (player g')
---                                         ++ " | dealer's hand: ["
---                                         ++ show (head (dealer g')) ++ " * ]"
---                                     runGame g'
--- runGame g@(Game _ _ _ PlayerTurn) = do
---                                       g' <- doPhase $ AppState g askAction
---                                       putStrLn $ "Your hand: " ++ show (player g')
---                                           ++ " | dealer's hand: ["
---                                           ++ show (head (dealer g')) ++ " * ]"
---                                       runGame g'
--- runGame g@(Game _ _ _ DealerTurn) = do
---                                       g' <- doPhase $ AppState g askAction
---                                       putStrLn $ "Your hand: " ++ show (player g')
---                                           ++ " | dealer's hand: "
---                                           ++ show (dealer g')
---                                       runGame g'
--- runGame g = doPhase (AppState g askAction) >>= runGame
-
-
-
-
 
 
 app :: App AppState e Name
