@@ -45,8 +45,11 @@ extra-deps:
   - data-clist-0.1.2.3@sha256:0a4ad5f045c285eb533c2baa228581d2ff3ee123a4da7ca84e95a74aea9fb058,936
   - text-zipper-0.10.1@sha256:8b73a97a3717a17df9b0a722b178950c476ff2268ca5c583e99d010c94af849e,1471
   - word-wrap-0.4.1@sha256:f72233b383ef569c557bfd9812cbb8e306c415ce509082c0bd15ee51c0239ccc,1606
+  - gi-gtk-declarative-0.6.0@sha256:e237751dccb85367891b4238d0a0f9463a1851c658e7da2282e3b11571445a04,3965
+  - gi-gtk-declarative-app-simple-0.6.0@sha256:96bbc8a584fcfc183b099c3393e7f81b78c35d7b9e79b2eae340fa2202f59bf7,1818
 
-
+ghc-options:
+  "$targets": -threaded
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

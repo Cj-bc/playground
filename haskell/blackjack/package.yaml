@@ -25,6 +25,8 @@ dependencies:
 - hspec
 - brick
 - vty
+- gi-gtk-declarative
+- gi-gtk-declarative-app-simple
 
 library:
   source-dirs: src
