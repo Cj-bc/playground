@@ -32,7 +32,7 @@ ui (AppState g _) = [vCenter $ vBox [dealerCards
                                     , playerCards
                                     , informationBox (phase g)]]
     where
-        dealerCards   = hCenter $ vBox [hBox $ map card (dealer g), str ("dealer: " <> (show $ getPoint (dealer g)))]
+        dealerCards   = hCenter $ vBox [str ("dealer: " <> (show $ getPoint (dealer g))), hBox $ map card (dealer g)]
         playerCards   = hCenter $ vBox [hBox $ map card (player g), str ("player: " <> (show $ getPoint (player g)))]
         standBox      = padTopBottom 2 $ clickable StandClicked $ border $ str "Stand"
         deckClickable = clickable HitClicked   $ border $ vBox $ replicate 11 $ str $ concat $ replicate 11 "#"
