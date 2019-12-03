@@ -37,10 +37,10 @@ import BlackJack.Types
 -- Game [Two,Three] [A,Ten] [] (GameEnd Dealer)
 doPhase :: AppState -> Game
 doPhase (AppState g action) | phase g == DealCard =
-                                    let g' =  g {player = take 2 (deck g),
-                                                dealer = drop 2 $ take 4 (deck g),
-                                                deck   = drop 4 (deck g),
-                                                phase  = PlayerTurn }
+                                    let g' =  g { player = take 2 (deck g)
+                                                , dealer = drop 2 $ take 4 (deck g)
+                                                , deck   = drop 4 (deck g)
+                                                , phase  = PlayerTurn }
                                         Just checked = doAction g' BustCheck
                                     in checked
                                | phase g == PlayerTurn = case doAction g (fromJust action) of
