@@ -33,15 +33,32 @@ library:
 
 executables:
   BlackJack-CLI:
-    main:                app/CLI.hs
+    main:                app/CLI/CLI.hs
+    source-dirs:
+    - app/CLI
+    - src
     ghc-options:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
     dependencies:
     - BlackJack
+    - UI
   BlackJack-CUI:
-    main:                app/CUI.hs
+    main:                app/CUI/CUI.hs
+    source-dirs:
+    - app/CLI
+    - src
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - BlackJack
+    - UI
+    - vty
+    - brick
+
     ghc-options:
     - -threaded
     - -rtsopts
