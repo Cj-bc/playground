@@ -5,4 +5,4 @@ import Brick
 import TicTacToe
 import UI.CUI
 
-main = defaultMain app (initializeBoard, O) >>= \s -> putStrLn $ show s
+main = defaultMain app (initializeBoard, O) >>= \(b, winner) -> putStrLn $ (show winner) ++ " wins!"
