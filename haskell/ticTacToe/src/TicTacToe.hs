@@ -1,7 +1,7 @@
 module TicTacToe where
 
 data Mark = O | X deriving (Show, Eq) -- ^ Mark, O or X
-data Board = Board [Maybe Mark]  -- ^ Actual game board
+data Board = Board [Maybe Mark] deriving (Show)  -- ^ Actual game board
 type Coord = (Int, Int) -- ^ Coord is from (0, 0) to (8, 8). (Horizontal, Vertical)
 
 initializeBoard :: Board -- ^ Initial state for Board
@@ -33,4 +33,9 @@ isFinished (Board b) = let horizontal = [take 3 b, drop 3 (take 6 b), drop 6 b]
                                         then False else areSame xs
                            result     = fmap hasLine allLines
                         in True `elem` result
+
+
+toStr :: Maybe Mark -> String
+toStr x = maybe "-" show x
+
 

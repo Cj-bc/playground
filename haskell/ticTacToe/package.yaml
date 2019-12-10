@@ -22,6 +22,8 @@ description:         Please see the README on GitHub at <https://github.com/Cj-b
 dependencies:
 - base >= 4.7 && < 5
 - transformers
+- vty
+- brick
 
 library:
   source-dirs: src
@@ -36,6 +38,17 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - ticTacToe
+
+  ticTacToe-CUI:
+    main:               CUI.hs
+    source-dirs:        app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - ticTacToe
+
 
 tests:
   ticTacToe-test:
