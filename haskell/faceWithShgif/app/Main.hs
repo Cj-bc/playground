@@ -44,7 +44,7 @@ makeLenses ''AppState
 data Name = NoName deriving (Eq, Ord)
 
 partUI :: Shgif -> (Int, Int) -> Widget Name
-partUI sgf (x, y) = padLeft (Pad x) $ padTop (Pad y) $ shgif sgf
+partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
 
 
 ui :: AppState -> [Widget Name]
