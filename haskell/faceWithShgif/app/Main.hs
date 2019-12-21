@@ -17,6 +17,7 @@ data Face = Face { _contour :: Shgif
                  , _rightEye :: Shgif
                  , _nose  :: Shgif
                  , _mouth :: Shgif
+                 , _hair :: Shgif
                  }
 makeLenses ''Face
 data LR = L | R
@@ -48,8 +49,9 @@ partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
 
 
 ui :: AppState -> [Widget Name]
-ui s = [partUI (f^.mouth) (19, 24), partUI (f^.rightEye) (9, 15), partUI (f^.leftEye) (27, 15), partUI (f^.nose) (21, 20)
-       , shgif (f^.contour)]
+ui s = [partUI (f^.rightEye) (9, 15)
+       , partUI (f^.nose) (21, 20), partUI (f^.mouth) (18, 24)
+       , partUI (f^.leftEye) (27, 15), shgif (f^.hair) , shgif (f^.contour)]
   where
     f = s^.face
 
@@ -59,7 +61,7 @@ eHandler s (AppEvent Tick) = liftIO newAppState >>= continue
         newAppState = AppState <$> newFace
         f = s^.face
         newFace = Face <$> (updateShgif $ f^.contour) <*> (updateShgif $ f^.leftEye) <*> (updateShgif $ f^.rightEye)
-                       <*> (updateShgif $ f^.nose)    <*> (updateShgif $ f^.mouth)
+                       <*> (updateShgif $ f^.nose)    <*> (updateShgif $ f^.mouth) <*> (updateShgif $ f^.hair)
  --   where
  --       newAppState = AppState newFace newMouth newREye newLEye
  --       newLEye = case s^.leftEyeState of
@@ -79,6 +81,8 @@ app = App { appDraw         = ui
 
 main :: IO ()
 main = do
+    -- Load resources
+    e_hair <- getShgif "resources/shgif/hair.yaml"
     e_contour <- getShgif "resources/shgif/contour.yaml"
     e_leftEye <- getShgif "resources/shgif/leftEye.yaml"
     e_rightEye <- getShgif "resources/shgif/rightEye.yaml"
@@ -95,7 +99,8 @@ main = do
         (Right re) = e_rightEye
         (Right ns) = e_nose
         (Right m)  = e_mouth
-    let face = (Face c le re ns m)
+        (Right h)  = e_hair
+        face       = (Face c le re ns m h)
 
     lastState <- mainWithTick Nothing 1000 app $ AppState face
     return ()
