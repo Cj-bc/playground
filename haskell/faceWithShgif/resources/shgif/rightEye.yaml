@@ -1,0 +1,30 @@
+title: rightEye
+author: Cj-bc
+format: Page
+width: 10
+height: 3
+data:
+  - timestamp: 0
+    contents:
+      - " .------. "
+      - "''  r\"\\ "
+      - " \\  \\o/_"
+  - timestamp: 30
+    contents:
+      - " ._______"
+      - "''  |\"| "
+      - " \\  ----"
+  - timestamp: 70
+    contents:
+      - ""
+      - "'_-------`"
+  - timestamp: 90
+    contents:
+      - ""
+      - ",==___==."
+      - ""
+  - timestamp: 100
+    contents:
+      - ""
+      - ",==___==."
+      - ""

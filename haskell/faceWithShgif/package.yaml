@@ -1,0 +1,52 @@
+name:                faceWithShgif
+version:             0.1.0.0
+github:              "Cj-bc/faceWithShgif"
+license:             BSD3
+author:              "Cj.bc_sd a.k.a Cj-bc"
+maintainer:          "cj.bc-sd@outlook.jp"
+copyright:           "MIT"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            CUI
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/Cj-bc/faceWithShgif#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- vty
+- brick
+- brick-shgif
+- lens
+
+library:
+  source-dirs: src
+
+executables:
+  faceWithShgif:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - faceWithShgif
+
+tests:
+  faceWithShgif-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - faceWithShgif
