@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main where
 
-import Control.Lens (makeLenses, (^.))
+import Control.Lens (makeLenses, (^.), (&), (.~))
 import Control.Monad (when)
 import Control.Monad.IO.Class (liftIO)
 import System.Exit (exitFailure)
@@ -10,7 +10,7 @@ import qualified Graphics.Vty as Vty
 import Brick
 import Brick.Extensions.Shgif.Widgets (shgif)
 import Brick.Extensions.Shgif.Events (TickEvent(..), mainWithTick)
-import Shgif.Type (Shgif, getShgif, updateShgif)
+import Shgif.Type (Shgif, getShgif, updateShgifNoLoop, updateShgif, updateShgifReversedNoLoop)
 
 data Face = Face { _contour :: Shgif
                  , _leftEye :: Shgif
@@ -34,11 +34,12 @@ data PartState = Opened  -- ^ The part is opened
                | Closed  -- ^ The part is closed
                | Opening -- ^ The part is opening
                | Closing -- ^ The part is closing
+                deriving (Eq)
 
 data AppState = AppState { _face :: Face
---                         , _mouthState :: PartState
---                         , _rightEyeState :: PartState
---                         , _leftEyeState :: PartState
+                         , _rightEyeState :: PartState
+                         , _leftEyeState :: PartState
+                         , _mouthState :: PartState
                          }
 makeLenses ''AppState
 
@@ -56,18 +57,38 @@ ui s = [partUI (f^.rightEye) (9, 15)
     f = s^.face
 
 
-eHandler s (AppEvent Tick) = liftIO newAppState >>= continue
-      where
-        newAppState = AppState <$> newFace
-        f = s^.face
-        newFace = Face <$> (updateShgif $ f^.contour) <*> (updateShgif $ f^.leftEye) <*> (updateShgif $ f^.rightEye)
-                       <*> (updateShgif $ f^.nose)    <*> (updateShgif $ f^.mouth) <*> (updateShgif $ f^.hair)
- --   where
- --       newAppState = AppState newFace newMouth newREye newLEye
- --       newLEye = case s^.leftEyeState of
- --                   OpeningMouth -> updateShgif s^.face^.leftEye
- --                   ClosingMouth -> 
+eHandler :: AppState -> BrickEvent name TickEvent -> EventM Name (Next AppState)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
+eHandler s (AppEvent Tick) = continue =<< liftIO (do
+                                                  nf <- newFace
+                                                  return $ s&face.~ nf)
+      where
+        f = s^.face
+        partUpdate partLens condLens = case s^.condLens of
+                                       Closing -> updateShgifNoLoop         $ f^.partLens
+                                       Opening -> updateShgifReversedNoLoop $ f^.partLens
+                                       _       -> return $ f^.partLens
+        newFace = Face <$> (updateShgif $ f^.contour)
+                       <*> partUpdate leftEye leftEyeState
+                       <*> partUpdate rightEye rightEyeState
+                       <*> (updateShgif $ f^.nose)
+                       <*> partUpdate mouth mouthState
+                       <*> (updateShgif $ f^.hair)
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ case s^.rightEyeState  of
+                                                                  Opened  -> s&rightEyeState.~ Closing
+                                                                  Opening -> s&rightEyeState.~ Closing
+                                                                  Closed  -> s&rightEyeState.~ Opening
+                                                                  Closing -> s&rightEyeState.~ Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'e') [])) = continue $ case s^.leftEyeState of
+                                                                  Opened  -> s&leftEyeState.~ Closing
+                                                                  Opening -> s&leftEyeState.~ Closing
+                                                                  Closed  -> s&leftEyeState.~ Opening
+                                                                  Closing -> s&leftEyeState.~ Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'r') [])) = continue $ case s^.mouthState of
+                                                                  Opened  -> s&mouthState.~ Closing
+                                                                  Opening -> s&mouthState.~ Closing
+                                                                  Closed  -> s&mouthState.~ Opening
+                                                                  Closing -> s&mouthState.~ Opening
 eHandler s _ = continue s
 
 
@@ -89,11 +110,8 @@ main = do
     e_nose <- getShgif "resources/shgif/nose.yaml"
     e_mouth <- getShgif "resources/shgif/mouth.yaml"
     let fromLeft (Left e) = e
-    when (isLeft e_contour ) $ putStrLn (show $ fromLeft e_contour ) >> exitFailure
-    when (isLeft e_leftEye ) $ putStrLn (show $ fromLeft e_leftEye ) >> exitFailure
-    when (isLeft e_rightEye) $ putStrLn (show $ fromLeft e_rightEye) >> exitFailure
-    when (isLeft e_nose    ) $ putStrLn (show $ fromLeft e_nose    ) >> exitFailure
-    when (isLeft e_mouth   ) $ putStrLn (show $ fromLeft e_mouth   ) >> exitFailure
+    flip mapM_ [e_hair, e_contour, e_leftEye, e_rightEye, e_nose, e_mouth] $ \e ->
+        when (isLeft e) $ putStrLn (show $ fromLeft e) >> exitFailure
     let (Right c)  = e_contour
         (Right le) = e_leftEye
         (Right re) = e_rightEye
@@ -102,5 +120,5 @@ main = do
         (Right h)  = e_hair
         face       = (Face c le re ns m h)
 
-    lastState <- mainWithTick Nothing 1000 app $ AppState face
+    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened
     return ()
