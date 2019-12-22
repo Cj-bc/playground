@@ -49,6 +49,9 @@ partUI :: Shgif -> (Int, Int) -> Widget Name
 partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
 
 
+-- | Render face
+--
+-- *Order of parts are really important*
 ui :: AppState -> [Widget Name]
 ui s = [partUI (f^.rightEye) (9, 15)
        , partUI (f^.nose) (21, 20), partUI (f^.mouth) (18, 24)
@@ -109,9 +112,13 @@ main = do
     e_rightEye <- getShgif "resources/shgif/rightEye.yaml"
     e_nose <- getShgif "resources/shgif/nose.yaml"
     e_mouth <- getShgif "resources/shgif/mouth.yaml"
+
+    -- validate if all resources are loaded correctly
     let fromLeft (Left e) = e
     flip mapM_ [e_hair, e_contour, e_leftEye, e_rightEye, e_nose, e_mouth] $ \e ->
         when (isLeft e) $ putStrLn (show $ fromLeft e) >> exitFailure
+
+    -- Unpack Either and construct face
     let (Right c)  = e_contour
         (Right le) = e_leftEye
         (Right re) = e_rightEye
