@@ -40,6 +40,10 @@ data AppState = AppState { _face :: Face
                          , _rightEyeState :: PartState
                          , _leftEyeState :: PartState
                          , _mouthState :: PartState
+                         , _rightEyeOffset :: (Int, Int)
+                         , _leftEyeOffset :: (Int, Int)
+                         , _mouthOffset :: (Int, Int)
+                         , _hairOffset :: (Int, Int)
                          }
 makeLenses ''AppState
 
@@ -53,11 +57,16 @@ partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
 --
 -- *Order of parts are really important*
 ui :: AppState -> [Widget Name]
-ui s = [partUI (f^.rightEye) (9, 15)
-       , partUI (f^.nose) (21, 20), partUI (f^.mouth) (18, 24)
-       , partUI (f^.leftEye) (27, 15), shgif (f^.hair) , shgif (f^.contour)]
+ui s = [partUI (f^.rightEye) $ (9, 15) `addOffset` (s^.rightEyeOffset)
+       , partUI (f^.nose) (21, 20)
+       , partUI (f^.mouth) $ (18, 24) `addOffset` (s^.mouthOffset)
+       , partUI (f^.leftEye) $ (27, 15) `addOffset` (s^.leftEyeOffset)
+       , partUI (f^.hair) $ s^.hairOffset
+       , shgif (f^.contour)
+       ]
   where
     f = s^.face
+    addOffset (a, b) (c, d) = (a + c, b + d)
 
 
 eHandler :: AppState -> BrickEvent name TickEvent -> EventM Name (Next AppState)
@@ -92,6 +101,18 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'r') [])) = continue $ case s^.mouthS
                                                                   Opening -> s&mouthState.~ Closing
                                                                   Closed  -> s&mouthState.~ Opening
                                                                   Closing -> s&mouthState.~ Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'l') [])) = continue $ s&rightEyeOffset.~ (3, 0)
+                                                                   &leftEyeOffset.~ (2, 0)
+                                                                   &mouthOffset.~ (1, 0)
+                                                                   &hairOffset.~ (1, 0)
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'h') [])) = continue $ s&rightEyeOffset.~ (-2, 0)
+                                                                   &leftEyeOffset.~ (-3, 0)
+                                                                   &mouthOffset.~ (-1, 0)
+                                                                   &hairOffset.~ (-1, 0)
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&rightEyeOffset.~ (0, 0)
+                                                                   &leftEyeOffset.~ (0, 0)
+                                                                   &mouthOffset.~ (0, 0)
+                                                                   &hairOffset.~ (0, 0)
 eHandler s _ = continue s
 
 
@@ -127,5 +148,5 @@ main = do
         (Right h)  = e_hair
         face       = (Face c le re ns m h)
 
-    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened
+    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0)
     return ()
