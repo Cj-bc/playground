@@ -4,13 +4,25 @@ module Main where
 import Control.Lens (makeLenses, (^.), (&), (.~))
 import Control.Monad (when)
 import Control.Monad.IO.Class (liftIO)
-import System.Exit (exitFailure)
+import System.Exit (exitFailure, exitSuccess)
+import System.Environment (getArgs)
 import Data.Either (isLeft)
 import qualified Graphics.Vty as Vty
 import Brick
 import Brick.Extensions.Shgif.Widgets (shgif)
 import Brick.Extensions.Shgif.Events (TickEvent(..), mainWithTick)
 import Shgif.Type (Shgif, getShgif, updateShgifNoLoop, updateShgif, updateShgifReversedNoLoop)
+
+helpText = unlines ["faceWithShgif -- prototype program to do live2d like animation with shgif"
+                   , ""
+                   , "Key control:"
+                   , "    q: quit program"
+                   , "    w: switch right eye"
+                   , "    e: switch left eye"
+                   , "    m: switch mouth"
+                   , "    l: look left"
+                   , "    h: look right"
+                   ]
 
 data Face = Face { _contour :: Shgif
                  , _leftEye :: Shgif
@@ -146,6 +158,10 @@ app = App { appDraw         = ui
 
 main :: IO ()
 main = do
+    -- help message
+    arg <- getArgs
+    when (arg /= [] && (head arg == "--help" || head arg == "-h")) $ putStrLn helpText >> exitSuccess
+
     -- Load resources
     e_hair <- getShgif "resources/shgif/hair.yaml"
     e_contour <- getShgif "resources/shgif/contour.yaml"
