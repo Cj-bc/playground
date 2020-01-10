@@ -9,17 +9,17 @@ data:
       - ",------."
       - "  r\"\\  ''"
       - " _\\o/  /"
-  - timestamp: 30
+  - timestamp: 10
     contents:
       - "_______."
       - "' |\"|  ''"
       - "  ---- /  "
-  - timestamp: 70
+  - timestamp: 20
     contents:
       - ""
       - "'------''"
       - ""
-  - timestamp: 90
+  - timestamp: 30
     contents:
       - ""
       - ".==___==,"
