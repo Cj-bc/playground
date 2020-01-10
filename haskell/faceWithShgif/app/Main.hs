@@ -71,6 +71,23 @@ ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
     addOffset (a, b) (c, d) = (a + c, b + d)
 
 
+-- | event handler
+--
+-- key bindings:
+--
+-- * 'q' : quit the app
+--
+-- * 'w' : Open/Close right eye
+--
+-- * 'e' : Open/Close left eye
+--
+-- * 'r' : Open/Close mouth
+--
+-- * 'l' : Look left
+--
+-- * 'h' : Look right
+--
+-- * 'n' : Look front
 eHandler :: AppState -> BrickEvent name TickEvent -> EventM Name (Next AppState)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
 eHandler s (AppEvent Tick) = continue =<< liftIO (do
@@ -99,7 +116,7 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'e') [])) = continue $ case s^.leftEy
                                                                   Opening -> s&leftEyeState.~ Closing
                                                                   Closed  -> s&leftEyeState.~ Opening
                                                                   Closing -> s&leftEyeState.~ Opening
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'r') [])) = continue $ case s^.mouthState of
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'm') [])) = continue $ case s^.mouthState of
                                                                   Opened  -> s&mouthState.~ Closing
                                                                   Opening -> s&mouthState.~ Closing
                                                                   Closed  -> s&mouthState.~ Opening
