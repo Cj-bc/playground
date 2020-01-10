@@ -18,6 +18,7 @@ data Face = Face { _contour :: Shgif
                  , _nose  :: Shgif
                  , _mouth :: Shgif
                  , _hair :: Shgif
+                 , _backHair :: Shgif
                  }
 makeLenses ''Face
 data LR = L | R
@@ -57,12 +58,13 @@ partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
 --
 -- *Order of parts are really important*
 ui :: AppState -> [Widget Name]
-ui s = [partUI (f^.rightEye) $ (9, 15) `addOffset` (s^.rightEyeOffset)
-       , partUI (f^.nose) (21, 20)
-       , partUI (f^.mouth) $ (18, 24) `addOffset` (s^.mouthOffset)
-       , partUI (f^.leftEye) $ (27, 15) `addOffset` (s^.leftEyeOffset)
-       , partUI (f^.hair) $ s^.hairOffset
+ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
+       , partUI (f^.nose) (25, 20)
+       , partUI (f^.mouth) $ (22, 24) `addOffset` (s^.mouthOffset)
+       , partUI (f^.leftEye) $ (31, 15) `addOffset` (s^.leftEyeOffset)
+       , partUI (f^.hair) $ (5, 0) `addOffset` (s^.hairOffset)
        , shgif (f^.contour)
+       , partUI (f^.backHair) (4, 0)
        ]
   where
     f = s^.face
@@ -86,6 +88,7 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                        <*> (updateShgif $ f^.nose)
                        <*> partUpdate mouth mouthState
                        <*> (updateShgif $ f^.hair)
+                       <*> (updateShgif $ f^.backHair)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ case s^.rightEyeState  of
                                                                   Opened  -> s&rightEyeState.~ Closing
                                                                   Opening -> s&rightEyeState.~ Closing
@@ -133,10 +136,11 @@ main = do
     e_rightEye <- getShgif "resources/shgif/rightEye.yaml"
     e_nose <- getShgif "resources/shgif/nose.yaml"
     e_mouth <- getShgif "resources/shgif/mouth.yaml"
+    e_backHair <- getShgif "resources/shgif/hair_back.yaml"
 
     -- validate if all resources are loaded correctly
     let fromLeft (Left e) = e
-    flip mapM_ [e_hair, e_contour, e_leftEye, e_rightEye, e_nose, e_mouth] $ \e ->
+    flip mapM_ [e_hair, e_contour, e_leftEye, e_rightEye, e_nose, e_mouth, e_backHair] $ \e ->
         when (isLeft e) $ putStrLn (show $ fromLeft e) >> exitFailure
 
     -- Unpack Either and construct face
@@ -146,7 +150,8 @@ main = do
         (Right ns) = e_nose
         (Right m)  = e_mouth
         (Right h)  = e_hair
-        face       = (Face c le re ns m h)
+        (Right hb) = e_backHair
+        face       = (Face c le re ns m h hb)
 
     lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0)
     return ()
