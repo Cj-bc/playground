@@ -12,6 +12,8 @@ dependencies:
 - brick
 - brick-shgif
 - random
+- microlens
+- microlens-th
 
 executables:
   oniOrHuman:

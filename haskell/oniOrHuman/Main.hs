@@ -19,6 +19,7 @@ If 'Human', don't throw them!
 30 seconds for one game.
 
 -}
+{-# LANGUAGE TemplateHaskell #-}
 module Main where
 
 import qualified Graphics.Vty as Vty
@@ -32,6 +33,8 @@ import Control.Monad.IO.Class (liftIO)
 import Data.Either (isRight)
 import Shgif.Type (Shgif, getShgif, updateShgifNoLoop, updateShgif, updateShgifReversedNoLoop)
 import System.Random
+import Lens.Micro
+import Lens.Micro.TH
 
 type Second = Int
 type MSec = Int
@@ -47,43 +50,47 @@ scoreOni = 100
 
 scoreHuman = -100
 
-data OoHAppState = OoHAppState { isOniList :: [Bool]
-                               , score :: Int
-                               , oniShgif :: Shgif
-                               , humanShgif :: Shgif
-                               , tickRemain :: Int
-                               , chTick :: Int
+data OoHAppState = OoHAppState { _isOniList :: [Bool]
+                               , _score :: Int
+                               , _oniShgif :: Shgif
+                               , _humanShgif :: Shgif
+                               , _tickRemain :: Int
+                               , _chTick :: Int
                                }
+
+makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
 ui s = [gameUI s <+> scoreUI s]
 
-gameUI s = case isOniList s of
+gameUI s = case (s^.isOniList) of
               []      -> border $ str "ALL Gone"
-              True:_  -> border $ shgif (oniShgif s)
-              False:_ -> border $ shgif (humanShgif s)
+              True:_  -> border $ shgif (s^.oniShgif)
+              False:_ -> border $ shgif (s^.humanShgif)
 
-scoreUI s = border $ vBox [str $ "score: " ++ (show $ score s)
-                          , str $ "ramain: " ++ (show $ tickRemain s)
-                          , str $ "characterRemain: " ++ (show $ length $ isOniList s)
+scoreUI s = border $ vBox [ str $ "score: "           ++ (show $ s^.score)
+                          , str $ "ramain: "          ++ (show $ s^.tickRemain)
+                          , str $ "characterRemain: " ++ (show $ length $ s^.isOniList)
                           ]
 -- }}}
 
 -- Event {{{
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
-eHandler s (AppEvent Tick) | (tickRemain s) <= 0 = halt s
-                           | otherwise  = continue =<< liftIO (do
-                newOni <- updateShgif $ oniShgif s
-                newHuman <- updateShgif $ humanShgif s
-                let ls = if (chTick s) <= 0 then (tail $ isOniList s)
-                                            else (isOniList s)
-                    tk = if (chTick s) <= 0 then secToChange else (chTick s - 1)
-                return $ OoHAppState ls (score s) newOni newHuman (tickRemain s - 1) tk)
+eHandler s (AppEvent Tick)
+    | (s^.tickRemain) <= 0 = halt s
+    | otherwise  = continue =<< liftIO (do
+                    newOni <- updateShgif (s^.oniShgif)
+                    newHuman <- updateShgif (s^.humanShgif)
+
+                    let ls = if (s^.chTick) <= 0 then (tail (s^.isOniList))
+                                                 else (s^.isOniList)
+                        tk = if (s^.chTick) <= 0 then secToChange else ((s^.chTick) - 1)
+                    return $ OoHAppState ls (s^.score) newOni newHuman ((s^.tickRemain) - 1) tk)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $
-    case (isOniList s) of
-        True:xs  -> OoHAppState xs (scoreOni + score s) (oniShgif s) (humanShgif s) (tickRemain s) secToChange
-        False:xs -> OoHAppState xs (scoreHuman + score s) (oniShgif s) (humanShgif s) (tickRemain s) secToChange
+    case s^.isOniList of
+        True:xs  -> ((s&isOniList.~xs)&score+~scoreOni)&chTick.~secToChange
+        False:xs -> ((s&isOniList.~xs)&score-~scoreHuman)&chTick.~secToChange
 
 eHandler s _ = continue s
 -- }}}
@@ -101,7 +108,7 @@ app = App { appDraw         = ui
 
 main :: IO ()
 main = do
-    onilist <- replicateM 1000 (randomIO :: IO Bool)
+    onilist <- replicateM 100 (randomIO :: IO Bool)
     oshgif <- getShgif "resources/oni.yaml"
     hshgif <- getShgif "resources/human.yaml"
 
@@ -112,4 +119,4 @@ main = do
         (Right hshgif') = hshgif
 
     lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange
-    putStrLn $ "Last Score: " ++ (show $ score lastS)
+    putStrLn $ "Last Score: " ++ (show $ lastS^.score)
