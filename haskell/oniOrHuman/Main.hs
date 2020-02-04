@@ -50,19 +50,23 @@ scoreOni = 100
 
 scoreHuman = -100
 
+defKeyPushRefreshTime = 50
+
 data OoHAppState = OoHAppState { _isOniList :: [Bool]
                                , _score :: Int
                                , _oniShgif :: Shgif
                                , _humanShgif :: Shgif
                                , _tickRemain :: Int
                                , _chTick :: Int
+                               , _pushedKey :: Maybe String
+                               , _keyPushRefreshTime :: Int
                                }
 
 makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
-ui s = [gameUI s <+> scoreUI s]
+ui s = [gameUI s <+> vBox [scoreUI s, pushedKeyUI s]]
 
 gameUI s = case (s^.isOniList) of
               []      -> border $ str "ALL Gone"
@@ -73,6 +77,10 @@ scoreUI s = border $ vBox [ str $ "score: "           ++ (show $ s^.score)
                           , str $ "ramain: "          ++ (show $ s^.tickRemain)
                           , str $ "characterRemain: " ++ (show $ length $ s^.isOniList)
                           ]
+
+pushedKeyUI s = case (s^.pushedKey) of
+                    (Just k)    -> border $ str k
+                    Nothing     -> emptyWidget
 -- }}}
 
 -- Event {{{
@@ -86,12 +94,14 @@ eHandler s (AppEvent Tick)
                     let ls = if (s^.chTick) <= 0 then (tail (s^.isOniList))
                                                  else (s^.isOniList)
                         tk = if (s^.chTick) <= 0 then secToChange else ((s^.chTick) - 1)
-                    return $ OoHAppState ls (s^.score) newOni newHuman ((s^.tickRemain) - 1) tk)
+                        pk = if (s^.keyPushRefreshTime) <= 0 then Nothing else (s^.pushedKey)
+                        keyPushRefreshTime' = if (s^.keyPushRefreshTime) <= 0 then 0 else (s^.keyPushRefreshTime - 1)
+                    return $ OoHAppState ls (s^.score) newOni newHuman ((s^.tickRemain) - 1) tk pk keyPushRefreshTime')
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $
     case s^.isOniList of
-        True:xs  -> ((s&isOniList.~xs)&score+~scoreOni)&chTick.~secToChange
-        False:xs -> ((s&isOniList.~xs)&score-~scoreHuman)&chTick.~secToChange
-
+        True:xs  -> ((((s&isOniList.~xs)&score+~scoreOni)&chTick.~secToChange)&pushedKey.~(Just "<SPACE>"))&keyPushRefreshTime.~defKeyPushRefreshTime
+        False:xs -> ((((s&isOniList.~xs)&score-~scoreHuman)&chTick.~secToChange)&pushedKey.~(Just "<SPACE>"))&keyPushRefreshTime.~defKeyPushRefreshTime
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar k) [])) = continue $ (s&pushedKey.~(Just [k]))&keyPushRefreshTime.~defKeyPushRefreshTime
 eHandler s _ = continue s
 -- }}}
 
@@ -118,5 +128,5 @@ main = do
     let (Right oshgif') = oshgif
         (Right hshgif') = hshgif
 
-    lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange
+    lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange (Nothing) 0
     putStrLn $ "Last Score: " ++ (show $ lastS^.score)
