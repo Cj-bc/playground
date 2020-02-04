@@ -66,7 +66,8 @@ makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
-ui s = [gameUI s <+> vBox [scoreUI s, pushedKeyUI s]]
+ui s = [gameUI s <+> vBox [scoreUI s
+                          , padTop (Pad 42) (pushedKeyUI s)]]
 
 gameUI s = case (s^.isOniList) of
               []      -> border $ str "ALL Gone"
