@@ -133,51 +133,44 @@ pushedKeyUI s = case (s^.pushedKey) of
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
 eHandler s (AppEvent Tick)
     | (s^.tickRemain) <= 0 = halt s
+    | (s^.phase) == Title  = continue $ updateKeyEvent s
     | otherwise  = continue =<< liftIO (do
                      -- Update Shgifs
                      -- This is needed to display (if not, it won't be shown)
                      newOni   <- updateShgif $ s^.oniShgif
                      newHuman <- updateShgif $ s^.humanShgif
 
-                     -- [TODO]
-                     -- I'm not sure, but changing order of those functions
-                     -- might cause some error.
-                     -- I fixed it right now, but might be.
-                     let updateS         = updateShgifs . updateGameTime . updateCharacterTick
-                                            . updateKeyEvent . updateIsOniList . updateAttackState
+                     return $ set humanShgif newHuman . set oniShgif newOni $ updateS s)
+      where
+          updateS  = updateGameTime . updateCharacterTick
+                      . updateKeyEvent . updateIsOniList . updateAttackState
 
-                         updateIsOniList = if (s^.chTick) <= 0
-                                             then over isOniList tail
-                                             else id
-                         updateCharacterTick = if (s^.chTick) <= 0
-                                                 then set chTick secToChange
-                                                 else over chTick (\x -> x - 1)
+          updateIsOniList = if (s^.chTick) <= 0
+                              then over isOniList tail
+                              else id
+          updateCharacterTick = if (s^.chTick) <= 0
+                                  then set chTick secToChange
+                                  else over chTick (\x -> x - 1)
 
-                         -- Don't change order of those functions
-                         --
+          -- Don't change order of those functions
+          --
 
-                         -- TODO:
-                         --  WIP below
-                         updateKeyEvent   = updatePushedKey . updateKeyPushRefreshTime
-                         updatePushedKey  = if (s^.keyPushRefreshTime) <= 0
-                                              then set pushedKey Nothing
-                                              else id
-                         updateKeyPushRefreshTime = if (s^.keyPushRefreshTime) <= 0
-                                                      then set keyPushRefreshTime 0
-                                                      else over keyPushRefreshTime (subtract 1)
+          -- TODO:
+          --  WIP below
+          updateKeyEvent   = updatePushedKey . updateKeyPushRefreshTime
+          updatePushedKey  = if (s^.keyPushRefreshTime) <= 0
+                               then set pushedKey Nothing
+                               else id
+          updateKeyPushRefreshTime = if (s^.keyPushRefreshTime) <= 0
+                                       then set keyPushRefreshTime 0
+                                       else over keyPushRefreshTime (subtract 1)
 
-                         updateGameTime   = over tickRemain (subtract 1)
+          updateGameTime   = over tickRemain (subtract 1)
 
-                         updateShgifs     = updateOniShgif . updateHumanShgif
-                         updateOniShgif   = set oniShgif newOni
-                         updateHumanShgif = set humanShgif newHuman
+          updateAttackState = if (s^.attackStat^._2) <= 0
+                                then set attackStat (NoAttack, 0)
+                                else over attackStat (over _2 (subtract 1))
 
-                         updateAttackState = if (s^.attackStat^._2) <= 0
-                                               then set attackStat (NoAttack, 0)
-                                               else over attackStat (over _2 (subtract 1))
-
-                     return $ updateS s
-                    )
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') []))
     | (s^.phase) == Title = continue (s&phase.~InGame)
     | otherwise = continue $ updateS s
