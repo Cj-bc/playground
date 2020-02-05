@@ -141,16 +141,18 @@ eHandler s (AppEvent Tick)
                     )
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $ updateS s
     where
-        updateS        = updateKeyEvent . chTickReset . calcScore
+        updateS        = updateList . updateKeyEvent . chTickReset . calcScore
         updateKeyEvent = pushedKeySet . resetRefTime
 
         pushedKeySet   = set pushedKey (Just "<SPACE>")
         resetRefTime   = set keyPushRefreshTime defKeyPushRefreshTime
 
         chTickReset    = set chTick secToChange
-        calcScore      = case s^.isOniList of
-                                  True:xs  -> set isOniList xs . over score (+ scoreOni)
-                                  False:xs -> set isOniList xs . over score (+ scoreHuman)
+        doesHitOni     = head $ s^.isOniList
+        calcScore      = if doesHitOni
+                           then over score (+ scoreOni)
+                           else over score (+ scoreHuman)
+        updateList     = over isOniList tail
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar k) [])) = continue $ (s&pushedKey.~(Just [k]))
                                                                   &keyPushRefreshTime.~defKeyPushRefreshTime
 eHandler s _ = continue s
