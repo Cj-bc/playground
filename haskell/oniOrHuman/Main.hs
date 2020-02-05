@@ -78,16 +78,19 @@ makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
-ui s | (s^.phase) == Title = [titleUI]
+ui s | (s^.phase) == Title = [vBox [titleUI, padLeft (Pad 30) $ pushedKeyUI s]]
      | otherwise           = [ translateBy (Location (30, 40)) $ attackStatUI (s^.attackStat^._1)
                              , gameUI s <+> vBox [scoreUI s
                                                 , manualUI
                                                 , padTop (Pad 37) (pushedKeyUI s)]
                              ]
 
-titleUI = border $ vBox [ hCenter $ str "豆まき！！！"
-                        , border  $ str "<SPACE>を押してスタート"
-                        ]
+titleUI = vBox [ hCenter $ str "豆まき！！！"
+               , hCenter $ padTop (Pad 10) manualUI
+               , hCenter $ padTop (Pad 5) $ str "鬼が出たら豆を投げよう！"
+               , hCenter $ str "人に当たらないように気をつけて！！"
+               , hCenter $ padTop (Pad 10) $ border  $ str "<SPACE>を押してスタート"
+               ]
 
 gameUI s = case (s^.isOniList) of
               []      -> border $ str "ALL Gone"
