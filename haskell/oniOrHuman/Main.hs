@@ -68,8 +68,11 @@ makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
-ui s = [gameUI s <+> vBox [scoreUI s
-                          , padTop (Pad 42) (pushedKeyUI s)]]
+ui s = [ gameUI s <+> vBox [scoreUI s
+                           , manualUI
+                           , padTop (Pad 37) (pushedKeyUI s)]
+       ]
+
 
 gameUI s = case (s^.isOniList) of
               []      -> border $ str "ALL Gone"
@@ -80,6 +83,11 @@ scoreUI s = border $ vBox [ str $ "score: "           ++ (show $ s^.score)
                           , str $ "ramain: "          ++ (show $ s^.tickRemain)
                           , str $ "characterRemain: " ++ (show $ length $ s^.isOniList)
                           ]
+
+manualUI = border $ vBox [ str "操作方法"
+                         , padLeft (Pad 4) $ str "<space>: 豆を投げる"
+                         , padLeft (Pad 4) $ str "q: ゲームを終了"
+                         ]
 
 pushedKeyUI s = case (s^.pushedKey) of
                     (Just k)    -> border $ str k
