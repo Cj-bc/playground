@@ -40,6 +40,7 @@ type Second = Int
 type MSec = Int
 type Name = ()
 
+-- Settings {{{
 timeLimit :: MSec
 timeLimit = 30
 
@@ -51,6 +52,7 @@ scoreOni = 100
 scoreHuman = -100
 
 defKeyPushRefreshTime = 50
+-- }}}
 
 data OoHAppState = OoHAppState { _isOniList :: [Bool]
                                , _score :: Int
@@ -89,56 +91,58 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
 eHandler s (AppEvent Tick)
     | (s^.tickRemain) <= 0 = halt s
     | otherwise  = continue =<< liftIO (do
-                    -- Update Shgifs
-                    -- This is needed to display (if not, it won't be shown)
-                    newOni   <- updateShgif $ s^.oniShgif
-                    newHuman <- updateShgif $ s^.humanShgif
+                     -- Update Shgifs
+                     -- This is needed to display (if not, it won't be shown)
+                     newOni   <- updateShgif $ s^.oniShgif
+                     newHuman <- updateShgif $ s^.humanShgif
 
-                    -- [TODO]
-                    -- I'm not sure, but changing order of those functions
-                    -- might cause some error.
-                    -- I fixed it right now, but might be.
-                    let updateS = updateCharacterTick . updateIsOniList . 
+                     -- [TODO]
+                     -- I'm not sure, but changing order of those functions
+                     -- might cause some error.
+                     -- I fixed it right now, but might be.
+                     let updateS         = updateShgifs . updateGameTime . updateCharacterTick
+                                            . updateKeyEvent . updateIsOniList
 
-                        updateIsOniList = if (s^.chTick) <= 0
-                                            then over isOniList tail
-                                            else id
-                        updateCharacterTick = if (s^.chTick) <= 0
-                                                then set chTick secToChange
-                                                else over chTick (- 1)
-
-                        -- Don't change order of those functions
-                        --
-
-                        -- TODO:
-                        --  WIP below
-                        updateKeyEvent   = updatePushedKey . updateKeyPushRefreshTime
-                        updatePushedKey  = if (s^.keyPushRefreshTime) <= 0
-                                             then set pushedKey Nothing
+                         updateIsOniList = if (s^.chTick) <= 0
+                                             then over isOniList tail
                                              else id
-                        updateKeyPushRefreshTime s'''
-                          = if (s^.keyPushRefreshTime) <= 0
-                              then s'''&keyPushRefreshTime.~0
-                              else over keyPushRefreshTime (- 1) s'''
-                        updateGameTime   = over tickRemain (- 1)
+                         updateCharacterTick = if (s^.chTick) <= 0
+                                                 then set chTick secToChange
+                                                 else over chTick (\x -> x - 1)
 
-                        updateShgifs     = updateOniShgif . updateHumanShgif
-                        updateOniShgif   = set oniShgif newOni
-                        updateHumanShgif = set humanShgif newHuman
+                         -- Don't change order of those functions
+                         --
 
-                    return $ updateS s
+                         -- TODO:
+                         --  WIP below
+                         updateKeyEvent   = updatePushedKey . updateKeyPushRefreshTime
+                         updatePushedKey  = if (s^.keyPushRefreshTime) <= 0
+                                              then set pushedKey Nothing
+                                              else id
+                         updateKeyPushRefreshTime = if (s^.keyPushRefreshTime) <= 0
+                                                      then set keyPushRefreshTime 0
+                                                      else over keyPushRefreshTime (subtract 1)
+
+                         updateGameTime   = over tickRemain (subtract 1)
+
+                         updateShgifs     = updateOniShgif . updateHumanShgif
+                         updateOniShgif   = set oniShgif newOni
+                         updateHumanShgif = set humanShgif newHuman
+
+                     return $ updateS s
+                    )
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $ updateS s
     where
-        updateS            = updateKeyEvent . chTickReset . calcScore
-        updateKeyEvent     = pushedKeySet . resetRefTime
+        updateS        = updateKeyEvent . chTickReset . calcScore
+        updateKeyEvent = pushedKeySet . resetRefTime
 
-        pushedKeySet s''   = s''&pushedKey.~(Just "<SPACE>")
-        resetRefTime s'''' = s''''&keyPushRefreshTime.~defKeyPushRefreshTime
+        pushedKeySet   = set pushedKey (Just "<SPACE>")
+        resetRefTime   = set keyPushRefreshTime defKeyPushRefreshTime
 
-        chTickReset s'''   = s'''&chTick.~secToChange
-        calcScore s'''''   = case s'''''^.isOniList of
-                                 True:xs  -> (s'''''&isOniList.~xs)&score+~scoreOni
-                                 False:xs -> (s'''''&isOniList.~xs)&score-~scoreHuman
+        chTickReset    = set chTick secToChange
+        calcScore      = case s^.isOniList of
+                                  True:xs  -> set isOniList xs . over score (+ scoreOni)
+                                  False:xs -> set isOniList xs . over score (+ scoreHuman)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar k) [])) = continue $ (s&pushedKey.~(Just [k]))
                                                                   &keyPushRefreshTime.~defKeyPushRefreshTime
 eHandler s _ = continue s
