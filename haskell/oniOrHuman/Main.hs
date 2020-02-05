@@ -26,6 +26,7 @@ import qualified Graphics.Vty as Vty
 import Brick
 import Brick.Widgets.Core
 import Brick.Widgets.Border
+import Brick.Widgets.Center
 import Brick.Extensions.Shgif.Widgets (shgif)
 import Brick.Extensions.Shgif.Events (TickEvent(..), mainWithTick)
 import Control.Monad (replicateM, guard)
@@ -57,6 +58,9 @@ attackStatRefreshTime = 50
 -- }}}
 
 data AttackStat = NoAttack | AttackOni | AttackHuman
+
+data Phase = Title | InGame deriving (Eq)
+
 data OoHAppState = OoHAppState { _isOniList :: [Bool]
                                , _score :: Int
                                , _oniShgif :: Shgif
@@ -66,18 +70,24 @@ data OoHAppState = OoHAppState { _isOniList :: [Bool]
                                , _pushedKey :: Maybe String
                                , _keyPushRefreshTime :: Int
                                , _attackStat :: (AttackStat, Int)
+                               , _phase :: Phase
                                }
+
 
 makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
-ui s = [ translateBy (Location (30, 40)) $ attackStatUI (s^.attackStat^._1)
-                     , gameUI s <+> vBox [scoreUI s
-                                        , manualUI
-                                        , padTop (Pad 37) (pushedKeyUI s)]
-                     ]
+ui s | (s^.phase) == Title = [titleUI]
+     | otherwise           = [ translateBy (Location (30, 40)) $ attackStatUI (s^.attackStat^._1)
+                             , gameUI s <+> vBox [scoreUI s
+                                                , manualUI
+                                                , padTop (Pad 37) (pushedKeyUI s)]
+                             ]
 
+titleUI = border $ vBox [ hCenter $ str "豆まき！！！"
+                        , border  $ str "<SPACE>を押してスタート"
+                        ]
 
 gameUI s = case (s^.isOniList) of
               []      -> border $ str "ALL Gone"
@@ -165,7 +175,9 @@ eHandler s (AppEvent Tick)
 
                      return $ updateS s
                     )
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $ updateS s
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') []))
+    | (s^.phase) == Title = continue (s&phase.~InGame)
+    | otherwise = continue $ updateS s
     where
         updateS        = updateList . updateAtkStat . updateKeyEvent . chTickReset . calcScore
         updateKeyEvent = pushedKeySet . resetRefTime
@@ -210,5 +222,5 @@ main = do
     let (Right oshgif') = oshgif
         (Right hshgif') = hshgif
 
-    lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange (Nothing) 0 (NoAttack, 0)
+    lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange (Nothing) 0 (NoAttack, 0) Title
     putStrLn $ "Last Score: " ++ (show $ lastS^.score)
