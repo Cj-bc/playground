@@ -52,8 +52,11 @@ scoreOni = 100
 scoreHuman = -100
 
 defKeyPushRefreshTime = 50
+
+attackStatRefreshTime = 50
 -- }}}
 
+data AttackStat = NoAttack | AttackOni | AttackHuman
 data OoHAppState = OoHAppState { _isOniList :: [Bool]
                                , _score :: Int
                                , _oniShgif :: Shgif
@@ -62,16 +65,18 @@ data OoHAppState = OoHAppState { _isOniList :: [Bool]
                                , _chTick :: Int
                                , _pushedKey :: Maybe String
                                , _keyPushRefreshTime :: Int
+                               , _attackStat :: (AttackStat, Int)
                                }
 
 makeLenses ''OoHAppState
 
 -- UI {{{
 ui :: OoHAppState -> [Widget Name]
-ui s = [ gameUI s <+> vBox [scoreUI s
-                           , manualUI
-                           , padTop (Pad 37) (pushedKeyUI s)]
-       ]
+ui s = [ translateBy (Location (30, 40)) $ attackStatUI (s^.attackStat^._1)
+                     , gameUI s <+> vBox [scoreUI s
+                                        , manualUI
+                                        , padTop (Pad 37) (pushedKeyUI s)]
+                     ]
 
 
 gameUI s = case (s^.isOniList) of
@@ -88,6 +93,23 @@ manualUI = border $ vBox [ str "操作方法"
                          , padLeft (Pad 4) $ str "<space>: 豆を投げる"
                          , padLeft (Pad 4) $ str "q: ゲームを終了"
                          ]
+
+attackStatUI NoAttack    = emptyWidget
+attackStatUI AttackOni   = border $ vBox [ str "         ____" 
+                                         , str "       /    \\"
+                                         , str "      /     /            ____"
+                                         , str "     /   .-'            /    \\          ____"
+                                         , str "     \\  \\ \\            /     /         /    \\"
+                                         , str "   /  \\___/           /   .-'         /     /"
+                                         , str "  / /                 \\  \\ \\         /   .-'"
+                                         , str " / /  /             /  \\___/         \\  \\ \\  \\"
+                                         , str "/ /  /             / /       \\        \\___/   \\"
+                                         , str "                  / /  /  \\ \\ \\          \\  \\  \\"
+                                         , str "                 / /  /    \\ \\ \\          \\  \\  \\"
+                                         , str "                                           \\  \\  \\"
+                                         ]
+attackStatUI AttackHuman = border $ padLeftRight 18 $ padTopBottom 5 $ str "うわっっっっっ"
+
 
 pushedKeyUI s = case (s^.pushedKey) of
                     (Just k)    -> border $ str k
@@ -109,7 +131,7 @@ eHandler s (AppEvent Tick)
                      -- might cause some error.
                      -- I fixed it right now, but might be.
                      let updateS         = updateShgifs . updateGameTime . updateCharacterTick
-                                            . updateKeyEvent . updateIsOniList
+                                            . updateKeyEvent . updateIsOniList . updateAttackState
 
                          updateIsOniList = if (s^.chTick) <= 0
                                              then over isOniList tail
@@ -137,11 +159,15 @@ eHandler s (AppEvent Tick)
                          updateOniShgif   = set oniShgif newOni
                          updateHumanShgif = set humanShgif newHuman
 
+                         updateAttackState = if (s^.attackStat^._2) <= 0
+                                               then set attackStat (NoAttack, 0)
+                                               else over attackStat (over _2 (subtract 1))
+
                      return $ updateS s
                     )
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $ updateS s
     where
-        updateS        = updateList . updateKeyEvent . chTickReset . calcScore
+        updateS        = updateList . updateAtkStat . updateKeyEvent . chTickReset . calcScore
         updateKeyEvent = pushedKeySet . resetRefTime
 
         pushedKeySet   = set pushedKey (Just "<SPACE>")
@@ -149,6 +175,9 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $ updateS s
 
         chTickReset    = set chTick secToChange
         doesHitOni     = head $ s^.isOniList
+        updateAtkStat  = if doesHitOni
+                           then set attackStat (AttackOni, attackStatRefreshTime)
+                           else set attackStat (AttackHuman, attackStatRefreshTime)
         calcScore      = if doesHitOni
                            then over score (+ scoreOni)
                            else over score (+ scoreHuman)
@@ -181,5 +210,5 @@ main = do
     let (Right oshgif') = oshgif
         (Right hshgif') = hshgif
 
-    lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange (Nothing) 0
+    lastS <- mainWithTick Nothing 1000 app $ OoHAppState onilist 0 oshgif' hshgif' (60 * 60) secToChange (Nothing) 0 (NoAttack, 0)
     putStrLn $ "Last Score: " ++ (show $ lastS^.score)
