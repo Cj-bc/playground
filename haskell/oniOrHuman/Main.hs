@@ -89,20 +89,58 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
 eHandler s (AppEvent Tick)
     | (s^.tickRemain) <= 0 = halt s
     | otherwise  = continue =<< liftIO (do
-                    newOni <- updateShgif (s^.oniShgif)
-                    newHuman <- updateShgif (s^.humanShgif)
+                    -- Update Shgifs
+                    -- This is needed to display (if not, it won't be shown)
+                    newOni   <- updateShgif $ s^.oniShgif
+                    newHuman <- updateShgif $ s^.humanShgif
 
-                    let ls = if (s^.chTick) <= 0 then (tail (s^.isOniList))
-                                                 else (s^.isOniList)
-                        tk = if (s^.chTick) <= 0 then secToChange else ((s^.chTick) - 1)
-                        pk = if (s^.keyPushRefreshTime) <= 0 then Nothing else (s^.pushedKey)
-                        keyPushRefreshTime' = if (s^.keyPushRefreshTime) <= 0 then 0 else (s^.keyPushRefreshTime - 1)
-                    return $ OoHAppState ls (s^.score) newOni newHuman ((s^.tickRemain) - 1) tk pk keyPushRefreshTime')
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $
-    case s^.isOniList of
-        True:xs  -> ((((s&isOniList.~xs)&score+~scoreOni)&chTick.~secToChange)&pushedKey.~(Just "<SPACE>"))&keyPushRefreshTime.~defKeyPushRefreshTime
-        False:xs -> ((((s&isOniList.~xs)&score-~scoreHuman)&chTick.~secToChange)&pushedKey.~(Just "<SPACE>"))&keyPushRefreshTime.~defKeyPushRefreshTime
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar k) [])) = continue $ (s&pushedKey.~(Just [k]))&keyPushRefreshTime.~defKeyPushRefreshTime
+                    -- [TODO]
+                    -- I'm not sure, but changing order of those functions
+                    -- might cause some error.
+                    -- I fixed it right now, but might be.
+                    let updateS = updateCharacterTick . updateIsOniList . 
+
+                        updateIsOniList = if (s^.chTick) <= 0
+                                            then over isOniList tail
+                                            else id
+                        updateCharacterTick = if (s^.chTick) <= 0
+                                                then set chTick secToChange
+                                                else over chTick (- 1)
+
+                        -- Don't change order of those functions
+                        --
+
+                        -- TODO:
+                        --  WIP below
+                        updateKeyEvent   = updatePushedKey . updateKeyPushRefreshTime
+                        updatePushedKey  = if (s^.keyPushRefreshTime) <= 0
+                                             then set pushedKey Nothing
+                                             else id
+                        updateKeyPushRefreshTime s'''
+                          = if (s^.keyPushRefreshTime) <= 0
+                              then s'''&keyPushRefreshTime.~0
+                              else over keyPushRefreshTime (- 1) s'''
+                        updateGameTime   = over tickRemain (- 1)
+
+                        updateShgifs     = updateOniShgif . updateHumanShgif
+                        updateOniShgif   = set oniShgif newOni
+                        updateHumanShgif = set humanShgif newHuman
+
+                    return $ updateS s
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar ' ') [])) = continue $ updateS s
+    where
+        updateS            = updateKeyEvent . chTickReset . calcScore
+        updateKeyEvent     = pushedKeySet . resetRefTime
+
+        pushedKeySet s''   = s''&pushedKey.~(Just "<SPACE>")
+        resetRefTime s'''' = s''''&keyPushRefreshTime.~defKeyPushRefreshTime
+
+        chTickReset s'''   = s'''&chTick.~secToChange
+        calcScore s'''''   = case s'''''^.isOniList of
+                                 True:xs  -> (s'''''&isOniList.~xs)&score+~scoreOni
+                                 False:xs -> (s'''''&isOniList.~xs)&score-~scoreHuman
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar k) [])) = continue $ (s&pushedKey.~(Just [k]))
+                                                                  &keyPushRefreshTime.~defKeyPushRefreshTime
 eHandler s _ = continue s
 -- }}}
 
