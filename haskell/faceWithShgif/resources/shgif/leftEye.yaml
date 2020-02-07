@@ -2,26 +2,52 @@ title: leftEye
 author: Cj-bc
 format: Page
 width: 9
-height: 3
+height: 5
 data:
   - timestamp: 0
     contents:
+      - "  _____ "
+      - ",/     \\."
+      - "   /\\  ''"
+      - " _ \\/  /"
+      - "         "
+
+  - timestamp: 40
+    contents:
+      - ""
       - ",------."
       - "  r\"\\  ''"
       - " _\\o/  /"
-  - timestamp: 10
+      - ""
+  - timestamp: 50
     contents:
+      - ""
       - "_______."
       - "' |\"|  ''"
       - "  ---- /  "
-  - timestamp: 20
+      - ""
+  - timestamp: 60
     contents:
+      - ""
       - ""
       - "'------''"
       - ""
-  - timestamp: 30
+      - ""
+  - timestamp: 70
     contents:
+      - ""
       - ""
       - ".==___==,"
       - ""
-
+  - timestamp: 80
+    contents:
+      - ""
+      - ""
+      - ".=---=,"
+      - ""
+  - timestamp: 90
+    contents:
+      - ""
+      - "   ___"
+      - ".=\"   \"=,"
+      - ""
