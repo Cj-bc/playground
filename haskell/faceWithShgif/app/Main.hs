@@ -11,7 +11,8 @@ import qualified Graphics.Vty as Vty
 import Brick
 import Brick.Extensions.Shgif.Widgets (shgif)
 import Brick.Extensions.Shgif.Events (TickEvent(..), mainWithTick)
-import Shgif.Type (Shgif, getShgif, updateShgifNoLoop, updateShgif, updateShgifReversedNoLoop)
+import Shgif.Type (Shgif, getShgif, updateShgifNoLoop, updateShgif, updateShgifReversedNoLoop
+                  , updateShgifTo)
 
 helpText = unlines ["faceWithShgif -- prototype program to do live2d like animation with shgif"
                    , ""
@@ -47,6 +48,7 @@ data PartState = Opened  -- ^ The part is opened
                | Closed  -- ^ The part is closed
                | Opening -- ^ The part is opening
                | Closing -- ^ The part is closing
+               | Emote1
                 deriving (Eq)
 
 data AppState = AppState { _face :: Face
@@ -73,7 +75,7 @@ ui :: AppState -> [Widget Name]
 ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
        , partUI (f^.nose) (25, 20)
        , partUI (f^.mouth) $ (22, 24) `addOffset` (s^.mouthOffset)
-       , partUI (f^.leftEye) $ (31, 15) `addOffset` (s^.leftEyeOffset)
+       , partUI (f^.leftEye) $ (29, 15) `addOffset` (s^.leftEyeOffset)
        , partUI (f^.hair) $ (5, 0) `addOffset` (s^.hairOffset)
        , shgif (f^.contour)
        , partUI (f^.backHair) (4, 0)
@@ -111,23 +113,32 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                                        Closing -> updateShgifNoLoop         $ f^.partLens
                                        Opening -> updateShgifReversedNoLoop $ f^.partLens
                                        _       -> return $ f^.partLens
+
+        eyeRTick = case s^.rightEyeState of
+                     Opening -> 40
+                     Opened  -> 40
+                     Closing -> 70
+                     Closed  -> 70
+                     Emote1  -> 0
+        eyeLTick = case s^.leftEyeState of
+                     Opening -> 40
+                     Opened  -> 40
+                     Closing -> 70
+                     Closed  -> 70
+                     Emote1  -> 0
         newFace = Face <$> (updateShgif $ f^.contour)
-                       <*> partUpdate leftEye leftEyeState
-                       <*> partUpdate rightEye rightEyeState
+                       <*> (updateShgifTo eyeLTick $ f^.leftEye)
+                       <*> (updateShgifTo eyeRTick $ f^.rightEye)
                        <*> (updateShgif $ f^.nose)
                        <*> partUpdate mouth mouthState
                        <*> (updateShgif $ f^.hair)
                        <*> (updateShgif $ f^.backHair)
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ case s^.rightEyeState  of
-                                                                  Opened  -> s&rightEyeState.~ Closing
-                                                                  Opening -> s&rightEyeState.~ Closing
-                                                                  Closed  -> s&rightEyeState.~ Opening
-                                                                  Closing -> s&rightEyeState.~ Opening
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'e') [])) = continue $ case s^.leftEyeState of
-                                                                  Opened  -> s&leftEyeState.~ Closing
-                                                                  Opening -> s&leftEyeState.~ Closing
-                                                                  Closed  -> s&leftEyeState.~ Opening
-                                                                  Closing -> s&leftEyeState.~ Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ s&rightEyeState.~Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 's') [])) = continue $ s&rightEyeState.~Closing
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'x') [])) = continue $ s&rightEyeState.~Emote1
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'e') [])) = continue $ s&leftEyeState.~Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'd') [])) = continue $ s&leftEyeState.~Closing
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'c') [])) = continue $ s&leftEyeState.~Emote1
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'm') [])) = continue $ case s^.mouthState of
                                                                   Opened  -> s&mouthState.~ Closing
                                                                   Opening -> s&mouthState.~ Closing
