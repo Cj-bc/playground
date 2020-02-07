@@ -92,11 +92,19 @@ ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
 --
 -- * 'q' : quit the app
 --
--- * 'w' : Open/Close right eye
+-- * 'w' : Open right eye
 --
--- * 'e' : Open/Close left eye
+-- * 's' : Close right eye
 --
--- * 'r' : Open/Close mouth
+-- * 'x' : Open right eye wide
+--
+-- * 'e' : Open left eye
+--
+-- * 'd' : Close left eye
+--
+-- * 'c' : Open left eye wide
+--
+-- * 'm' : Open/Close mouth
 --
 -- * 'l' : Look left
 --
