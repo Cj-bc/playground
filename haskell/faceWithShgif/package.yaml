@@ -23,7 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - vty
 - brick
-- brick-shgif
+- brick-shgif >= 1.1.4.0
 - lens
 
 library:
