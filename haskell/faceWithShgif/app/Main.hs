@@ -49,6 +49,7 @@ data PartState = Opened  -- ^ The part is opened
                | Opening -- ^ The part is opening
                | Closing -- ^ The part is closing
                | Emote1
+               | Emote2
                 deriving (Eq)
 
 data AppState = AppState { _face :: Face
@@ -120,12 +121,14 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                      Closing -> 70
                      Closed  -> 70
                      Emote1  -> 0
+                     Emote2  -> 90
         eyeLTick = case s^.leftEyeState of
                      Opening -> 40
                      Opened  -> 40
                      Closing -> 70
                      Closed  -> 70
                      Emote1  -> 0
+                     Emote2  -> 90
         newFace = Face <$> (updateShgif $ f^.contour)
                        <*> (updateShgifTo eyeLTick $ f^.leftEye)
                        <*> (updateShgifTo eyeRTick $ f^.rightEye)
@@ -136,9 +139,11 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ s&rightEyeState.~Opening
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 's') [])) = continue $ s&rightEyeState.~Closing
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'x') [])) = continue $ s&rightEyeState.~Emote1
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'r') [])) = continue $ s&rightEyeState.~Emote2
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'e') [])) = continue $ s&leftEyeState.~Opening
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'd') [])) = continue $ s&leftEyeState.~Closing
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'c') [])) = continue $ s&leftEyeState.~Emote1
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'f') [])) = continue $ s&leftEyeState.~Emote2
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'm') [])) = continue $ case s^.mouthState of
                                                                   Opened  -> s&mouthState.~ Closing
                                                                   Opening -> s&mouthState.~ Closing
