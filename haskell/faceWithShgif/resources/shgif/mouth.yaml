@@ -2,11 +2,18 @@ title: mouth
 author: Cj-bc
 format: Page
 width: 7
-height: 1
+height: 3
 data:
   - timestamp: 0
     contents:
-      - "`====='"
+      - "_______"
+      - "\\     /"
+      - " '---'"
   - timestamp: 50
     contents:
+      - ""
+      - "`====='"
+  - timestamp: 60
+    contents:
+      - ""
       - "   O"

@@ -137,11 +137,18 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                      Closed  -> 70
                      Emote1  -> 0
                      Emote2  -> 90
+        mouthTick = case s^.mouthState of
+                     Opening -> 0
+                     Opened  -> 0
+                     Closing -> 50
+                     Closed  -> 50
+                     Emote1  -> 60
+                     Emote2  -> 60
         newFace = Face <$> (updateShgif $ f^.contour)
                        <*> (updateShgifTo eyeLTick $ f^.leftEye)
                        <*> (updateShgifTo eyeRTick $ f^.rightEye)
                        <*> (updateShgif $ f^.nose)
-                       <*> partUpdate mouth mouthState
+                       <*> (updateShgifTo mouthTick $ f^.mouth)
                        <*> (updateShgif $ f^.hair)
                        <*> (updateShgif $ f^.backHair)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ s&rightEyeState.~Opening
@@ -152,11 +159,9 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'e') [])) = continue $ s&leftEyeState
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'd') [])) = continue $ s&leftEyeState.~Closing
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'c') [])) = continue $ s&leftEyeState.~Emote1
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'f') [])) = continue $ s&leftEyeState.~Emote2
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'm') [])) = continue $ case s^.mouthState of
-                                                                  Opened  -> s&mouthState.~ Closing
-                                                                  Opening -> s&mouthState.~ Closing
-                                                                  Closed  -> s&mouthState.~ Opening
-                                                                  Closing -> s&mouthState.~ Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'm') [])) = continue $ s&mouthState.~ Closing
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&mouthState.~ Opening
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'b') [])) = continue $ s&mouthState.~ Emote1
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'l') [])) = continue $ s&rightEyeOffset.~ (3, 0)
                                                                    &leftEyeOffset.~ (2, 0)
                                                                    &mouthOffset.~ (1, 0)
@@ -165,10 +170,10 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'h') [])) = continue $ s&rightEyeOffs
                                                                    &leftEyeOffset.~ (-3, 0)
                                                                    &mouthOffset.~ (-1, 0)
                                                                    &hairOffset.~ (-1, 0)
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&rightEyeOffset.~ (0, 0)
-                                                                   &leftEyeOffset.~ (0, 0)
-                                                                   &mouthOffset.~ (0, 0)
-                                                                   &hairOffset.~ (0, 0)
+-- eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&rightEyeOffset.~ (0, 0)
+--                                                                    &leftEyeOffset.~ (0, 0)
+--                                                                    &mouthOffset.~ (0, 0)
+--                                                                    &hairOffset.~ (0, 0)
 eHandler s _ = continue s
 
 
