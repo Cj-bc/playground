@@ -150,7 +150,11 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                      Closed  -> 50
                      Emote1  -> 60
                      Emote2  -> 60
-        newFace = Face <$> (updateShgif $ f^.contour)
+        contourTick = case s^.faceLooking of
+                    Just L  -> 0
+                    Nothing -> 100
+                    Just R  -> 200
+        newFace = Face <$> (updateShgifTo contourTick $ f^.contour)
                        <*> (updateShgifTo eyeLTick $ f^.leftEye)
                        <*> (updateShgifTo eyeRTick $ f^.rightEye)
                        <*> (updateShgif $ f^.nose)
