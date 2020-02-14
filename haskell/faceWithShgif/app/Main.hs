@@ -76,7 +76,7 @@ data Name = NoName deriving (Eq, Ord)
 -- UI {{{
 -- | Render face
 ui :: AppState -> [Widget Name]
-ui s = [ border $ canvas [(s^.currentCanvas)]
+ui s = [ canvas [(s^.currentCanvas)]
        ]
 -- }}}
 
