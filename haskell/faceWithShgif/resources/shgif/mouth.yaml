@@ -5,15 +5,18 @@ width: 7
 height: 3
 data:
   - timestamp: 0
-    contents:
-      - "_______"
-      - "\\     /"
-      - " '---'"
+    contents: |-
+      anchor
+      _______
+      \     /
+       '---'
   - timestamp: 50
-    contents:
-      - ""
-      - "`====='"
+    contents: |-
+      anchor
+
+      `====='
   - timestamp: 60
-    contents:
-      - ""
-      - "   O"
+    contents: |-
+      anchor
+
+         O

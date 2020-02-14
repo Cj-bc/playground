@@ -5,69 +5,79 @@ width: 9
 height: 5
 data:
   - timestamp: 0
-    contents:
-      - "  _____"
-      - "./     \\."
-      - "''  /\\"
-      - " \\  \\/ _"
+    contents: |-
+      anchor
+        _____
+      ./     \.
+      ''  /\
+       \  \/ _
 
   - timestamp: 10
-    contents:
-      - "  _____"
-      - "./     \\."
-      - "''  /\\"
-      - " \\  \\/ _"
+    contents: |-
+      anchor
+        _____
+      ./     \.
+      ''  /\
+       \  \/ _
 
   - timestamp: 20
-    contents:
-      - "   ____"
-      - " ,\"    \"."
-      - "''  r\\"
-      - " \\  \\/ _"
+    contents: |-
+      anchor
+         ____
+       ,"    ".
+      ''  r\
+       \  \/ _
 
   - timestamp: 30
-    contents:
-      - "    __"
-      - " ,-\"  \"-."
-      - "''  r\"\\"
-      - " \\  \\o/_"
+    contents: |-
+      anchor
+          __
+       ,-"  "-.
+      ''  r"\
+       \  \o/_
 
 
   - timestamp: 40
-    contents:
-      - ""
-      - " .------."
-      - "''  r\"\\"
-      - " \\  \\o/_"
-      - ""
+    contents: |-
+      anchor
+
+       .------.
+      ''  r"\
+       \  \o/_
+
   - timestamp: 50
-    contents:
-      - ""
-      - " ._______"
-      - "''  |\"| "
-      - " \\  ----"
-      - ""
+    contents: |-
+      anchor
+
+       ._______
+      ''  |"|
+       \  ----
+
   - timestamp: 60
-    contents:
-      - ""
-      - ""
-      - "'_-------`"
+    contents: |-
+      anchor
+
+
+      '_-------`
   - timestamp: 70
-    contents:
-      - ""
-      - ""
-      - ",==___==."
-      - ""
+    contents: |-
+      anchor
+
+
+      ,==___==.
+
   - timestamp: 80
-    contents:
-      - ""
-      - ""
-      - ",=---=."
-      - ""
+    contents: |-
+      anchor
+
+
+      ,=---=.
+
   - timestamp: 90
-    contents:
-      - ""
-      - "   ___"
-      - ",=\"   \"=."
-      - ""
+    contents: |-
+      anchor
+
+         ___
+      ,="   "=.
+
 

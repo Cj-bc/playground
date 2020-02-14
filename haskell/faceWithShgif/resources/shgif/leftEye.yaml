@@ -5,49 +5,56 @@ width: 9
 height: 5
 data:
   - timestamp: 0
-    contents:
-      - "  _____ "
-      - ",/     \\."
-      - "   /\\  ''"
-      - " _ \\/  /"
-      - "         "
+    contents: |-
+      anchor
+        _____
+      ,/     \.
+         /\  ''
+       _ \/  /
+
 
   - timestamp: 40
-    contents:
-      - ""
-      - ",------."
-      - "  r\"\\  ''"
-      - " _\\o/  /"
-      - ""
+    contents: |-
+      anchor
+
+      ,------.
+        r"\  ''
+       _\o/  /
+
   - timestamp: 50
-    contents:
-      - ""
-      - "_______."
-      - "' |\"|  ''"
-      - "  ---- /  "
-      - ""
+    contents: |-
+      anchor
+
+      _______.
+      ' |"|  ''
+        ---- /
+
   - timestamp: 60
-    contents:
-      - ""
-      - ""
-      - "'------''"
-      - ""
-      - ""
+    contents: |-
+      anchor
+
+
+      '------''
+
+
   - timestamp: 70
-    contents:
-      - ""
-      - ""
-      - ".==___==,"
-      - ""
+    contents: |-
+      anchor
+
+
+      .==___==,
+
   - timestamp: 80
-    contents:
-      - ""
-      - ""
-      - ".=---=,"
-      - ""
+    contents: |-
+      anchor
+
+
+      .=---=,
+
   - timestamp: 90
-    contents:
-      - ""
-      - "   ___"
-      - ".=\"   \"=,"
-      - ""
+    contents: |-
+      anchor
+
+         ___
+      .="   "=,
+
