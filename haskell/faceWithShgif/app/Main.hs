@@ -1,7 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main where
 
-import Control.Lens (makeLenses, (^.), (&), (.~))
+import Control.Lens (makeLenses, (^.), (&), (.~), over)
 import Control.Monad (when)
 import Control.Monad.IO.Class (liftIO)
 import System.Exit (exitFailure, exitSuccess)
@@ -61,6 +61,8 @@ data AppState = AppState { _face :: Face
                          , _mouthOffset :: (Int, Int)
                          , _hairOffset :: (Int, Int)
                          , _noseOffset :: (Int, Int)
+                         , _faceLooking :: Maybe LR
+                         , _tick :: Int
                          }
 makeLenses ''AppState
 
@@ -111,12 +113,15 @@ ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
 --
 -- * 'h' : Look right
 --
--- * 'n' : Look front
+-- * 'o' : Look front
 eHandler :: AppState -> BrickEvent name TickEvent -> EventM Name (Next AppState)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
 eHandler s (AppEvent Tick) = continue =<< liftIO (do
                                                   nf <- newFace
-                                                  return $ s&face.~ nf)
+                                                  let updateOffset = if ((s^.tick) `mod` 10) == 0
+                                                                       then calculateOffset
+                                                                       else id
+                                                  return $ over tick (+1) $ updateOffset $ s&face.~ nf)
       where
         f = s^.face
         partUpdate partLens condLens = case s^.condLens of
@@ -152,6 +157,15 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                        <*> (updateShgifTo mouthTick $ f^.mouth)
                        <*> (updateShgif $ f^.hair)
                        <*> (updateShgif $ f^.backHair)
+        calculateOffset = case (s^.faceLooking) of
+                            Nothing -> calculateOffset' (0, 0) (0, 0) (0, 0) (0, 0) (0, 0)
+                            Just R  -> calculateOffset' (-1, 0) (-2, 0) (-1, 0) (0, 0) (-1, 0)
+                            Just L  -> calculateOffset' (2, 0) (1, 0) (1, 0) (0, 0) (1, 0)
+        calculateOffset' a b c d e = over rightEyeOffset  (_moveOffsetTo a)
+                                     . over leftEyeOffset (_moveOffsetTo b)
+                                     . over mouthOffset   (_moveOffsetTo c)
+                                     . over hairOffset    (_moveOffsetTo d)
+                                     . over noseOffset    (_moveOffsetTo e)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ s&rightEyeState.~Opening
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 's') [])) = continue $ s&rightEyeState.~Closing
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'x') [])) = continue $ s&rightEyeState.~Emote1
@@ -163,22 +177,27 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'f') [])) = continue $ s&leftEyeState
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'm') [])) = continue $ s&mouthState.~ Closing
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&mouthState.~ Opening
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'b') [])) = continue $ s&mouthState.~ Emote1
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'l') [])) = continue $ s&rightEyeOffset.~ (3, 0)
-                                                                   &leftEyeOffset.~ (2, 0)
-                                                                   &mouthOffset.~ (1, 0)
-                                                                   &hairOffset.~ (1, 0)
-                                                                   &noseOffset.~ (1, 0)
-eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'h') [])) = continue $ s&rightEyeOffset.~ (-2, 0)
-                                                                   &leftEyeOffset.~ (-3, 0)
-                                                                   &mouthOffset.~ (-1, 0)
-                                                                   &hairOffset.~ (-1, 0)
-                                                                   &noseOffset.~ (-1, 0)
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'l') [])) = continue $ s&faceLooking.~(Just L)
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'h') [])) = continue $ s&faceLooking.~(Just R)
+eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'o') [])) = continue $ s&faceLooking.~Nothing
 -- eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&rightEyeOffset.~ (0, 0)
 --                                                                    &leftEyeOffset.~ (0, 0)
 --                                                                    &mouthOffset.~ (0, 0)
 --                                                                    &hairOffset.~ (0, 0)
 eHandler s _ = continue s
 
+_moveOffsetTo :: (Int, Int) -> (Int, Int) -> (Int, Int)
+_moveOffsetTo limit@(x1, y1) current@(x2, y2) | current == limit = current
+                                              | x1 == x2         = updateY current
+                                              | y1 == y2         = updateX current
+                                              | otherwise        = updateX $ updateY current
+    where
+        updateX (tx, ty) = if x2 < x1
+                             then (tx + 1, ty)
+                             else (tx - 1, ty)
+        updateY (tx, ty) = if y2 < y1
+                             then (tx, ty + 1)
+                             else (tx, ty - 1)
 
 app :: App AppState TickEvent Name
 app = App { appDraw         = ui
@@ -218,5 +237,5 @@ main = do
         (Right hb) = e_backHair
         face       = (Face c le re ns m h hb)
 
-    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0) (0, 0)
+    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0) (0, 0) Nothing 0
     return ()
