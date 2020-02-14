@@ -218,11 +218,15 @@ plotToCanvas (dw, dh) bc c = do
     write [(w', h') | w' <- [0..w-1], h' <- [0..h-1]] bc
     where
         write :: [(Int, Int)] -> Canvas -> IO Canvas
-        write [] c'         = return c'
-        write ((w, h):x) c' = do
-            let (ch, attr) = canvasGetPixel c' (w, h)
-            newC <- canvasSetPixel bc (w + dw, h + dh) ch attr
-            write x newC
+        write [] bc'         = return bc'
+        write ((w, h):x) bc' = do
+            let (ch, attr) = canvasGetPixel c (w, h)
+            case ch of
+                ' ' -> write x bc
+                _   -> do
+                  newC <- canvasSetPixel bc (w + dw, h + dh) ch attr
+                  write x newC
+
 
 -- | Merge and render all Shgifs into one Canvas
 mergeToBigCanvas :: [(Shgif, (Int, Int))] -> IO Canvas
