@@ -60,6 +60,7 @@ data AppState = AppState { _face :: Face
                          , _leftEyeOffset :: (Int, Int)
                          , _mouthOffset :: (Int, Int)
                          , _hairOffset :: (Int, Int)
+                         , _noseOffset :: (Int, Int)
                          }
 makeLenses ''AppState
 
@@ -74,7 +75,7 @@ partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
 -- *Order of parts are really important*
 ui :: AppState -> [Widget Name]
 ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
-       , partUI (f^.nose) (25, 20)
+       , partUI (f^.nose) $ (25, 20) `addOffset` (s^.noseOffset)
        , partUI (f^.mouth) $ (22, 24) `addOffset` (s^.mouthOffset)
        , partUI (f^.leftEye) $ (29, 15) `addOffset` (s^.leftEyeOffset)
        , partUI (f^.hair) $ (5, 0) `addOffset` (s^.hairOffset)
@@ -166,10 +167,12 @@ eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'l') [])) = continue $ s&rightEyeOffs
                                                                    &leftEyeOffset.~ (2, 0)
                                                                    &mouthOffset.~ (1, 0)
                                                                    &hairOffset.~ (1, 0)
+                                                                   &noseOffset.~ (1, 0)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'h') [])) = continue $ s&rightEyeOffset.~ (-2, 0)
                                                                    &leftEyeOffset.~ (-3, 0)
                                                                    &mouthOffset.~ (-1, 0)
                                                                    &hairOffset.~ (-1, 0)
+                                                                   &noseOffset.~ (-1, 0)
 -- eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'n') [])) = continue $ s&rightEyeOffset.~ (0, 0)
 --                                                                    &leftEyeOffset.~ (0, 0)
 --                                                                    &mouthOffset.~ (0, 0)
@@ -215,5 +218,5 @@ main = do
         (Right hb) = e_backHair
         face       = (Face c le re ns m h hb)
 
-    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0)
+    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0) (0, 0)
     return ()
