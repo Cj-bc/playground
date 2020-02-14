@@ -154,17 +154,21 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                     Just L  -> 0
                     Nothing -> 100
                     Just R  -> 200
+        hairTick = case s^.faceLooking of
+                    Just L  -> 0
+                    Nothing -> 100
+                    Just R  -> 200
         newFace = Face <$> (updateShgifTo contourTick $ f^.contour)
                        <*> (updateShgifTo eyeLTick $ f^.leftEye)
                        <*> (updateShgifTo eyeRTick $ f^.rightEye)
                        <*> (updateShgif $ f^.nose)
                        <*> (updateShgifTo mouthTick $ f^.mouth)
-                       <*> (updateShgif $ f^.hair)
+                       <*> (updateShgifTo hairTick  $ f^.hair)
                        <*> (updateShgif $ f^.backHair)
         calculateOffset = case (s^.faceLooking) of
                             Nothing -> calculateOffset' (0, 0) (0, 0) (0, 0) (0, 0) (0, 0)
-                            Just R  -> calculateOffset' (-1, 0) (-2, 0) (-1, 0) (0, 0) (-1, 0)
-                            Just L  -> calculateOffset' (2, 0) (1, 0) (1, 0) (0, 0) (1, 0)
+                            Just R  -> calculateOffset' (-2, 0) (-3, 0) (-2, 0) (0, 0) (-2, 0)
+                            Just L  -> calculateOffset' (3, 0) (2, 0) (2, 0) (0, 0) (2, 0)
         calculateOffset' a b c d e = over rightEyeOffset  (_moveOffsetTo a)
                                      . over leftEyeOffset (_moveOffsetTo b)
                                      . over mouthOffset   (_moveOffsetTo c)
