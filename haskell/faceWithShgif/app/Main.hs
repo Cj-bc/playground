@@ -235,10 +235,10 @@ mergeToBigCanvas ss = do
 
         -- | Write Canvases one after another
         write :: [(Shgif, (Int, Int))] -> Canvas -> IO Canvas
-        write [] c      = return c
-        write ((s,p):x) c = do
-            canvs <- shgifToCanvas s
-            newC <- plotToCanvas p c canvs
+        write [] c         = return c
+        write ((s,p):x) bc = do
+            shgifC <- shgifToCanvas s
+            newC <- plotToCanvas p bc shgifC
             write x newC
 -- }}}
 
