@@ -166,11 +166,12 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                                      . over hairOffset    (_moveOffsetTo d)
                                      . over noseOffset    (_moveOffsetTo e)
         addOffset (a, b) (c, d) = (a + c, b + d)
-        updateCanvas = mergeToBigCanvas [ (f^.rightEye, (13, 15) `addOffset` (s^.rightEyeOffset))
+        updateCanvas = mergeToBigCanvas [ (f^.hair    , (5, 0)   `addOffset` (s^.hairOffset))
+                                        , (f^.rightEye, (13, 15) `addOffset` (s^.rightEyeOffset))
+                                        , (f^.leftEye , (29, 15) `addOffset` (s^.leftEyeOffset))
                                         , (f^.nose    , (25, 20) `addOffset` (s^.noseOffset))
                                         , (f^.mouth   , (22, 24) `addOffset` (s^.mouthOffset))
-                                        , (f^.leftEye , (29, 15) `addOffset` (s^.leftEyeOffset))
-                                        , (f^.hair    , (5, 0)   `addOffset` (s^.hairOffset))
+                                        , ((f^.contour), (0, 0))
                                         , (f^.backHair, (4, 0))
                                         ]
 
