@@ -43,7 +43,7 @@ extra-deps:
   - brick-0.46@sha256:78629a4da6b759c78ec264bedc9e794edeb55a302d17015d0278620eef4ebe29,13852
   - tart-0.1.2@sha256:f2c3352fc634b55b905eeb33a8104193e8108cfb812ce4cc9ca22fd701cbb313,3225
   - github: Cj-bc/brick-shgif
-    commit: 2bee8d5496d3b053b4b44874f962f8553a1262cf
+    commit: f697bf5c95c053564322f9144e3427b204f6906e
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
