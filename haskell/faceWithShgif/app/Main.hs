@@ -1,18 +1,20 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main where
 
-import Control.Lens (makeLenses, (^.), (&), (.~), over)
-import Control.Monad (when)
+import Control.Lens (makeLenses, (^.), (&), (.~), over, set)
+import Control.Monad (when, forM_)
 import Control.Monad.IO.Class (liftIO)
 import System.Exit (exitFailure, exitSuccess)
 import System.Environment (getArgs)
 import Data.Either (isLeft)
 import qualified Graphics.Vty as Vty
 import Brick
-import Brick.Extensions.Shgif.Widgets (shgif)
+import Brick.Widgets.Border (border)
+import Brick.Extensions.Shgif.Widgets (shgif, canvas)
 import Brick.Extensions.Shgif.Events (TickEvent(..), mainWithTick)
 import Shgif.Type (Shgif, getShgif, updateShgifNoLoop, updateShgif, updateShgifReversedNoLoop
-                  , updateShgifTo)
+                  , updateShgifTo, shgifToCanvas, width, height)
+import Tart.Canvas
 
 helpText = unlines ["faceWithShgif -- prototype program to do live2d like animation with shgif"
                    , ""
@@ -25,6 +27,7 @@ helpText = unlines ["faceWithShgif -- prototype program to do live2d like animat
                    , "    h: look right"
                    ]
 
+-- data types {{{
 data Face = Face { _contour :: Shgif
                  , _leftEye :: Shgif
                  , _rightEye :: Shgif
@@ -63,32 +66,21 @@ data AppState = AppState { _face :: Face
                          , _noseOffset :: (Int, Int)
                          , _faceLooking :: Maybe LR
                          , _tick :: Int
+                         , _currentCanvas :: Canvas
                          }
 makeLenses ''AppState
 
 data Name = NoName deriving (Eq, Ord)
+-- }}}
 
-partUI :: Shgif -> (Int, Int) -> Widget Name
-partUI sgf (x, y) = translateBy (Location (x, y)) $ shgif sgf
-
-
+-- UI {{{
 -- | Render face
---
--- *Order of parts are really important*
 ui :: AppState -> [Widget Name]
-ui s = [partUI (f^.rightEye) $ (13, 15) `addOffset` (s^.rightEyeOffset)
-       , partUI (f^.nose) $ (25, 20) `addOffset` (s^.noseOffset)
-       , partUI (f^.mouth) $ (22, 24) `addOffset` (s^.mouthOffset)
-       , partUI (f^.leftEye) $ (29, 15) `addOffset` (s^.leftEyeOffset)
-       , partUI (f^.hair) $ (5, 0) `addOffset` (s^.hairOffset)
-       , shgif (f^.contour)
-       , partUI (f^.backHair) (4, 0)
+ui s = [ border $ canvas [(s^.currentCanvas)]
        ]
-  where
-    f = s^.face
-    addOffset (a, b) (c, d) = (a + c, b + d)
+-- }}}
 
-
+-- event handler {{{
 -- | event handler
 --
 -- key bindings:
@@ -118,11 +110,18 @@ eHandler :: AppState -> BrickEvent name TickEvent -> EventM Name (Next AppState)
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'q') [])) = halt s
 eHandler s (AppEvent Tick) = continue =<< liftIO (do
                                                   nf <- newFace
+                                                  nc <- updateCanvas
                                                   let updateOffset = if ((s^.tick) `mod` 10) == 0
                                                                        then calculateOffset
                                                                        else id
-                                                  return $ over tick (+1) $ updateOffset $ s&face.~ nf)
+                                                  return $ over tick (+1)
+                                                         $ updateOffset
+                                                         $ set face nf
+                                                         $ set currentCanvas nc
+                                                         s
+                                                 )
       where
+        updateTick = over tick (+1)
         f = s^.face
         partUpdate partLens condLens = case s^.condLens of
                                        Closing -> updateShgifNoLoop         $ f^.partLens
@@ -166,6 +165,16 @@ eHandler s (AppEvent Tick) = continue =<< liftIO (do
                                      . over mouthOffset   (_moveOffsetTo c)
                                      . over hairOffset    (_moveOffsetTo d)
                                      . over noseOffset    (_moveOffsetTo e)
+        addOffset (a, b) (c, d) = (a + c, b + d)
+        updateCanvas = mergeToBigCanvas [ (f^.rightEye, (13, 15) `addOffset` (s^.rightEyeOffset))
+                                        , (f^.nose    , (25, 20) `addOffset` (s^.noseOffset))
+                                        , (f^.mouth   , (22, 24) `addOffset` (s^.mouthOffset))
+                                        , (f^.leftEye , (29, 15) `addOffset` (s^.leftEyeOffset))
+                                        , (f^.hair    , (5, 0)   `addOffset` (s^.hairOffset))
+                                        , (f^.backHair, (4, 0))
+                                        ]
+
+
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'w') [])) = continue $ s&rightEyeState.~Opening
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 's') [])) = continue $ s&rightEyeState.~Closing
 eHandler s (VtyEvent (Vty.EvKey (Vty.KChar 'x') [])) = continue $ s&rightEyeState.~Emote1
@@ -198,6 +207,45 @@ _moveOffsetTo limit@(x1, y1) current@(x2, y2) | current == limit = current
         updateY (tx, ty) = if y2 < y1
                              then (tx, ty + 1)
                              else (tx, ty - 1)
+-- }}}
+
+-- Utilities for Canvas {{{
+
+-- | Render Canvas into other canvas
+plotToCanvas :: (Int, Int) -> Canvas -> Canvas -> IO Canvas
+plotToCanvas (dw, dh) bc c = do
+    let (w, h) = canvasSize c
+    write [(w', h') | w' <- [0..w-1], h' <- [0..h-1]] bc
+    where
+        write :: [(Int, Int)] -> Canvas -> IO Canvas
+        write [] c'         = return c'
+        write ((w, h):x) c' = do
+            let (ch, attr) = canvasGetPixel c' (w, h)
+            newC <- canvasSetPixel bc (w + dw, h + dh) ch attr
+            write x newC
+
+-- | Merge and render all Shgifs into one Canvas
+mergeToBigCanvas :: [(Shgif, (Int, Int))] -> IO Canvas
+mergeToBigCanvas ss = do
+    emptyCanvas <- newCanvas (w, h)
+    write ss emptyCanvas
+    where
+        w = maximum $ fmap (\(s, (w',_)) -> s^.width + w') ss
+        h = maximum $ fmap (\(s, (_,h')) -> s^.height + h') ss
+
+        -- | Write Canvases one after another
+        write :: [(Shgif, (Int, Int))] -> Canvas -> IO Canvas
+        write [] c      = return c
+        write ((s,p):x) c = do
+            canvs <- shgifToCanvas s
+            newC <- plotToCanvas p c canvs
+            write x newC
+-- }}}
+
+
+
+
+
 
 app :: App AppState TickEvent Name
 app = App { appDraw         = ui
@@ -237,5 +285,8 @@ main = do
         (Right hb) = e_backHair
         face       = (Face c le re ns m h hb)
 
-    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened (0,0) (0,0) (0,0) (0, 0) (0, 0) Nothing 0
+    emptyCanvas <- newCanvas (1, 1)
+    lastState <- mainWithTick Nothing 1000 app $ AppState face  Opened Opened Opened
+                                                 (0,0) (0,0) (0,0) (0, 0) (0, 0) Nothing 0
+                                                 emptyCanvas
     return ()
