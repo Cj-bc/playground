@@ -36,7 +36,7 @@ server sock = do
     recieved <- recv sock 1024
     print recieved
     quote <- pickRandomQuote
-    send sock quote
+    send sock $ quote `append` "\r\n"
 
 
 pickRandomQuote :: IO ByteString
