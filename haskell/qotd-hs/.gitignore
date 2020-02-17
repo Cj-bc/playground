@@ -1,0 +1,84 @@
+.stack-work/
+qotd-hs.cabal
+*~
+
+### https://raw.github.com/github/gitignore/cb0c6ef7ac68f2300409ee85501d9ad432cb4c7e/Global/Vim.gitignore
+
+# Swap
+[._]*.s[a-v][a-z]
+!*.svg  # comment out if you don't need vector files
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+Sessionx.vim
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
+
+### https://raw.github.com/github/gitignore/cb0c6ef7ac68f2300409ee85501d9ad432cb4c7e/Global/macOS.gitignore
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+
+### https://raw.github.com/github/gitignore/cb0c6ef7ac68f2300409ee85501d9ad432cb4c7e/Haskell.gitignore
+
+dist
+dist-*
+cabal-dev
+*.o
+*.hi
+*.hie
+*.chi
+*.chs.h
+*.dyn_o
+*.dyn_hi
+.hpc
+.hsenv
+.cabal-sandbox/
+cabal.sandbox.config
+*.prof
+*.aux
+*.hp
+*.eventlog
+.stack-work/
+cabal.project.local
+cabal.project.local~
+.HTF/
+.ghc.environment.*
+
+
