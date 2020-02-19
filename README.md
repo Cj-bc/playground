@@ -13,3 +13,5 @@ There're some practical codes/tools.
   - Simple CUI timing game
 - [haskell/qotd-hs](haskell/qotd-hs/README.md)
   - Quote of the day server (RFC865)
+- [haskell/echo-server](haskell/echo-server/README.md)
+  - Echo server (RFC862)
