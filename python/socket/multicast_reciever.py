@@ -1,8 +1,9 @@
 from socket import *
 
 s = socket(AF_INET, SOCK_DGRAM)
-s.bind(("localhost", 5003))
+port = 5002
 
+s.bind(('', port))
 try:
     while True:
         msg = s.recv(48)
