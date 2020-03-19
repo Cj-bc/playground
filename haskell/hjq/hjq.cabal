@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 03473f83132cec72534c31114013f547836f2a3c3b7b9a7e95c1352a9e030105
+-- hash: 9a46e68213496069487324b825c463b4ca4dc81b6582c0f9d89e0f80d2a0d582
 
 name:           hjq
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Data.Hjq
       Data.Hjq.Parser
       Data.Hjq.Query
       Lib
@@ -36,8 +37,11 @@ library
       src
   build-depends:
       aeson
+    , aeson-pretty
     , attoparsec
     , base >=4.7 && <5
+    , bytestring
+    , errors
     , lens-aeson
     , microlens
     , text
@@ -54,8 +58,11 @@ executable hjq-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       aeson
+    , aeson-pretty
     , attoparsec
     , base >=4.7 && <5
+    , bytestring
+    , errors
     , hjq
     , lens-aeson
     , microlens
@@ -75,8 +82,11 @@ test-suite hjq-test
   build-depends:
       HUnit
     , aeson
+    , aeson-pretty
     , attoparsec
     , base >=4.7 && <5
+    , bytestring
+    , errors
     , hjq
     , lens-aeson
     , microlens

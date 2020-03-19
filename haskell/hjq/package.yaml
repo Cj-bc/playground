@@ -28,6 +28,9 @@ dependencies:
 - aeson
 - lens-aeson
 - microlens
+- aeson-pretty
+- bytestring
+- errors
 
 library:
   source-dirs: src

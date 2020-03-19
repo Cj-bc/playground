@@ -17,6 +17,7 @@ main = void $ runTestTT $ TestList
         , jqFilterParserSpaceTest
         , jqQueryParserTest
         , applyFilterTest
+        , executeQueryTest
         ]
 
 -- testData {{{
@@ -90,6 +91,7 @@ jqQueryParserSpaceTest = TestList
 -- }}}
 
 -- Query.hs {{{
+-- applyFilter {{{2
 applyFilterTest :: Test
 applyFilterTest = TestList
     [ "applyFilterTest 1" ~: (applyFilter (unsafeParseFilter ".") testData) ~?= Right testData
@@ -111,4 +113,21 @@ unsafeParseFilter :: T.Text -> JqFilter
 unsafeParseFilter t = case parseJqFilter t of
                         Right a -> a
                         Left e  -> error $ "PARSE FAILED IN A TEST: " ++ T.unpack e
+-- }}}
+
+-- executeQuery {{{2
+executeQueryTest :: Test
+executeQueryTest = TestList
+    [ "executeQuery test 1" ~: executeQuery (unsafeParseQuery "{}") testData ~?= Right (Object $ H.fromList [])
+    , "executeQuery test 2" ~: executeQuery (unsafeParseQuery "{\"field1\": ., \"field2\": .string-field}") testData
+        ~?= Right (Object $ H.fromList [("field1", testData), ("field2", String "string value")])
+    , "executeQuery test 3" ~: executeQuery (unsafeParseQuery "[.string-field, .nested-field.inner-string]") testData
+        ~?= Right (Array $ V.fromList [String "string value", String "inner value"])
+    ]
+
+unsafeParseQuery :: T.Text -> JqQuery
+unsafeParseQuery t = case parseJqQuery t of
+                        Right q -> q
+                        Left s -> error $ "PARSE FAILURE IN A TEST: " ++ T.unpack s
+-- }}}
 -- }}}

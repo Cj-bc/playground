@@ -26,3 +26,9 @@ noteIndexOutOfRangeError i Nothing  = Left $ "Index out of range: " <> tshow i
 
 tshow :: Show a => a -> T.Text
 tshow = T.pack . show
+
+
+executeQuery :: JqQuery -> Value -> Either T.Text Value
+executeQuery (JqQueryObject o) v = fmap (Object . H.fromList) . sequence . fmap sequence . fmap (fmap (flip executeQuery v)) $ o
+executeQuery (JqQueryArray l)  v = fmap (Array . V.fromList) . sequence $ fmap (flip executeQuery v) l
+executeQuery (JqQueryFilter f) v = applyFilter f v
