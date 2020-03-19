@@ -1,0 +1,86 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 03473f83132cec72534c31114013f547836f2a3c3b7b9a7e95c1352a9e030105
+
+name:           hjq
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/Cj-bc/hjq#readme>
+homepage:       https://github.com/Cj-bc/hjq#readme
+bug-reports:    https://github.com/Cj-bc/hjq/issues
+author:         Cj.bc_sd a.k.a Cj-bc
+maintainer:     cj.bc-sd@outlook.jp
+copyright:      MIT
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/Cj-bc/hjq
+
+library
+  exposed-modules:
+      Data.Hjq.Parser
+      Data.Hjq.Query
+      Lib
+  other-modules:
+      Paths_hjq
+  hs-source-dirs:
+      src
+  build-depends:
+      aeson
+    , attoparsec
+    , base >=4.7 && <5
+    , lens-aeson
+    , microlens
+    , text
+    , unordered-containers
+    , vector
+  default-language: Haskell2010
+
+executable hjq-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hjq
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      aeson
+    , attoparsec
+    , base >=4.7 && <5
+    , hjq
+    , lens-aeson
+    , microlens
+    , text
+    , unordered-containers
+    , vector
+  default-language: Haskell2010
+
+test-suite hjq-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_hjq
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      HUnit
+    , aeson
+    , attoparsec
+    , base >=4.7 && <5
+    , hjq
+    , lens-aeson
+    , microlens
+    , text
+    , unordered-containers
+    , vector
+  default-language: Haskell2010

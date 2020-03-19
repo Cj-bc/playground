@@ -1,0 +1,56 @@
+name:                hjq
+version:             0.1.0.0
+github:              "Cj-bc/hjq"
+license:             BSD3
+author:              "Cj.bc_sd a.k.a Cj-bc"
+maintainer:          "cj.bc-sd@outlook.jp"
+copyright:           "MIT"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/Cj-bc/hjq#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- attoparsec
+- text
+- vector
+- unordered-containers
+- aeson
+- lens-aeson
+- microlens
+
+library:
+  source-dirs: src
+
+executables:
+  hjq-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hjq
+
+tests:
+  hjq-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hjq
+    - HUnit
