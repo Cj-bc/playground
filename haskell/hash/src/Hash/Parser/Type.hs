@@ -1,5 +1,5 @@
 {-# LANGUAGE GADTs #-}
-module Hash.Type where
+module Hash.Parser.Type where
 
 data NumericalExprToken where
     Plus  :: Num a => a -> a -> NumericalExprToken
