@@ -20,10 +20,14 @@ data BuiltinCmd = Set String String -- ^ Set <Name> <Value>
                 | Expr NumericalExprToken
 
 
-data Token = Executable String
-           | ShPipe Token Token
-           | Builtin BuiltinCmd
-           | Redirect FilePath
+-- | Represents File Descriptor used in redirect
+type FileDescriptor = Int
 
+data Token = Executable Text (V.Vector Text) -- ^ Executable, Arguments
+           | ShPipe Token Token
+           | Builtin BuiltinCmd (V.Vector Text) -- ^ Builtin, Arguments
+           | Redirect FileDescriptor FilePath
+           | ShStatement [Token]
+           | AssignVariable Text Text -- ^ Name and Content
 
 
