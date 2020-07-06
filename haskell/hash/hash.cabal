@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 826f423abc3ec4e4afda3fa4f9c685c9dd8976ac87d000996a4f6917672a6003
+-- hash: e4cce6a0ba97a2d7ad5b17ea187c91d645acafc0c00c5451a45570b80fa668cd
 
 name:           hash
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Hash.Parser.Parser
       Hash.Parser.Type
       Lib
   other-modules:
@@ -35,6 +36,10 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , containers
+    , megaparsec
+    , text
+    , vector
   default-language: Haskell2010
 
 executable hash-exe
@@ -46,7 +51,11 @@ executable hash-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , hash
+    , megaparsec
+    , text
+    , vector
   default-language: Haskell2010
 
 test-suite hash-test
@@ -59,5 +68,9 @@ test-suite hash-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , containers
     , hash
+    , megaparsec
+    , text
+    , vector
   default-language: Haskell2010

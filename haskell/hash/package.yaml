@@ -23,6 +23,8 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - megaparsec
+- vector
+- containers
 
 library:
   source-dirs: src
