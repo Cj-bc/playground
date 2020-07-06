@@ -36,6 +36,7 @@ data BinaryExprToken where
 
 data BuiltinCmd = Set String String -- ^ Set <Name> <Value>
                 | Expr NumericalExprToken
+    deriving (Eq, Show, Ord)
 
 
 -- | Represents File Descriptor used in redirect
