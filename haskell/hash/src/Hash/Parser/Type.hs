@@ -30,5 +30,10 @@ data Token where
     Redirect        :: FileDescriptor -> FilePath -> Token
     ShStatement     :: [Token] -> Token
     AssignVariable  :: Text -> Text -> Token -- ^ Name and Content
+    ShExpr          :: BinaryExprToken -> Token   -- ^ Expr used in test command, etc
+    If              :: BinaryExprToken -> Token -> (Maybe Token) -> Token  -- ^ Condition, content of 'THEN', content of 'ELSE'
+    Case            :: (M.Map CaseExpr Token) -> Token -- ^ [(regex, content), (regex, content)...]
+    AssignFunction  :: Text -> Token -> Token -- ^ name, content of function
+    For             :: (V.Vector a) -> (V.Vector Token) -> Token
 
 
