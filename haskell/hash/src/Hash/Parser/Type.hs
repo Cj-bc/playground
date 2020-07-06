@@ -5,6 +5,16 @@ import Data.Text
 import qualified Data.Map.Strict as M
 import qualified Data.Vector as V
 
+data Environment = Environment { _variables :: M.Map Text Text
+                               , _functions :: M.Map Text [Token]
+                   }
+
+-- | Create default Environment.
+--
+-- All Environment variables will be 
+defaultEnvironment :: IO Environment
+defaultEnvironment = Environment . M.fromList <$> getEnvironment
+
 data NumericalExprToken where
     Plus  :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
     Minus :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
