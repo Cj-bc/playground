@@ -37,3 +37,26 @@ data Token where
     For             :: (V.Vector a) -> (V.Vector Token) -> Token
 
 
+data ReservedWords = IF | THEN | ELSE | ELIF | FI | DO | DONE
+                   | CASE | ESAC | WHILE | UNTIL | FOR
+                   | LBRACE | RBRACE | BANG | IN
+                    deriving (Eq, Ord)
+
+instance Show ReservedWords where
+    show IF     = "if"
+    show THEN   = "then"
+    show ELSE   = "else"
+    show ELIF   = "elif"
+    show FI     = "fi"
+    show DO     = "do"
+    show DONE   = "done"
+    show CASE   = "case"
+    show ESAC   = "esac"
+    show WHILE  = "while"
+    show UNTIL  = "until"
+    show FOR    = "for"
+    show LBRACE = "{"
+    show RBRACE = "}"
+    show BANG   = "!"
+    show IN     = "in"
+
