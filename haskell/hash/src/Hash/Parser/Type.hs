@@ -2,10 +2,14 @@
 module Hash.Parser.Type where
 
 data NumericalExprToken where
-    Plus  :: Num a => a -> a -> NumericalExprToken
-    Minus :: Num a => a -> a -> NumericalExprToken
-    Multi :: Num a => a -> a -> NumericalExprToken
-    Div   :: Num a => a -> a -> NumericalExprToken
+    Plus  :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
+    Minus :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
+    Multi :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
+    Div   :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
+
+instance Show NumericalExprToken
+instance Eq NumericalExprToken
+instance Ord NumericalExprToken
 
 -- | Presents binary expr
 data BinaryExprToken where
