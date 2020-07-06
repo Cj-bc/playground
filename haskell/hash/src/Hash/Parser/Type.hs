@@ -1,5 +1,9 @@
 {-# LANGUAGE GADTs #-}
 module Hash.Parser.Type where
+import Prelude hiding (lookup)
+import Data.Text
+import qualified Data.Map.Strict as M
+import qualified Data.Vector as V
 
 data NumericalExprToken where
     Plus  :: (Num a, Show a, Ord a) => a -> a -> NumericalExprToken
