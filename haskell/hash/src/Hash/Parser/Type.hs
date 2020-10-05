@@ -30,8 +30,13 @@ data BinaryExprToken where
     And       :: BinaryExprToken -> BinaryExprToken -> BinaryExprToken
     Or        :: BinaryExprToken -> BinaryExprToken -> BinaryExprToken
     Not       :: BinaryExprToken -> BinaryExprToken
-    Statement :: Bool -> BinaryExprToken
+    Statement :: Bool -> BinaryExprToken -- TODO: What the f is this???
 
+instance Show BinaryExprToken where
+    show (And l r)     = mconcat [show l, " -a ", show r]
+    show (Or l r)      = mconcat [show l, " -o ", show r]
+    show (Not c)       = mconcat ["! ", show c]
+    show (Statement _) = "[TODO] Statement"
 
 
 data BuiltinCmd = Set String String -- ^ Set <Name> <Value>
