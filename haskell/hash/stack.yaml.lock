@@ -3,7 +3,18 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages: []
+packages:
+- completed:
+    size: 3149
+    url: https://github.com/Cj-bc/own-library.hs/archive/111640938c884bece07d8cc718ced44cea45d8ea.tar.gz
+    name: own-library-hs
+    version: 0.1.0.0
+    sha256: f5cc80b0b998354c7b0a7293bd82af116d145cf4aef4dcecee3947363c11800c
+    pantry-tree:
+      size: 319
+      sha256: 457425c7e5ae1a1581258ca3a47f80a03e7099e976827578360b783f3f0ef0f7
+  original:
+    url: https://github.com/Cj-bc/own-library.hs/archive/111640938c884bece07d8cc718ced44cea45d8ea.tar.gz
 snapshots:
 - completed:
     size: 531696

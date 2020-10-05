@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: e4cce6a0ba97a2d7ad5b17ea187c91d645acafc0c00c5451a45570b80fa668cd
+-- hash: 7113100e6496ef061bd60663ab99bd35e67c72b112deca438f6deebdb9ae09a4
 
 name:           hash
 version:        0.1.0.0
@@ -27,6 +27,7 @@ source-repository head
 
 library
   exposed-modules:
+      Hash.Parser
       Hash.Parser.Parser
       Hash.Parser.Type
       Lib
@@ -38,7 +39,9 @@ library
       base >=4.7 && <5
     , containers
     , megaparsec
+    , own-library-hs
     , text
+    , transformers
     , vector
   default-language: Haskell2010
 
@@ -54,7 +57,9 @@ executable hash-exe
     , containers
     , hash
     , megaparsec
+    , own-library-hs
     , text
+    , transformers
     , vector
   default-language: Haskell2010
 
@@ -71,6 +76,8 @@ test-suite hash-test
     , containers
     , hash
     , megaparsec
+    , own-library-hs
     , text
+    , transformers
     , vector
   default-language: Haskell2010

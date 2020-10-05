@@ -25,6 +25,8 @@ dependencies:
 - megaparsec
 - vector
 - containers
+- own-library-hs
+- transformers
 
 library:
   source-dirs: src
