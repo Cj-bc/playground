@@ -7,7 +7,14 @@ import qualified Data.Vector as V
 
 data Environment = Environment { _variables :: M.Map Text Text
                                , _functions :: M.Map Text [Token]
-                   }
+                   } deriving (Show)
+
+instance Semigroup Environment where
+    (Environment v1 f1) <> (Environment v2 f2) = Environment (v1 <> v2) (f1 <> f2)
+
+instance Monoid Environment where
+    mempty = Environment mempty mempty
+
 
 -- | Create default Environment.
 --
