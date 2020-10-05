@@ -42,20 +42,24 @@ data BuiltinCmd = Set String String -- ^ Set <Name> <Value>
 -- | Represents File Descriptor used in redirect
 type FileDescriptor = Int
 
+
+-- Token {{{
 data Token where
-    Executable      :: Text -> (V.Vector Text) -> Token -- ^ Executable, Arguments
-    ShPipe          :: Token -> Token -> Token
-    Builtin         :: BuiltinCmd -> (V.Vector Text) -> Token -- ^ Builtin, Arguments
-    Redirect        :: FileDescriptor -> FilePath -> Token
-    ShStatement     :: [Token] -> Token
-    AssignVariable  :: Text -> Text -> Token -- ^ Name and Content
-    ShExpr          :: BinaryExprToken -> Token   -- ^ Expr used in test command, etc
-    If              :: BinaryExprToken -> Token -> (Maybe Token) -> Token  -- ^ Condition, content of 'THEN', content of 'ELSE'
-    Case            :: (M.Map CaseExpr Token) -> Token -- ^ [(regex, content), (regex, content)...]
-    AssignFunction  :: Text -> Token -> Token -- ^ name, content of function
-    For             :: (V.Vector a) -> (V.Vector Token) -> Token
+    Executable          :: Text -> (V.Vector Text) -> Token -- ^ Executable, Arguments
+    ShPipe              :: Token -> Token -> Token
+    Builtin             :: BuiltinCmd -> (V.Vector Text) -> Token -- ^ Builtin, Arguments
+    RedirectIn          :: FileDescriptor -> FilePath -> Token -- ^edirection of input. see `man bash`
+    RedirectOut         :: FileDescriptor -> FilePath -> Token -- ^edirection of output. see `man bash`
+    RedirectOutAppend   :: FileDescriptor -> FilePath -> Token -- ^edirection of output but appending. see `man bash`
+    ShStatement         :: [Token] -> Token
+    AssignVariable      :: Text -> Text -> Token -- ^ Name and Content
+    ShExpr              :: BinaryExprToken -> Token   -- ^ Expr used in test command, etc
+    If                  :: BinaryExprToken -> Token -> (Maybe Token) -> Token  -- ^ Condition, content of 'THEN', content of 'ELSE'
+    Case                :: (M.Map CaseExpr Token) -> Token -- ^ [(regex, content), (regex, content)...]
+    AssignFunction      :: Text -> Token -> Token -- ^ name, content of function
+    For                 :: (V.Vector a) -> (V.Vector Token) -> Token
 
-
+-- }}}
 data ReservedWords = IF | THEN | ELSE | ELIF | FI | DO | DONE
                    | CASE | ESAC | WHILE | UNTIL | FOR
                    | LBRACE | RBRACE | BANG | IN
