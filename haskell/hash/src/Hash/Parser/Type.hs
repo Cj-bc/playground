@@ -59,11 +59,27 @@ data Token where
     AssignFunction      :: Text -> Token -> Token -- ^ name, content of function
     For                 :: (V.Vector a) -> (V.Vector Token) -> Token
 
+instance Show Token where
+    show (Executable exe arg)       = mconcat [show exe, foldl (\l r -> l ++ " " ++ (show r)) "" arg]
+    show (ShPipe l r)               = mconcat [show l, " | ", show r]
+    show (Builtin cmd arg)          = mconcat [show cmd, foldl (\l r -> l ++ " " ++ (show r)) "" arg]
+    show (RedirectIn  fd fp)        = mconcat [show fd, "< ",  show fp]
+    show (RedirectOut fd fp)        = mconcat [show fd, "> ",  show fp]
+    show (RedirectOutAppend fd fp)  = mconcat [show fd, ">> ", show fp]
+    show (ShStatement (s:ss))       = mconcat [show s,  "; ", mconcat $ fmap show ss]
+    show (AssignVariable name c)    = mconcat ["declare", " -- ", show name, "=", "\"", show c, "\""] -- TODO: support options
+    show (ShExpr expr)              = "ShExpr" -- TODO
+    show (If cond then_ else_)      = mconcat ["if ", show cond, "; then ", show then_, "; else", maybe "" show else_]
+    show (Case cases)               = "case" -- TODO
+    show (AssignFunction name cont) = "function declare" -- TODO
+    show (For items cont)           = " for fo " -- TODO
 -- }}}
+--
 data ReservedWords = IF | THEN | ELSE | ELIF | FI | DO | DONE
                    | CASE | ESAC | WHILE | UNTIL | FOR
                    | LBRACE | RBRACE | BANG | IN
                     deriving (Eq, Ord)
+
 
 instance Show ReservedWords where
     show IF     = "if"
