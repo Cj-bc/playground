@@ -250,7 +250,7 @@ class Maze:
                 elif cell == Maze.PLAYER:
                     result += "@"
                 elif cell == Maze.GOAL:
-                    result += "%"
+                    result += "G"
                 elif cell == Maze.START:
                     result += "S"
                 else:
