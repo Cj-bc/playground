@@ -200,7 +200,7 @@ class Maze:
             self.logger.debug(f"y座標'{y}'は有効範囲外のため、動かせません")
             return
 
-        if self._data[y][x] == CellType.PATH:
+        if self.isCellType(x, y, CellType.PATH):
             self._playerPoint = Coord(x, y)
 
 
