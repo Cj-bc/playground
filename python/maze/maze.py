@@ -46,7 +46,7 @@ class Maze:
 
     _isCreated = False
 
-    _playerPoint = None
+    _playerPoint: Coord = None
     _playerMovementHistory: List[Coord] = []
 
 
@@ -309,7 +309,7 @@ if __name__ == '__main__':
 
     maze = Maze(width, height, logger=mainlogger)
     maze.create()
-    firstPos = Coord(random.randint(0, width-1), random.randint(0, height-1))
+    firstPos = Coord(random.randint(1, width-2), random.randint(1, height-2))
     maze.dig(firstPos.x, firstPos.y)
     maze.setStart(firstPos)
     maze.setPlayer(firstPos.x, firstPos.y)
