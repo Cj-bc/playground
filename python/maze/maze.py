@@ -70,7 +70,8 @@ class Maze:
         return True
 
     def isCellType(self, x: int, y: int, cellType) -> bool:
-        return self._data[y][x] == cellType
+        # andは、前者が失敗していれば後者を実行しない(はず)
+        return self.isValidCoord(x, y) and self._data[y][x] == cellType
 
     def create(self):
         """迷路を生成する
