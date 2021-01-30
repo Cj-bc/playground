@@ -12,11 +12,19 @@ class Direction(Enum):
     LEFT = 2
     RIGHT = 3
 
+class CellType(Enum):
+    PATH = 0
+    WALL = 1
+    PLAYER = 2
+    GOAL = 3
+    START = 4
+
 # 配列だと引数の順番がこんがらがってきたので作成
 class Coord:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
 
 class Maze:
     _width = 0
@@ -34,11 +42,6 @@ class Maze:
 
     _playerPoint = None
 
-    PATH = 0
-    WALL = 1
-    PLAYER = 2
-    GOAL = 3
-    START = 4
 
     logger: logging.Logger
 
@@ -82,7 +85,7 @@ class Maze:
         """迷路を生成する
         """
         self._isCreated = False
-        self._data = [[Maze.WALL for _ in range(0, self._width)] for _ in range(0, self._height)]
+        self._data = [[CellType.WALL for _ in range(0, self._width)] for _ in range(0, self._height)]
 
 
     def _setGoal(self):
@@ -137,13 +140,13 @@ class Maze:
             self.logger.debug("start checking diggable directions")
             # 必ず2マス同時に掘り進めるため、一マス横が掘れるかどうかは確認しなくて良い
             # (ﾁｮｯﾄしかわからん)
-            if self.isValidCoord(x, y - 2) and self.isCellType(x, y-2, Maze.WALL):
+            if self.isValidCoord(x, y - 2) and self.isCellType(x, y-2, CellType.WALL):
                 digDirections.append(Direction.UP)
-            if self.isValidCoord(x, y + 2) and self.isCellType(x, y+2, Maze.WALL):
+            if self.isValidCoord(x, y + 2) and self.isCellType(x, y+2, CellType.WALL):
                 digDirections.append(Direction.DOWN)
-            if self.isValidCoord(x - 2, y) and self.isCellType(x-2, y, Maze.WALL):
+            if self.isValidCoord(x - 2, y) and self.isCellType(x-2, y, CellType.WALL):
                 digDirections.append(Direction.LEFT)
-            if self.isValidCoord(x + 2, y) and self.isCellType(x+2, y, Maze.WALL):
+            if self.isValidCoord(x + 2, y) and self.isCellType(x+2, y, CellType.WALL):
                 digDirections.append(Direction.RIGHT)
 
             if len(digDirections) == 0:
@@ -152,10 +155,10 @@ class Maze:
                 #
                 # 行き止まりならゴールの候補地にする
                 if len(list(filter(lambda x: x == True
-                                  , [self.isCellType(x-1,y, Maze.WALL)
-                                    ,self.isCellType(x+1,y, Maze.WALL)
-                                    ,self.isCellType(x,y-1, Maze.WALL)
-                                    ,self.isCellType(x,y+1, Maze.WALL)]))) == 3:
+                                  , [self.isCellType(x-1,y, CellType.WALL)
+                                    ,self.isCellType(x+1,y, CellType.WALL)
+                                    ,self.isCellType(x,y-1, CellType.WALL)
+                                    ,self.isCellType(x,y+1, CellType.WALL)]))) == 3:
                     self._goalProposalList.append(Coord(x,y))
                 break
 
@@ -248,11 +251,15 @@ class Maze:
                     result += "@"
                 elif cell == Maze.GOAL:
                     result += "%"
+                elif cell == Maze.START:
+                    result += "S"
                 else:
                     self.logger.error(f"row: '{row}' is neither PATH nor WALL nor PLAYER")
             result += "\n"
 
         print(result)
+
+
 
 if __name__ == '__main__':
     # logger {{{
