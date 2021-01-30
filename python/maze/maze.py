@@ -110,6 +110,12 @@ class Maze:
         self._isCreated = False
         self._data = [[CellType.WALL for _ in range(0, self._width)] for _ in range(0, self._height)]
 
+        firstPos = Coord(random.randint(1, self._width-2), random.randint(1, self._height-2))
+        self.dig(firstPos)
+        self.setStart(firstPos)
+        self.setPlayer(firstPos)
+        self._setGoal()
+
 
     def _setGoal(self):
         """ ゴール地点をself._goalProposalListからランダムに設定する
@@ -321,11 +327,6 @@ if __name__ == '__main__':
 
     maze = Maze(width, height, logger=mainlogger)
     maze.create()
-    firstPos = Coord(random.randint(1, width-2), random.randint(1, height-2))
-    maze.dig(firstPos)
-    maze.setStart(firstPos)
-    maze.setPlayer(firstPos)
-    maze._setGoal()
     maze.draw()
 
     steps = 0
