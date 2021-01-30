@@ -24,7 +24,7 @@ class Maze:
 
     _data = [0][0] # _data[y][x]。 [x][y]ではないので注意
     goal: Coord = None
-    _goalProposallist: List[Coord] # 生成途中用
+    _goalProposalList: List[Coord] # 生成途中用
 
     # 変数名がわかりづらいので改名_startPath
     _breadcrumb: List[Coord] = []
@@ -69,6 +69,9 @@ class Maze:
 
         return True
 
+    def isCellType(self, x: int, y: int, cellType) -> bool:
+        return self._data[y][x] == cellType
+
     def create(self):
         """迷路を生成する
         """
@@ -104,13 +107,13 @@ class Maze:
             self.logger.debug("start checking diggable directions")
             # 必ず2マス同時に掘り進めるため、一マス横が掘れるかどうかは確認しなくて良い
             # (ﾁｮｯﾄしかわからん)
-            if y - 2 > 0 and self._data[y - 2][x] == Maze.WALL:
+            if self.isValidCoord(x, y - 2) and self.isCellType(x, y-2, Maze.WALL):
                 digDirections.append(Direction.UP)
-            if y + 2 < self._height and self._data[y + 2][x] == Maze.WALL:
+            if self.isValidCoord(x, y + 2) and self.isCellType(x, y+2, Maze.WALL):
                 digDirections.append(Direction.DOWN)
-            if x - 2 > 0 and self._data[y][x - 2] == Maze.WALL:
+            if self.isValidCoord(x - 2, y) and self.isCellType(x-2, y, Maze.WALL):
                 digDirections.append(Direction.LEFT)
-            if x + 2 < self._width and self._data[y][x + 2] == Maze.WALL:
+            if self.isValidCoord(x + 2, y) and self.isCellType(x+2, y, Maze.WALL):
                 digDirections.append(Direction.RIGHT)
 
             if len(digDirections) == 0:
