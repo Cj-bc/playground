@@ -53,19 +53,19 @@ class Maze:
     logger: logging.Logger
 
     # Utilities {{{
-    def isValidCoord(self, x: int, y: int) -> bool:
+    def isValidCoord(self, c: Coord) -> bool:
         """ この迷路内に存在する座標かどうかを判定する
         """
-        if x < 0 or self._width - 1 < x:
+        if c.x < 0 or self._width - 1 < c.x:
             return False
-        if y < 0 or self._height - 1 < y:
+        if c.y < 0 or self._height - 1 < c.y:
             return False
 
         return True
 
-    def isCellType(self, x: int, y: int, cellType) -> bool:
+    def isCellType(self, c: Coord, cellType: CellType) -> bool:
         # andは、前者が失敗していれば後者を実行しない(はず)
-        return self.isValidCoord(x, y) and self._data[y][x] == cellType
+        return self.isValidCoord(c) and self._data[c.y][c.x] == cellType
 
     def isGoal(self) -> bool:
         return self._playerPoint == self.goal
@@ -116,13 +116,13 @@ class Maze:
         if not self._isCreated:
             self.logger.info("迷路が生成されていないため、スタート地点が設定できませんでした")
             return
-        if not self.isValidCoord(c.x,c.y):
+        if not self.isValidCoord(c):
             self.logger.info("座標{c}は有効な座標ではないため、スタート地点が設定できませんでした")
             return
 
         self.start = c
 
-    def dig(self, x, y):
+    def dig(self, c):
         """
         終了するまで掘る。一マスのみ掘るのではない。
         再帰だと上限に引っかかる可能性があるため、ループで処理する
@@ -135,11 +135,11 @@ class Maze:
         6. どこにも掘ることが出来る座標がなくなった場合は、その時点で処理を終了する
         """
 
-        if not self.isValidCoord(x, y):
-            self.logger.info(f"座標({x}, {y})はこの迷路の有効範囲外のため、digに失敗しました")
+        if not self.isValidCoord(c):
+            self.logger.info(f"座標({c.x}, {c.y})はこの迷路の有効範囲外のため、digに失敗しました")
             return
 
-        self._data[y][x] = CellType.PATH
+        self._data[c.y][c.x] = CellType.PATH
         # TODO: この無限ループは最大4回しか呼び出されないはず。
         # Forなどを使った方がわかりやすくなるかもしれない
         #
@@ -150,13 +150,13 @@ class Maze:
             self.logger.debug("start checking diggable directions")
             # 必ず2マス同時に掘り進めるため、一マス横が掘れるかどうかは確認しなくて良い
             # (ﾁｮｯﾄしかわからん)
-            if self.isValidCoord(x, y - 2) and self.isCellType(x, y-2, CellType.WALL):
+            if self.isValidCoord(Coord(c.x, c.y - 2)) and self.isCellType(Coord(c.x, c.y-2), CellType.WALL):
                 digDirections.append(Direction.UP)
-            if self.isValidCoord(x, y + 2) and self.isCellType(x, y+2, CellType.WALL):
+            if self.isValidCoord(Coord(c.x, c.y + 2)) and self.isCellType(Coord(c.x, c.y+2), CellType.WALL):
                 digDirections.append(Direction.DOWN)
-            if self.isValidCoord(x - 2, y) and self.isCellType(x-2, y, CellType.WALL):
+            if self.isValidCoord(Coord(c.x - 2, c.y)) and self.isCellType(Coord(c.x-2, c.y), CellType.WALL):
                 digDirections.append(Direction.LEFT)
-            if self.isValidCoord(x + 2, y) and self.isCellType(x+2, y, CellType.WALL):
+            if self.isValidCoord(Coord(c.x + 2, c.y)) and self.isCellType(Coord(c.x+2, c.y), CellType.WALL):
                 digDirections.append(Direction.RIGHT)
 
             if len(digDirections) == 0:
@@ -164,57 +164,56 @@ class Maze:
                 # ここにくる時点では行き止まりかはわからない
                 #
                 # 行き止まりならゴールの候補地にする
-                if len(list(filter(lambda x: x == True
-                                  , [self.isCellType(x-1,y, CellType.WALL)
-                                    ,self.isCellType(x+1,y, CellType.WALL)
-                                    ,self.isCellType(x,y-1, CellType.WALL)
-                                    ,self.isCellType(x,y+1, CellType.WALL)]))) == 3:
-                    self._goalProposalList.append(Coord(x,y))
+                if len(list(filter(lambda n: n == True
+                                  , [self.isCellType(Coord(c.x-1,c.y), CellType.WALL)
+                                    ,self.isCellType(Coord(c.x+1,c.y), CellType.WALL)
+                                    ,self.isCellType(Coord(c.x,c.y-1), CellType.WALL)
+                                    ,self.isCellType(Coord(c.x,c.y+1), CellType.WALL)]))) == 3:
+                    self._goalProposalList.append(c)
                 break
 
             direction = random.choice(digDirections)
             self.logger.debug(f"direction {direction} is chosen by random choice")
 
             if direction == Direction.UP:
-                self._data[y - 1][x] = CellType.PATH
-                self._data[y - 2][x] = CellType.PATH
-                self._nextDigProposals.append(Coord(x, y - 2))
+                self._data[c.y - 1][c.x] = CellType.PATH
+                self._data[c.y - 2][c.x] = CellType.PATH
+                self._nextDigProposals.append(Coord(c.x, c.y - 2))
             elif direction == Direction.DOWN:
-                self._data[y + 1][x] = CellType.PATH
-                self._data[y + 2][x] = CellType.PATH
-                self._nextDigProposals.append(Coord(x, y + 2))
+                self._data[c.y + 1][c.x] = CellType.PATH
+                self._data[c.y + 2][c.x] = CellType.PATH
+                self._nextDigProposals.append(Coord(c.x, c.y + 2))
             elif direction == Direction.LEFT:
-                self._data[y][x - 1] = CellType.PATH
-                self._data[y][x - 2] = CellType.PATH
-                self._nextDigProposals.append(Coord(x - 2, y))
+                self._data[c.y][c.x - 1] = CellType.PATH
+                self._data[c.y][c.x - 2] = CellType.PATH
+                self._nextDigProposals.append(Coord(c.x - 2, c.y))
             elif direction == Direction.RIGHT:
-                self._data[y][x + 1] = CellType.PATH
-                self._data[y][x + 2] = CellType.PATH
-                self._nextDigProposals.append(Coord(x + 2, y))
+                self._data[c.y][c.x + 1] = CellType.PATH
+                self._data[c.y][c.x + 2] = CellType.PATH
+                self._nextDigProposals.append(Coord(c.x + 2, c.y))
 
         nextDigProposalsLen = len(self._nextDigProposals)
         self.logger.debug(f"nextDigProposalsLen: {nextDigProposalsLen}")
         if nextDigProposalsLen > 0:
             path = self._nextDigProposals.pop(random.randint(0, nextDigProposalsLen - 1))
-            self.dig(path.x, path.y)
+            self.dig(path)
         else:
             self._isCreated = True
     # }}}
 
     # Player movements {{{
-    def setPlayer(self, x, y):
-        if x < 0 or self._width < x:
-            self.logger.debug(f"x座標'{x}'は有効範囲外のため、動かせません")
+    def setPlayer(self, c: Coord):
+        if c.x < 0 or self._width < c.x:
+            self.logger.debug(f"x座標'{c.x}'は有効範囲外のため、動かせません")
             return
-        if y < 0 or self._height < y:
-            self.logger.debug(f"y座標'{y}'は有効範囲外のため、動かせません")
-            return
-
-        if not self.isCellType(x, y, CellType.PATH):
-            self.logger.debug(f"座標({x}, {y})は道ではないため、動かせません")
+        if c.y < 0 or self._height < c.y:
+            self.logger.debug(f"y座標'{c.y}'は有効範囲外のため、動かせません")
             return
 
-        c = Coord(x, y)
+        if not self.isCellType(c, CellType.PATH):
+            self.logger.debug(f"座標({c.x}, {c.y})は道ではないため、動かせません")
+            return
+
         prevPlayerCoord = self._playerPoint
         self._playerPoint = c
 
@@ -244,7 +243,7 @@ class Maze:
         else:
             self.logger.warn(f"direction: '{direction}' is not recognized")
 
-        self.setPlayer(checkpos.x, checkpos.y)
+        self.setPlayer(checkpos)
     # }}}
 
     def draw(self):
@@ -310,9 +309,9 @@ if __name__ == '__main__':
     maze = Maze(width, height, logger=mainlogger)
     maze.create()
     firstPos = Coord(random.randint(1, width-2), random.randint(1, height-2))
-    maze.dig(firstPos.x, firstPos.y)
+    maze.dig(firstPos)
     maze.setStart(firstPos)
-    maze.setPlayer(firstPos.x, firstPos.y)
+    maze.setPlayer(firstPos)
     maze._setGoal()
     maze.draw()
 
