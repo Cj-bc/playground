@@ -32,6 +32,19 @@ class Coord:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def right(self):
+      return Coord(self.x+1, self.y)
+
+    def left(self):
+      return Coord(self.x-1, self.y)
+
+    def up(self):
+      return Coord(self.x, self.y-1)
+
+    def down(self):
+      return Coord(self.x, self.y+1)
+
+
 class Maze:
     _width = 0
     _height = 0
