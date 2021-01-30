@@ -41,7 +41,7 @@ class Maze:
     _goalProposalList: List[Coord] = [] # 生成途中用
 
     # 変数名がわかりづらいので改名_startPath
-    _breadcrumb: List[Coord] = []
+    _nextDigProposals: List[Coord] = []
 
     _isCreated = False
 
@@ -176,24 +176,24 @@ class Maze:
             if direction == Direction.UP:
                 self._data[y - 1][x] = CellType.PATH
                 self._data[y - 2][x] = CellType.PATH
-                self._breadcrumb.append(Coord(x, y - 2))
+                self._nextDigProposals.append(Coord(x, y - 2))
             elif direction == Direction.DOWN:
                 self._data[y + 1][x] = CellType.PATH
                 self._data[y + 2][x] = CellType.PATH
-                self._breadcrumb.append(Coord(x, y + 2))
+                self._nextDigProposals.append(Coord(x, y + 2))
             elif direction == Direction.LEFT:
                 self._data[y][x - 1] = CellType.PATH
                 self._data[y][x - 2] = CellType.PATH
-                self._breadcrumb.append(Coord(x - 2, y))
+                self._nextDigProposals.append(Coord(x - 2, y))
             elif direction == Direction.RIGHT:
                 self._data[y][x + 1] = CellType.PATH
                 self._data[y][x + 2] = CellType.PATH
-                self._breadcrumb.append(Coord(x + 2, y))
+                self._nextDigProposals.append(Coord(x + 2, y))
 
-        breadcrumbLen = len(self._breadcrumb)
-        self.logger.debug(f"breadcrumbLen: {breadcrumbLen}")
-        if breadcrumbLen > 0:
-            path = self._breadcrumb.pop(random.randint(0, breadcrumbLen - 1))
+        nextDigProposalsLen = len(self._nextDigProposals)
+        self.logger.debug(f"nextDigProposalsLen: {nextDigProposalsLen}")
+        if nextDigProposalsLen > 0:
+            path = self._nextDigProposals.pop(random.randint(0, nextDigProposalsLen - 1))
             self.dig(path.x, path.y)
         else:
             self._isCreated = True
