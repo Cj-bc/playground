@@ -59,6 +59,9 @@ class Maze:
     def isCellType(self, x: int, y: int, cellType) -> bool:
         # andは、前者が失敗していれば後者を実行しない(はず)
         return self.isValidCoord(x, y) and self._data[y][x] == cellType
+
+    def isGoal(self) -> bool:
+        return self._playerPoint == self.goal
     # }}}
 
     # Initializations {{{
@@ -305,3 +308,7 @@ if __name__ == '__main__':
             mainlogger.info("予期しない入力のため、なにもしませんでした")
 
         maze.draw()
+
+        if maze.isGoal():
+            print("おめでとうございます！ゴールしました！")
+            break
