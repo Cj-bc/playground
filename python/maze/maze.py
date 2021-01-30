@@ -42,6 +42,23 @@ class Maze:
 
     logger: logging.Logger
 
+    # Utilities {{{
+    def isValidCoord(self, x: int, y: int) -> bool:
+        """ この迷路内に存在する座標かどうかを判定する
+        """
+        if x < 0 or self._width - 1 < x:
+            return False
+        if y < 0 or self._height - 1 < y:
+            return False
+
+        return True
+
+    def isCellType(self, x: int, y: int, cellType) -> bool:
+        # andは、前者が失敗していれば後者を実行しない(はず)
+        return self.isValidCoord(x, y) and self._data[y][x] == cellType
+    # }}}
+
+    # Initializations {{{
     def __init__(self, width: int, height: int, logger=None) -> None:
         if logger is None:
             self.logger = logging.getLogger("Maze.{__name__}")
@@ -60,20 +77,6 @@ class Maze:
 
         self._width = width
         self._height = height
-
-    def isValidCoord(self, x: int, y: int) -> bool:
-        """ この迷路内に存在する座標かどうかを判定する
-        """
-        if x < 0 or self._width - 1 < x:
-            return False
-        if y < 0 or self._height - 1 < y:
-            return False
-
-        return True
-
-    def isCellType(self, x: int, y: int, cellType) -> bool:
-        # andは、前者が失敗していれば後者を実行しない(はず)
-        return self.isValidCoord(x, y) and self._data[y][x] == cellType
 
     def create(self):
         """迷路を生成する
@@ -183,8 +186,9 @@ class Maze:
             self.dig(path.x, path.y)
         else:
             self._isCreated = True
+    # }}}
 
-
+    # Player movements {{{
     def setPlayer(self, x, y):
         if x < 0 or self._width < x:
             self.logger.debug(f"x座標'{x}'は有効範囲外のため、動かせません")
@@ -215,6 +219,7 @@ class Maze:
             self.logger.warn(f"direction: '{direction}' is not recognized")
 
         self.setPlayer(checkpos.x, checkpos.y)
+    # }}}
 
     def draw(self):
         if not self._isCreated:
