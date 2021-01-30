@@ -18,6 +18,7 @@ class CellType(Enum):
     PLAYER = 2
     GOAL = 3
     START = 4
+    FOOTPRINT = 5
 
 # 配列だと引数の順番がこんがらがってきたので作成
 class Coord:
@@ -46,6 +47,7 @@ class Maze:
     _isCreated = False
 
     _playerPoint = None
+    _playerMovementHistory: List[Coord] = []
 
 
     logger: logging.Logger
@@ -208,8 +210,21 @@ class Maze:
             self.logger.debug(f"y座標'{y}'は有効範囲外のため、動かせません")
             return
 
-        if self.isCellType(x, y, CellType.PATH):
-            self._playerPoint = Coord(x, y)
+        if not self.isCellType(x, y, CellType.PATH):
+            self.logger.debug(f"座標({x}, {y})は道ではないため、動かせません")
+            return
+
+        c = Coord(x, y)
+        prevPlayerCoord = self._playerPoint
+        self._playerPoint = c
+
+        if c in self._playerMovementHistory:
+            self._playerMovementHistory.remove(c)
+            if prevPlayerCoord in self._playerMovementHistory:
+                self._playerMovementHistory.remove(prevPlayerCoord)
+
+        if not c in self._playerMovementHistory:
+            self._playerMovementHistory.append(c)
 
 
     def movePlayer(self, direction):
@@ -243,6 +258,8 @@ class Maze:
         # PLAYERを最後に入れることで、スタート時点やゴール地点にいる際もプレイヤーを表示させる。
         self.logger.debug(f"data is {self._data}")
         rendering = copy.deepcopy(self._data)
+        for c in self._playerMovementHistory:
+            rendering[c.y][c.x] = CellType.FOOTPRINT
         rendering[self.goal.y][self.goal.x] = CellType.GOAL
         rendering[self.start.y][self.start.x] = CellType.START
         if self._playerPoint is not None:
@@ -261,6 +278,8 @@ class Maze:
                     result += "G"
                 elif cell == CellType.START:
                     result += "S"
+                elif cell == CellType.FOOTPRINT:
+                    result += "*"
                 else:
                     self.logger.error(f"row: '{row}' is neither PATH nor WALL nor PLAYER")
             result += "\n"
