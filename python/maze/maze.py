@@ -129,7 +129,7 @@ class Maze:
             self.logger.info(f"座標({x}, {y})はこの迷路の有効範囲外のため、digに失敗しました")
             return
 
-        self._data[y][x] = Maze.PATH
+        self._data[y][x] = CellType.PATH
         # TODO: この無限ループは最大4回しか呼び出されないはず。
         # Forなどを使った方がわかりやすくなるかもしれない
         #
@@ -166,20 +166,20 @@ class Maze:
             self.logger.debug(f"direction {direction} is chosen by random choice")
 
             if direction == Direction.UP:
-                self._data[y - 1][x] = Maze.PATH
-                self._data[y - 2][x] = Maze.PATH
+                self._data[y - 1][x] = CellType.PATH
+                self._data[y - 2][x] = CellType.PATH
                 self._breadcrumb.append(Coord(x, y - 2))
             elif direction == Direction.DOWN:
-                self._data[y + 1][x] = Maze.PATH
-                self._data[y + 2][x] = Maze.PATH
+                self._data[y + 1][x] = CellType.PATH
+                self._data[y + 2][x] = CellType.PATH
                 self._breadcrumb.append(Coord(x, y + 2))
             elif direction == Direction.LEFT:
-                self._data[y][x - 1] = Maze.PATH
-                self._data[y][x - 2] = Maze.PATH
+                self._data[y][x - 1] = CellType.PATH
+                self._data[y][x - 2] = CellType.PATH
                 self._breadcrumb.append(Coord(x - 2, y))
             elif direction == Direction.RIGHT:
-                self._data[y][x + 1] = Maze.PATH
-                self._data[y][x + 2] = Maze.PATH
+                self._data[y][x + 1] = CellType.PATH
+                self._data[y][x + 2] = CellType.PATH
                 self._breadcrumb.append(Coord(x + 2, y))
 
         breadcrumbLen = len(self._breadcrumb)
@@ -200,7 +200,7 @@ class Maze:
             self.logger.debug(f"y座標'{y}'は有効範囲外のため、動かせません")
             return
 
-        if self._data[y][x] == Maze.PATH:
+        if self._data[y][x] == CellType.PATH:
             self._playerPoint = Coord(x, y)
 
 
@@ -235,23 +235,23 @@ class Maze:
         # PLAYERを最後に入れることで、スタート時点やゴール地点にいる際もプレイヤーを表示させる。
         self.logger.debug(f"data is {self._data}")
         rendering = copy.deepcopy(self._data)
-        rendering[self.goal.y][self.goal.x] = Maze.GOAL
-        rendering[self.start.y][self.start.x] = Maze.START
+        rendering[self.goal.y][self.goal.x] = CellType.GOAL
+        rendering[self.start.y][self.start.x] = CellType.START
         if self._playerPoint is not None:
             self.logger.debug("Add player to the rendering")
-            rendering[self._playerPoint.y][self._playerPoint.x] = Maze.PLAYER
+            rendering[self._playerPoint.y][self._playerPoint.x] = CellType.PLAYER
 
         for row in rendering:
             for cell in row:
-                if cell == Maze.PATH:
+                if cell == CellType.PATH:
                     result += " "
-                elif cell == Maze.WALL:
+                elif cell == CellType.WALL:
                     result += "#"
-                elif cell == Maze.PLAYER:
+                elif cell == CellType.PLAYER:
                     result += "@"
-                elif cell == Maze.GOAL:
+                elif cell == CellType.GOAL:
                     result += "G"
-                elif cell == Maze.START:
+                elif cell == CellType.START:
                     result += "S"
                 else:
                     self.logger.error(f"row: '{row}' is neither PATH nor WALL nor PLAYER")
