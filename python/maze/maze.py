@@ -24,7 +24,7 @@ class Maze:
 
     _data = [0][0] # _data[y][x]。 [x][y]ではないので注意
     goal: Coord = None
-    _goalProposalList: List[Coord] # 生成途中用
+    _goalProposalList: List[Coord] = [] # 生成途中用
 
     # 変数名がわかりづらいので改名_startPath
     _breadcrumb: List[Coord] = []
@@ -79,6 +79,18 @@ class Maze:
         self._data = [[Maze.WALL for _ in range(0, self._width)] for _ in range(0, self._height)]
 
 
+    def _setGoal(self):
+        """ ゴール地点をself._goalProposalListからランダムに設定する
+        """
+        if self.goal is not None:
+            self.logger.debug("ゴール地点が既に設定されているため、設定しませんでした")
+            return
+        if len(self._goalProposalList) == 0:
+            self.logger.debug("ゴール地点の候補リストが存在しないため、設定できませんでした")
+            return
+        self.goal = random.choice(self._goalProposalList)
+
+
     def dig(self, x, y):
         """
         終了するまで掘る。一マスのみ掘るのではない。
@@ -117,7 +129,16 @@ class Maze:
                 digDirections.append(Direction.RIGHT)
 
             if len(digDirections) == 0:
-                if self._data[y-1][x]
+                # このif分岐は元の座標から4方向全て掘った後に通る場所なので、
+                # ここにくる時点では行き止まりかはわからない
+                #
+                # 行き止まりならゴールの候補地にする
+                if len(list(filter(lambda x: x == True
+                                  , [self.isCellType(x-1,y, Maze.WALL)
+                                    ,self.isCellType(x+1,y, Maze.WALL)
+                                    ,self.isCellType(x,y-1, Maze.WALL)
+                                    ,self.isCellType(x,y+1, Maze.WALL)]))) == 3:
+                    self._goalProposalList.append(Coord(x,y))
                 break
 
             direction = random.choice(digDirections)
@@ -139,11 +160,6 @@ class Maze:
                 self._data[y][x + 1] = Maze.PATH
                 self._data[y][x + 2] = Maze.PATH
                 self._breadcrumb.append(Coord(x + 2, y))
-
-        # 一番最初にdigされたものが最長だと見て、最長のものの末端をgoalとする
-        # (独自仕様)
-        if self.goal is None:
-            self.goal = self._breadcrumb[-1]
 
         breadcrumbLen = len(self._breadcrumb)
         self.logger.debug(f"breadcrumbLen: {breadcrumbLen}")
@@ -240,6 +256,7 @@ if __name__ == '__main__':
     firstPos = Coord(random.randint(0, width-1), random.randint(0, height-1))
     maze.dig(firstPos.x, firstPos.y)
     maze.setPlayer(firstPos.x, firstPos.y)
+    maze._setGoal()
     maze.draw()
 
     while True:
