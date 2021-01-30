@@ -297,6 +297,7 @@ if __name__ == '__main__':
     maze._setGoal()
     maze.draw()
 
+    steps = 0
     while True:
         i = input("左: h, 下: j, 上: k, 右: l, 終了: q")
         if i == "h":
@@ -314,6 +315,8 @@ if __name__ == '__main__':
 
         maze.draw()
 
+        steps+= 1
+
         if maze.isGoal():
-            print("おめでとうございます！ゴールしました！")
+            print(f"おめでとうございます！{steps}手でゴールしました！")
             break
