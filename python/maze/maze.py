@@ -23,6 +23,7 @@ class Maze:
     _height = 0
 
     _data = [0][0] # _data[y][x]。 [x][y]ではないので注意
+    start: Coord = None
     goal: Coord = None
     _goalProposalList: List[Coord] = [] # 生成途中用
 
@@ -37,6 +38,7 @@ class Maze:
     WALL = 1
     PLAYER = 2
     GOAL = 3
+    START = 4
 
     logger: logging.Logger
 
@@ -91,6 +93,18 @@ class Maze:
             return
         self.goal = random.choice(self._goalProposalList)
 
+    def setStart(self, c: Coord) -> None:
+        """ スタート地点を設定する。
+            先に迷路を生成すること。
+        """
+        if not self._isCreated:
+            self.logger.info("迷路が生成されていないため、スタート地点が設定できませんでした")
+            return
+        if not self.isValidCoord(c.x,c.y):
+            self.logger.info("座標{c}は有効な座標ではないため、スタート地点が設定できませんでした")
+            return
+
+        self.start = c
 
     def dig(self, x, y):
         """
@@ -209,10 +223,12 @@ class Maze:
 
         result = ""
 
-        # PLAYERとGOALは_data内に存在しないため、突っ込む
+        # PLAYER,GOAL, STARTは_data内に存在しないため、突っ込む
+        # PLAYERを最後に入れることで、スタート時点やゴール地点にいる際もプレイヤーを表示させる。
         self.logger.debug(f"data is {self._data}")
         rendering = copy.deepcopy(self._data)
         rendering[self.goal.y][self.goal.x] = Maze.GOAL
+        rendering[self.start.y][self.start.x] = Maze.START
         if self._playerPoint is not None:
             self.logger.debug("Add player to the rendering")
             rendering[self._playerPoint.y][self._playerPoint.x] = Maze.PLAYER
@@ -256,6 +272,7 @@ if __name__ == '__main__':
     maze.create()
     firstPos = Coord(random.randint(0, width-1), random.randint(0, height-1))
     maze.dig(firstPos.x, firstPos.y)
+    maze.setStart(firstPos)
     maze.setPlayer(firstPos.x, firstPos.y)
     maze._setGoal()
     maze.draw()
