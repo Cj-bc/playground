@@ -4,6 +4,7 @@ import random
 import logging
 from enum import Enum
 import copy
+import rich
 
 class InvalidMazeSizeError(Exception):
   pass
@@ -294,15 +295,15 @@ class Maze:
                 elif cell == CellType.WALL:
                     result += "#"
                 elif cell == CellType.PLAYER:
-                    result += "@"
+                    result += "[red]@[/red]"
                 elif cell == CellType.GOAL:
                     result += "G"
                 elif cell == CellType.START:
                     result += "S"
                 elif cell == CellType.FOOTPRINT:
-                    result += "*"
+                    result += "[on green] [/on green]"
                 else:
                     self.logger.error(f"row: '{row}' is neither PATH nor WALL nor PLAYER")
             result += "\n"
 
-        print(result)
+        rich.print(result)
