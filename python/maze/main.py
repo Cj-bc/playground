@@ -55,5 +55,23 @@ def play():
             click.echo(f"おめでとうございます！{steps}手でゴールしました！")
             break
 
+@cli.command()
+def solve():
+    mainlogger = logging.getLogger("__main__")
+    mainlogger.setLevel(logging.INFO)
+    h = logging.StreamHandler()
+    h.setLevel(logging.DEBUG)
+    mainlogger.addHandler(h)
+
+    width,height = 11,11
+    maze = Maze(width, height)
+    maze.create()
+    maze.draw()
+
+    s = Solver(maze)
+    answer = s.solve()
+    maze.draw()
+
+
 if __name__ == '__main__':
     cli()
