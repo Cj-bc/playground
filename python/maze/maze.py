@@ -52,6 +52,7 @@ class Maze:
     _width = 0
     _height = 0
 
+    mazeId: str = "" # Eq用のハッシュ。毎回生成するのはコストがかかる可能性があるため
     _data = [0][0] # _data[y][x]。 [x][y]ではないので注意
     start: Coord = None
     goal: Coord = None
@@ -74,6 +75,9 @@ class Maze:
       playerInfo = "doesn't exist" if self._playerPoint is None else str(self._playerPoint)
       return f"Maze: ({self._width}, {self._height}): {created}; Player {playerInfo}"
 
+    def __eq__(self, other):
+        return type(self) == type(other) and self.mazeId == other.mazeId\
+                and self._playerPoint == other._playerPoint
 
     # Utilities {{{
     def isValidCoord(self, c: Coord) -> bool:
@@ -114,6 +118,10 @@ class Maze:
 
         self._width = width
         self._height = height
+
+        # self__hash__は、ミュータブルな変数を持つクラスであるため定義できない
+        # https://docs.python.org/ja/3/reference/datamodel.html#object.__hash__
+        self.mazeId = hash(f"{self._width}{self._height}{self.start}{self.goal}{str(self._data)}")
 
     def create(self):
         """迷路を生成する
