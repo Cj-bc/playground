@@ -3,7 +3,7 @@ from solver import Solver
 from bot import Bot
 import click
 import logging
-
+import rich
 
 @click.group()
 def cli():
@@ -27,7 +27,7 @@ def play(width, height):
 
     maze = Maze(width, height, logger=mainlogger)
     maze.create()
-    maze.draw()
+    rich.print(rich.panel.Panel.fit(maze.draw()))
 
     steps = 0
     while True:
@@ -45,7 +45,8 @@ def play(width, height):
         else:
             mainlogger.info("予期しない入力のため、なにもしませんでした")
 
-        maze.draw()
+        
+        rich.print(rich.panel.Panel.fit(maze.draw()))
 
         steps+= 1
 
@@ -69,8 +70,7 @@ def solve(width, height):
 
     bot = Bot(maze)
     bot.run()
-    maze.draw()
-
+    rich.print(maze.draw())
 
 if __name__ == '__main__':
     try:
