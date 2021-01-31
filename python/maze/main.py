@@ -1,10 +1,12 @@
 from maze import Maze, Direction, InvalidMazeSizeError
 from solver import Solver
 from bot import Bot
+from game import GameState
 import click
 import logging
 import rich
 import rich.panel
+import urwid
 
 @click.group()
 def cli():
@@ -30,29 +32,43 @@ def play(width, height):
     maze.create()
     rich.print(rich.panel.Panel.fit(maze.draw()))
 
-    steps = 0
-    while True:
-        rich.print(rich.panel.Panel.fit(maze.draw()))
-        
-        i = input("左: h, 下: j, 上: k, 右: l, 終了: q")
-        if i == "h":
+    urwid_maze  = urwid.Text("")
+    urwid_usage = urwid.Text("左: h, 下: j, 上: k, 右: l, 終了: q")
+    urwid_fill  = urwid.Filler(urwid_maze)
+
+    state = GameState(maze)
+    def eHandler(key):
+        """ Playで使われるurwid用のイベントハンドラ関数 """
+        if key == "h":
             maze.movePlayer(Direction.LEFT)
-        elif i == "j":
+            urwid_maze.set_text(maze.draw())
+            state.step()
+        elif key == "j":
             maze.movePlayer(Direction.DOWN)
-        elif i == "k":
+            urwid_maze.set_text(maze.draw())
+            state.step()
+        elif key == "k":
             maze.movePlayer(Direction.UP)
-        elif i == "l":
+            urwid_maze.set_text(maze.draw())
+            state.step()
+        elif key == "l":
             maze.movePlayer(Direction.RIGHT)
-        elif i == "q":
-            break
+            urwid_maze.set_text(maze.draw())
+            state.step()
+        elif key == "q":
+            raise urwid.ExitMainLoop()
         else:
             mainlogger.info("予期しない入力のため、なにもしませんでした")
 
-        steps+= 1
-
         if maze.isGoal():
-            click.echo(f"おめでとうございます！{steps}手でゴールしました！")
-            break
+            raise urwid.ExitMainLoop()
+
+
+    loop = urwid.MainLoop(urwid_fill, unhandled_input=eHandler)
+    loop.run()
+    click.echo(f"おめでとうございます！{state.steps}手でゴールしました！")
+
+
 
 
 

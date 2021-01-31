@@ -4,3 +4,4 @@ commonmark==0.9.1
 Pygments==2.7.4
 rich==9.10.0
 typing-extensions==3.7.4.3
+urwid==2.1.2

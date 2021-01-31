@@ -309,13 +309,15 @@ class Maze:
                 elif cell == CellType.WALL:
                     result += "#"
                 elif cell == CellType.PLAYER:
-                    result += "[red]@[/red]"
+                    result += "@"
+                    #result += "[red]@[/red]"
                 elif cell == CellType.GOAL:
                     result += "G"
                 elif cell == CellType.START:
                     result += "S"
                 elif cell == CellType.FOOTPRINT:
-                    result += "[on green] [/on green]"
+                    #result += "[on green] [/on green]"
+                    result += "."
                 else:
                     self.logger.error(f"row: '{row}' is neither PATH nor WALL nor PLAYER")
             result += "\n"
