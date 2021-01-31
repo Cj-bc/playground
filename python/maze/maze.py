@@ -5,6 +5,8 @@ import logging
 from enum import Enum
 import copy
 
+class InvalidMazeSizeError(Exception):
+  pass
 
 class Direction(Enum):
     UP = 0
@@ -99,7 +101,8 @@ class Maze:
 
         if width < 5 or height < 5 or width % 2 == 0 or height % 2 == 0:
             self.logger.error("迷路の縦・横は5以上の奇数である必要があります")
-            return
+            raise InvalidMazeSizeError
+
 
         self._width = width
         self._height = height

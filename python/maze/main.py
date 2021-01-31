@@ -73,4 +73,7 @@ def solve(width, height):
 
 
 if __name__ == '__main__':
-    cli()
+    try:
+        cli()
+    except InvalidMazeSizeError:
+        pass
