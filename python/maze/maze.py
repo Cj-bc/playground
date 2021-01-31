@@ -68,6 +68,13 @@ class Maze:
 
     logger: logging.Logger
 
+
+    def __str__(self):
+      created = "created" if self._isCreated else "not created"
+      playerInfo = "doesn't exist" if self._playerPoint is None else str(self._playerPoint)
+      return f"Maze: ({self._width}, {self._height}): {created}; Player {playerInfo}"
+
+
     # Utilities {{{
     def isValidCoord(self, c: Coord) -> bool:
         """ この迷路内に存在する座標かどうかを判定する
