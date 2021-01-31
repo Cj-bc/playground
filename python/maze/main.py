@@ -1,5 +1,6 @@
 from maze import Maze, Direction, InvalidMazeSizeError
 from solver import Solver
+from bot import Bot
 import click
 import logging
 
@@ -65,10 +66,9 @@ def solve(width, height):
 
     maze = Maze(width, height)
     maze.create()
-    maze.draw()
 
-    s = Solver(maze)
-    answer = s.solve()
+    bot = Bot(maze)
+    bot.run()
     maze.draw()
 
 
