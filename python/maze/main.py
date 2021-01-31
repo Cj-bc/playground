@@ -4,6 +4,7 @@ from bot import Bot
 import click
 import logging
 import rich
+import rich.panel
 
 @click.group()
 def cli():
@@ -31,6 +32,8 @@ def play(width, height):
 
     steps = 0
     while True:
+        rich.print(rich.panel.Panel.fit(maze.draw()))
+        
         i = input("左: h, 下: j, 上: k, 右: l, 終了: q")
         if i == "h":
             maze.movePlayer(Direction.LEFT)
@@ -45,14 +48,12 @@ def play(width, height):
         else:
             mainlogger.info("予期しない入力のため、なにもしませんでした")
 
-        
-        rich.print(rich.panel.Panel.fit(maze.draw()))
-
         steps+= 1
 
         if maze.isGoal():
             click.echo(f"おめでとうございます！{steps}手でゴールしました！")
             break
+
 
 
 @click.option('--width', default=31, help='迷路の横幅')
