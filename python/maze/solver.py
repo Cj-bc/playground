@@ -37,7 +37,7 @@ class Solver:
                 ret = self.loop(c, n)
                 if ret != None:
                     self.logger.debug(f"Back...")
-                    return ret.append(c)
+                    ret.append(c)
+                    return ret
 
         return None
-
