@@ -1,6 +1,6 @@
 from typing import List
 import random
-from maze import Maze, Coord, CellType
+from maze import Maze, Coord, CellType, Direction
 import logging
 
 class Solver:
@@ -23,21 +23,25 @@ class Solver:
         if ret is None:
             self.logger.info("見つかりませんでした")
             return
+        ret.reverse()
         return ret
 
-    def loop(self, prev, c) -> List[Coord]:
+    def loop(self, prev, c) -> List[Direction]:
         self.logger.debug(f"Looking around {c}...")
-        for n in filter(lambda a: a != prev, [c.up(), c.down(), c.right(), c.left()]):
-            if n == self.maze.goal:
-                self.logger.debug(f"{n} is goal. Return")
-                return [n, c]
+        for d,c_looking in filter(lambda s: s[1] != prev, [(Direction.UP,     c.up())
+                                                          , (Direction.DOWN,  c.down())
+                                                          , (Direction.RIGHT, c.right())
+                                                          , (Direction.LEFT,  c.left())]):
+            if c_looking == self.maze.goal:
+                self.logger.debug(f"{c_looking} is goal. Return")
+                return [d]
 
-            if self.maze.isCellType(n, CellType.PATH):
-                self.logger.debug(f"Look for {n}...")
-                ret = self.loop(c, n)
+            if self.maze.isCellType(c_looking, CellType.PATH):
+                self.logger.debug(f"Dig into {c_looking}...")
+                ret = self.loop(c, c_looking)
                 if ret != None:
                     self.logger.debug(f"Back...")
-                    ret.append(c)
+                    ret.append(d)
                     return ret
 
         return None
