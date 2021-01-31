@@ -21,9 +21,9 @@ class Solver:
     def solve(self):
         ret = self.loop(self.maze.start, self.maze.start)
         if ret is None:
-            print("見つかりませんでした")
-        else:
-            print(ret)
+            self.logger.info("見つかりませんでした")
+            return
+        return ret
 
     def loop(self, prev, c) -> List[Coord]:
         self.logger.debug(f"Looking around {c}...")
