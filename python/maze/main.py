@@ -1,14 +1,17 @@
-from maze import Maze, Direction
+from maze import Maze, Direction, InvalidMazeSizeError
 from solver import Solver
 import click
 import logging
+
 
 @click.group()
 def cli():
     pass
 
+@click.option('--width', default=31, help='迷路の横幅')
+@click.option('--height', default=31, help='迷路の縦幅')
 @cli.command()
-def play():
+def play(width, height):
     # logger {{{
     mainlogger = logging.getLogger("__main__")
     mainlogger.setLevel(logging.INFO)
@@ -20,12 +23,6 @@ def play():
     mainlogger.addHandler(h)
     # }}}
 
-    try:
-        width = int(input("迷路の横幅を入力してください"))
-        height = int(input("迷路の縦幅を入力してください"))
-    except TypeError:
-        mainlogger.critical("横幅・縦幅は整数で入力してください")
-        sys.exit(-1)
 
     maze = Maze(width, height, logger=mainlogger)
     maze.create()
@@ -55,15 +52,17 @@ def play():
             click.echo(f"おめでとうございます！{steps}手でゴールしました！")
             break
 
+
+@click.option('--width', default=31, help='迷路の横幅')
+@click.option('--height', default=31, help='迷路の縦幅')
 @cli.command()
-def solve():
+def solve(width, height):
     mainlogger = logging.getLogger("__main__")
     mainlogger.setLevel(logging.INFO)
     h = logging.StreamHandler()
     h.setLevel(logging.DEBUG)
     mainlogger.addHandler(h)
 
-    width,height = 11,11
     maze = Maze(width, height)
     maze.create()
     maze.draw()
