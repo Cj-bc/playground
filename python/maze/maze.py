@@ -4,7 +4,6 @@ import random
 import logging
 from enum import Enum
 import copy
-import rich
 
 class InvalidMazeSizeError(Exception):
   pass
