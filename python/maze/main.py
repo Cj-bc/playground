@@ -66,7 +66,8 @@ def play(width, height):
 
     loop = urwid.MainLoop(urwid_fill, unhandled_input=eHandler)
     loop.run()
-    click.echo(f"おめでとうございます！{state.steps}手でゴールしました！")
+    if maze.isGoal():
+        click.echo(f"おめでとうございます！{state.steps}手でゴールしました！")
 
 
 
