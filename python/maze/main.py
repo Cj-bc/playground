@@ -89,7 +89,7 @@ def solve(width, height):
     bot = Bot(maze)
     bot.run()
     rich.print(maze.draw())
-
+    print(f"{bot.step}手でゴールしました")
 if __name__ == '__main__':
     try:
         cli()
