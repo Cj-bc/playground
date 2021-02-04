@@ -34,7 +34,6 @@ def play(width, height):
 
     urwid_maze  = urwid.Text("")
     urwid_usage = urwid.Text("左: h, 下: j, 上: k, 右: l, 終了: q")
-    urwid_fill  = urwid.Filler(urwid_maze)
 
     state = GameState(maze)
     def eHandler(key):
@@ -64,7 +63,8 @@ def play(width, height):
             raise urwid.ExitMainLoop()
 
 
-    loop = urwid.MainLoop(urwid_fill, unhandled_input=eHandler)
+    loop = urwid.MainLoop(urwid.ListBox(urwid.SimpleListWalker([urwid_maze, urwid_usage]))
+                         , unhandled_input=eHandler)
     loop.run()
     if maze.isGoal():
         click.echo(f"おめでとうございます！{state.steps}手でゴールしました！")
