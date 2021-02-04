@@ -300,7 +300,7 @@ class Maze:
                 elif cell == CellType.START:
                     result += "S"
                 elif cell == CellType.FOOTPRINT:
-                    result += "*"
+                    result += "."
                 else:
                     self.logger.error(f"row: '{row}' is neither PATH nor WALL nor PLAYER")
             result += "\n"
