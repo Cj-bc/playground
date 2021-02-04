@@ -32,7 +32,7 @@ def play(width, height):
     maze.create()
     rich.print(rich.panel.Panel.fit(maze.draw()))
 
-    urwid_maze  = urwid.Text("")
+    urwid_maze  = urwid.Text(maze.draw())
     urwid_usage = urwid.Text("左: h, 下: j, 上: k, 右: l, 終了: q")
 
     state = GameState(maze)
