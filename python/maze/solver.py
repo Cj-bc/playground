@@ -12,7 +12,7 @@ class Solver:
         solverLogger = logging.getLogger(__name__)
         solverLogger.setLevel(logging.DEBUG)
         h = logging.StreamHandler()
-        h.setLevel(logging.DEBUG)
+        h.setLevel(logging.ERROR)
         solverLogger.addHandler(h)
 
         self.logger = solverLogger
