@@ -70,6 +70,7 @@ def solve(width, height):
     bot = Bot(maze)
     bot.run()
     maze.draw()
+    print(f"{bot.step}手でゴールしました")
 
 
 if __name__ == '__main__':
