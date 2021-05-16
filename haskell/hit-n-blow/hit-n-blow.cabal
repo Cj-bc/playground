@@ -1,0 +1,63 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           hit-n-blow
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/Cj-bc/hit-n-blow#readme>
+homepage:       https://github.com/Cj-bc/hit-n-blow#readme
+bug-reports:    https://github.com/Cj-bc/hit-n-blow/issues
+author:         Cj.bc_sd a.k.a Cj-bc
+maintainer:     cj.bc-sd@outlook.jp
+copyright:      MIT
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/Cj-bc/hit-n-blow
+
+library
+  exposed-modules:
+      HitNBlow.Type
+  other-modules:
+      Paths_hit_n_blow
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , lens
+  default-language: Haskell2010
+
+executable hit-n-blow-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_hit_n_blow
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , hit-n-blow
+    , lens
+  default-language: Haskell2010
+
+test-suite hit-n-blow-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_hit_n_blow
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , hit-n-blow
+    , lens
+  default-language: Haskell2010
