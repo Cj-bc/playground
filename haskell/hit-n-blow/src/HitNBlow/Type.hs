@@ -10,6 +10,7 @@ Stability   : experimental
 module HitNBlow.Type where
 import Control.Lens
 import Control.Monad.Trans.State
+import Data.Default (Default(..))
 
 -- | Represents each Pin
 data Pin = Red | Blue | Green | White | Purple deriving (Show)
@@ -32,6 +33,9 @@ instance Ixed Lane where
     ix 5 = \g l@(Lane a b c d e) -> Lane a b c d <$> g e
     ix _ = \_ l -> pure l
 
+instance Default Lane where
+    def = Lane Nothing Nothing Nothing Nothing Nothing
+
 data Result = Solved | Failed
 data GamePhase = InGame
                | End Result
@@ -52,10 +56,5 @@ data GameState = GameState {
 
 makeLenses ''GameState
 
--- | Make initial 'Game' state.
---
--- Note that 
-instance Default Game where
-    def = Game ran
 
 type Game = State GameState
