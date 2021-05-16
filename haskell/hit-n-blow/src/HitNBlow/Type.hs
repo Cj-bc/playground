@@ -9,6 +9,7 @@ Stability   : experimental
 -}
 module HitNBlow.Type where
 import Control.Lens
+import Control.Monad.Trans.State
 
 -- | Represents each Pin
 data Pin = Red | Blue | Green | White | Purple deriving (Show)
@@ -42,11 +43,19 @@ triesLimit = 5
 -- 
 -- TODO: It might be better to make 'Monad' instance for this (or by using 'Free' monad)
 -- So that I can write DSL
-data Game = Game {
+data GameState = GameState {
       _correctAnswer :: Lane
     , _tries         :: [Lane]
     , _currentChoise :: Lane
     , _phase         :: GamePhase
     }
 
-makeLenses ''Game
+makeLenses ''GameState
+
+-- | Make initial 'Game' state.
+--
+-- Note that 
+instance Default Game where
+    def = Game ran
+
+type Game = State GameState
