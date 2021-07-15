@@ -21,6 +21,11 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- gi-gtk
+- gi-gtk-declarative
+- gi-gtk-declarative-app-simple
+- text
+- vector
 
 library:
   source-dirs: src
@@ -33,6 +38,7 @@ executables:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -haddock
     dependencies:
     - gi-gtk-declarative-trying
 
