@@ -26,6 +26,9 @@ dependencies:
 - gi-gtk-declarative-app-simple
 - text
 - vector
+- uuid
+- containers
+- lens
 
 library:
   source-dirs: src
