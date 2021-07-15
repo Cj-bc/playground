@@ -18,7 +18,7 @@ import           GI.Gtk.Declarative
 import           GI.Gtk.Declarative.App.Simple
 import qualified Data.Vector as V
 
-data TodoState = TODO | DONE deriving (Show)
+data TodoState = TODO | DONE deriving (Show, Eq)
 
 data TodoItem = TodoItem { todoTitle :: Text
                          , todoState :: TodoState
@@ -50,10 +50,13 @@ update' _ AppClosed = Exit
 
 todoWidget :: TodoItem -> Widget Event
 todoWidget (TodoItem title state desc)
-  = container Box [] [ widget Label [#label := (pack . show $ state)]
-                     , widget Label [#label := title]
-                     , widget Label [#label := desc]
-                     ]
+  = container Box [] $ [ widget Label [#label := (pack . show $ state)]
+                       , widget Label [#label := title]
+                       , widget Label [#label := desc]
+                       ] V.++ doneButton
+  where
+    doneButton | state == DONE = []
+               | otherwise = [widget Button [#label := "mark as done", on #clicked (DoneTodo title)]]
   
 view' :: State -> AppView Window Event
 view' s =
