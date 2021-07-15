@@ -66,12 +66,13 @@ view' :: State -> AppView Window Event
 view' s =
   bin Window [#title := "Todo List"
              , on #deleteEvent (const (True, AppClosed))
-             ] $ container Box [] [ BoxChild defaultBoxChildProperties (todoesWidget s)
-                                   ]
+             ] $ container ListBox [] [ bin ListBoxRow [] (todoesWidget s)
+                                      , bin ListBoxRow [] $ widget Button [#label := "New item", on #clicked (AddItem "New Item" "Description")]
+                                      ]
   
 -- | Making ToDo App
 main = void $ run App { view = view'
                       , update = update'
                       , inputs = []
                       , initialState  = [TodoItem "Test" TODO "This is test entry"]
-                        }
+                      }
