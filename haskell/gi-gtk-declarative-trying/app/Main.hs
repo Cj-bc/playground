@@ -57,12 +57,17 @@ todoWidget (TodoItem title state desc)
   where
     doneButton | state == DONE = []
                | otherwise = [widget Button [#label := "mark as done", on #clicked (DoneTodo title)]]
-  
+
+-- | 'Widget' for List of toodes
+todoesWidget :: State -> Widget Event  
+todoesWidget s = container ListBox [] ( V.map (\i -> bin ListBoxRow [] $ todoWidget i) s) 
+
 view' :: State -> AppView Window Event
 view' s =
   bin Window [#title := "Todo List"
              , on #deleteEvent (const (True, AppClosed))
-             ] $ container ListBox [] ( V.map (\i -> bin ListBoxRow [] $ todoWidget i) s )
+             ] $ container Box [] [ BoxChild defaultBoxChildProperties (todoesWidget s)
+                                   ]
   
 -- | Making ToDo App
 main = void $ run App { view = view'
