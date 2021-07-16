@@ -19,10 +19,12 @@ import           GI.Gtk                         ( Window(..)
                                                 , Button(..)
                                                 , Entry(..)
                                                 , Separator(..)
+                                                , Grid(..)
                                                 )
 import qualified GI.Gtk as Gtk
 import           GI.Gtk.Declarative
 import           GI.Gtk.Declarative.App.Simple
+import qualified GI.Gtk.Declarative.Container.Grid as Grid
 import qualified Data.Vector as V
 import qualified Data.Map as M
 import Control.Lens (ix, over, (.~), (&), (^.), (%~))
@@ -83,13 +85,19 @@ update' _ AppClosed = Exit
 -- | 'Widget' for one 'TodoItem'
 todoWidget :: UUID -> TodoItem -> Widget Event
 todoWidget uuid (TodoItem title state desc)
-  = container Box [] $ [ widget Label [#label := (pack . show $ state)]
-                       , widget Label [#label := title]
-                       , widget Label [#label := desc]
+  = container Grid [#rowSpacing := 2, #columnSpacing := 3]
+    $ [ Grid.GridChild { Grid.child = widget Label [#useMarkup := True, #label := ("<s>" <> title <> "</s>")]
+                  , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 2, Grid.height = 1, Grid.topAttach = 1}
+                  }
+      , Grid.GridChild { Grid.child = widget Label [#useMarkup := True, #label := ("<small>" <> desc <> "</small>")]
+                  , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 2, Grid.height = 1, Grid.topAttach = 2}
+                  }
                        ] V.++ doneButton
   where
     doneButton | state == DONE = []
-               | otherwise = [widget Button [#label := "mark as done", on #clicked (DoneTodo uuid)]]
+               | otherwise = [Grid.GridChild { Grid.child = widget Button [#label := "mark as done", on #clicked (DoneTodo uuid)]
+                                        , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 1, Grid.height = 2, Grid.leftAttach = 2 }
+                                        }]
 
 -- | 'Widget' for List of toodes
 todoesWidget :: State -> Widget Event  
