@@ -135,5 +135,5 @@ view' s =
 main = void $ run App { view = view'
                       , update = update'
                       , inputs = []
-                      , initialState  = AppState "" "" $ M.fromList [(UUID.nil, TodoItem "Test" TODO "This is test entry" )]
+                      , initialState  = AppState "" "" []
                       }
