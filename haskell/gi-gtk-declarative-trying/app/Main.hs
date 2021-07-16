@@ -81,18 +81,22 @@ update' _ AppClosed = Exit
 -- | 'Widget' for one 'TodoItem'
 todoWidget :: UUID -> TodoItem -> Widget Event
 todoWidget uuid (TodoItem title state desc)
-  = container Grid [#rowSpacing := 2, #columnSpacing := 3]
-    $ [ Grid.GridChild { Grid.child = widget Label [#useMarkup := True, #label := ("<s>" <> title <> "</s>")]
-                  , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 2, Grid.height = 1, Grid.topAttach = 1}
+  = container Grid [#rowSpacing := 2, #columnSpacing := 10]
+    $ [ Grid.GridChild { Grid.child = widget Label [#useMarkup := True
+                                                   , #label := ("<s>" <> title <> "</s>")
+                                                   ]
+                  , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 8, Grid.height = 1, Grid.topAttach = 1}
                   }
-      , Grid.GridChild { Grid.child = widget Label [#useMarkup := True, #label := ("<small>" <> desc <> "</small>")]
-                  , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 2, Grid.height = 1, Grid.topAttach = 2}
+      , Grid.GridChild { Grid.child = widget Label [#useMarkup := True
+                                                   , #label := ("<small>" <> desc <> "</small>")
+                                                   , #xalign := 0.1]
+                  , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 8, Grid.height = 1, Grid.topAttach = 2}
                   }
                        ] V.++ doneButton
   where
     doneButton | state == DONE = []
                | otherwise = [Grid.GridChild { Grid.child = widget Button [#label := "mark as done", on #clicked (DoneTodo uuid)]
-                                        , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 1, Grid.height = 2, Grid.leftAttach = 2 }
+                                        , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 1, Grid.height = 2, Grid.leftAttach = 10 }
                                         }]
 
 -- | 'Widget' for List of toodes
