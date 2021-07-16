@@ -122,14 +122,15 @@ view' :: State -> AppView Window Event
 view' s =
   bin Window [#name := "Todo List"
              , on #deleteEvent (const (True, AppClosed))
-             ] $ container ListBox [] [ bin ListBoxRow [] $ todoesWidget s
-                                      , bin ListBoxRow [] $ widget Separator []
+             ] $ container ListBox [] [ bin ListBoxRow [] $ widget Gtk.ProgressBar [#fraction := percentage]
                                       , bin ListBoxRow [] $ newItemWidget s
-                                      , bin ListBoxRow [] $ widget Gtk.ProgressBar [#fraction := percentage]
+                                      , bin ListBoxRow [] $ widget Separator []
+                                      , bin ListBoxRow [] $ todoesWidget s
                                       ]
   where
     doneItems = Lens.views items . M.filter $ (==) DONE . Lens.view todoState
-    percentage = (fromIntegral . M.size $ doneItems s) / (Lens.views items (fromIntegral . M.size) s)
+    allItems = Lens.views items (fromIntegral . M.size) s
+    percentage = if allItems == 0 then 0 else (fromIntegral . M.size $ doneItems s) / allItems
   
 -- | Making ToDo App
 main = void $ run App { view = view'
