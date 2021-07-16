@@ -1,6 +1,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE OverloadedLabels #-}
 {-# LANGUAGE OverloadedLists #-}
+{-# LANGUAGE TemplateHaskell #-}
 module Main where
 
 import           Control.Monad                  ( void )
@@ -19,11 +20,14 @@ import           GI.Gtk                         ( Window(..)
                                                 , Entry(..)
                                                 , Separator(..)
                                                 )
+import qualified GI.Gtk as Gtk
 import           GI.Gtk.Declarative
 import           GI.Gtk.Declarative.App.Simple
 import qualified Data.Vector as V
 import qualified Data.Map as M
-import Control.Lens (ix, over)
+import Control.Lens (ix, over, (.~), (&), (^.), (%~))
+import qualified Control.Lens as Lens
+import Control.Lens.TH (makeLenses)
 
 data TodoState = TODO | DONE deriving (Show, Eq)
 
@@ -33,32 +37,43 @@ data TodoItem = TodoItem { _todoTitle :: Text
                          }
 makeLenses ''TodoItem
   
+data State = AppState { _newItemName :: Text
+                      , _newItemDesc :: Text
+                      , _items :: (M.Map UUID TodoItem)
+                      }
+makeLenses ''State
+
+-- | Smart constructor for 'TodoItem'
+newItem title desc = TodoItem title TODO desc
 
 appendNewItem :: State -> Text -> Text -> IO State
-appendNewItem s title desc = M.insert <$> nextRandom
-                                      <*> return (TodoItem title TODO desc)
-                                      <*> return s
-  
-type State = M.Map UUID TodoItem
+appendNewItem s title desc = do
+  newuuid <- nextRandom
+  return $ over items (M.insert newuuid (newItem title desc)) s
 
-data Event = AddItem { _item_uuid :: UUID
-                     , _item_name :: Text
-                     , _item_desc :: Text
-                     }
+-- | Names to 
+data EntryName = NewItemNameEntry
+               | NewItemDescEntry
+
+data Event = AddItem UUID -- ^ New item. UUID should be generated in IO monad, therefore I need to make it here.
              | DoneTodo UUID -- ^ use title to specify.
              | RemoveTodo UUID -- ^ use title to specify.
+             | OnEntryChanged EntryName Text -- ^ Called when entry is modified
              | AppClosed
 
 update' :: State -> Event -> Transition State Event
-update' s (AddItem uuid title desc) = Transition (M.insert uuid newItem s) (return Nothing)
-  where
-    newItem = TodoItem title TODO desc
+update' s (AddItem uuid) = Transition (s&items%~(M.insert uuid $ newItem (s^.newItemName) (s^.newItemDesc))) (return Nothing)
 update' s (DoneTodo uuid) = Transition newState (return Nothing)
   where
-    newState = over (ix uuid) (\i -> i { todoState = DONE }) s
+    newState = Lens.set (items.ix uuid.todoState) (DONE) s
 update' s (RemoveTodo uuid) = Transition newState ( return Nothing)
   where
-    newState = M.delete uuid s
+    newState = over items (M.delete uuid) s
+update' s (OnEntryChanged en t) = Transition (s&l.~t) (return Nothing)
+  where
+    l = case en of
+      NewItemNameEntry -> newItemName
+      NewItemDescEntry -> newItemDesc
 update' _ AppClosed = Exit
 
 
@@ -75,19 +90,19 @@ todoWidget uuid (TodoItem title state desc)
 
 -- | 'Widget' for List of toodes
 todoesWidget :: State -> Widget Event  
-todoesWidget = container ListBox [] . mapToVector . M.mapWithKey (\k i -> bin ListBoxRow [] $ todoWidget k i)
+todoesWidget = container ListBox [] . mapToVector . M.mapWithKey (\k i -> bin ListBoxRow [] $ todoWidget k i) . Lens.view items
   where
     mapToVector :: M.Map k v -> V.Vector v
     mapToVector = V.fromList . fmap snd . M.toList
 
 newItemWidget :: Widget Event
 newItemWidget = container Box [] [ widget Button [#label := "hoge"]
-                                 ,widget Entry [ #text := "title" ]
-                                 ,widget Entry [ #text := "description" ]
+                                 ,widget Entry [ #placeholderText := "title"
+                                               , onM #changed (fmap (OnEntryChanged NewItemNameEntry) . Gtk.entryGetText)]
+                                 ,widget Entry [ #placeholderText := "description"
+                                               , onM #changed (fmap (OnEntryChanged NewItemDescEntry) . Gtk.entryGetText)]
                                  , widget Button [#label := "New item"
-                                                 , onM #clicked (const (AddItem <$> nextRandom
-                                                                         <*> return "New Item"
-                                                                         <*> return "Description"))]
+                                                 , onM #clicked (const (AddItem <$> nextRandom))]
                                  ]
                                  
 
@@ -103,5 +118,5 @@ view' s =
 main = void $ run App { view = view'
                       , update = update'
                       , inputs = []
-                      , initialState  = M.fromList [(UUID.nil, TodoItem "Test" TODO "This is test entry" )]
+                      , initialState  = AppState "" "" $ M.fromList [(UUID.nil, TodoItem "Test" TODO "This is test entry" )]
                       }
