@@ -27,10 +27,12 @@ import Control.Lens (ix, over)
 
 data TodoState = TODO | DONE deriving (Show, Eq)
 
-data TodoItem = TodoItem { todoTitle :: Text
-                         , todoState :: TodoState
-                         , todoDescription :: Text
+data TodoItem = TodoItem { _todoTitle :: Text
+                         , _todoState :: TodoState
+                         , _todoDescription :: Text
                          }
+makeLenses ''TodoItem
+  
 
 appendNewItem :: State -> Text -> Text -> IO State
 appendNewItem s title desc = M.insert <$> nextRandom
