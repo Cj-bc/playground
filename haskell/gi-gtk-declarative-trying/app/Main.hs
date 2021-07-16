@@ -48,10 +48,6 @@ makeLenses ''State
 -- | Smart constructor for 'TodoItem'
 newItem title desc = TodoItem title TODO desc
 
-appendNewItem :: State -> Text -> Text -> IO State
-appendNewItem s title desc = do
-  newuuid <- nextRandom
-  return $ over items (M.insert newuuid (newItem title desc)) s
 
 -- | Names to 
 data EntryName = NewItemNameEntry
@@ -107,13 +103,12 @@ todoesWidget = container ListBox [] . mapToVector . M.mapWithKey (\k i -> bin Li
     mapToVector = V.fromList . fmap snd . M.toList
 
 newItemWidget :: State -> Widget Event
-newItemWidget s = container Box [] [ widget Button [#label := "hoge"]
-                                   ,widget Entry [ #placeholderText := "title"
-                                                 , #text := ( s^.newItemName )
-                                                 , onM #changed (fmap (OnEntryChanged NewItemNameEntry) . Gtk.entryGetText)]
-                                   ,widget Entry [ #placeholderText := "description"
-                                                 , #text := ( s^.newItemDesc )
-                                                 , onM #changed (fmap (OnEntryChanged NewItemDescEntry) . Gtk.entryGetText)]
+newItemWidget s = container Box [] [ widget Entry [ #placeholderText := "title"
+                                                  , #text := ( s^.newItemName )
+                                                  , onM #changed (fmap (OnEntryChanged NewItemNameEntry) . Gtk.entryGetText)]
+                                   , widget Entry [ #placeholderText := "description"
+                                                  , #text := ( s^.newItemDesc )
+                                                  , onM #changed (fmap (OnEntryChanged NewItemDescEntry) . Gtk.entryGetText)]
                                    , widget Button [#label := "New item"
                                                    , onM #clicked (const (AddItem <$> nextRandom))]
                                    ]
