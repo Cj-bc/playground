@@ -62,7 +62,10 @@ data Event = AddItem UUID -- ^ New item. UUID should be generated in IO monad, t
              | AppClosed
 
 update' :: State -> Event -> Transition State Event
-update' s (AddItem uuid) = Transition (s&items%~(M.insert uuid $ newItem (s^.newItemName) (s^.newItemDesc))) (return Nothing)
+update' s (AddItem uuid) = Transition (clearEntries $ addItem s) (return Nothing)
+  where
+    addItem = over items (M.insert uuid $ newItem (s^.newItemName) (s^.newItemDesc))
+    clearEntries = Lens.set newItemName "" . Lens.set newItemDesc ""
 update' s (DoneTodo uuid) = Transition newState (return Nothing)
   where
     newState = Lens.set (items.ix uuid.todoState) (DONE) s
@@ -95,15 +98,17 @@ todoesWidget = container ListBox [] . mapToVector . M.mapWithKey (\k i -> bin Li
     mapToVector :: M.Map k v -> V.Vector v
     mapToVector = V.fromList . fmap snd . M.toList
 
-newItemWidget :: Widget Event
-newItemWidget = container Box [] [ widget Button [#label := "hoge"]
-                                 ,widget Entry [ #placeholderText := "title"
-                                               , onM #changed (fmap (OnEntryChanged NewItemNameEntry) . Gtk.entryGetText)]
-                                 ,widget Entry [ #placeholderText := "description"
-                                               , onM #changed (fmap (OnEntryChanged NewItemDescEntry) . Gtk.entryGetText)]
-                                 , widget Button [#label := "New item"
-                                                 , onM #clicked (const (AddItem <$> nextRandom))]
-                                 ]
+newItemWidget :: State -> Widget Event
+newItemWidget s = container Box [] [ widget Button [#label := "hoge"]
+                                   ,widget Entry [ #placeholderText := "title"
+                                                 , #text := ( s^.newItemName )
+                                                 , onM #changed (fmap (OnEntryChanged NewItemNameEntry) . Gtk.entryGetText)]
+                                   ,widget Entry [ #placeholderText := "description"
+                                                 , #text := ( s^.newItemDesc )
+                                                 , onM #changed (fmap (OnEntryChanged NewItemDescEntry) . Gtk.entryGetText)]
+                                   , widget Button [#label := "New item"
+                                                   , onM #clicked (const (AddItem <$> nextRandom))]
+                                   ]
                                  
 
 view' :: State -> AppView Window Event
@@ -111,7 +116,7 @@ view' s =
   bin Window [#title := "Todo List"
              , on #deleteEvent (const (True, AppClosed))
              ] $ container ListBox [] [ bin ListBoxRow [] (todoesWidget s)
-                                      , bin ListBoxRow [] newItemWidget
+                                      , bin ListBoxRow [] $ newItemWidget s
                                       ]
   
 -- | Making ToDo App
