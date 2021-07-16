@@ -33,7 +33,7 @@ import Control.Lens.TH (makeLenses)
 
 data TodoState = TODO | DONE deriving (Show, Eq)
 
-data TodoItem = TodoItem { _todoTitle :: Text
+data TodoItem = TodoItem { _todoName :: Text
                          , _todoState :: TodoState
                          , _todoDescription :: Text
                          }
@@ -46,7 +46,7 @@ data State = AppState { _newItemName :: Text
 makeLenses ''State
 
 -- | Smart constructor for 'TodoItem'
-newItem title desc = TodoItem title TODO desc
+newItem name desc = TodoItem name TODO desc
 
 
 -- | Names to 
@@ -54,8 +54,8 @@ data EntryName = NewItemNameEntry
                | NewItemDescEntry
 
 data Event = AddItem UUID -- ^ New item. UUID should be generated in IO monad, therefore I need to make it here.
-             | DoneTodo UUID -- ^ use title to specify.
-             | RemoveTodo UUID -- ^ use title to specify.
+             | DoneTodo UUID -- ^ use name to specify.
+             | RemoveTodo UUID -- ^ use name to specify.
              | OnEntryChanged EntryName Text -- ^ Called when entry is modified
              | AppClosed
 
@@ -80,10 +80,10 @@ update' _ AppClosed = Exit
 
 -- | 'Widget' for one 'TodoItem'
 todoWidget :: UUID -> TodoItem -> Widget Event
-todoWidget uuid (TodoItem title state desc)
+todoWidget uuid (TodoItem name state desc)
   = container Grid [#rowSpacing := 2, #columnSpacing := 10]
     $ [ Grid.GridChild { Grid.child = widget Label [#useMarkup := True
-                                                   , #label := ("<s>" <> title <> "</s>")
+                                                   , #label := ("<s>" <> name <> "</s>")
                                                    ]
                   , Grid.properties = Grid.defaultGridChildProperties { Grid.width = 8, Grid.height = 1, Grid.topAttach = 1}
                   }
@@ -107,7 +107,7 @@ todoesWidget = container ListBox [] . mapToVector . M.mapWithKey (\k i -> bin Li
     mapToVector = V.fromList . fmap snd . M.toList
 
 newItemWidget :: State -> Widget Event
-newItemWidget s = container Box [] [ widget Entry [ #placeholderText := "title"
+newItemWidget s = container Box [] [ widget Entry [ #placeholderText := "name"
                                                   , #text := ( s^.newItemName )
                                                   , onM #changed (fmap (OnEntryChanged NewItemNameEntry) . Gtk.entryGetText)]
                                    , widget Entry [ #placeholderText := "description"
@@ -120,7 +120,7 @@ newItemWidget s = container Box [] [ widget Entry [ #placeholderText := "title"
 
 view' :: State -> AppView Window Event
 view' s =
-  bin Window [#title := "Todo List"
+  bin Window [#name := "Todo List"
              , on #deleteEvent (const (True, AppClosed))
              ] $ container ListBox [] [ bin ListBoxRow [] $ todoesWidget s
                                       , bin ListBoxRow [] $ widget Separator []
