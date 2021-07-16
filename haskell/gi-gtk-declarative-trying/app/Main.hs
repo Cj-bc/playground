@@ -115,7 +115,8 @@ view' :: State -> AppView Window Event
 view' s =
   bin Window [#title := "Todo List"
              , on #deleteEvent (const (True, AppClosed))
-             ] $ container ListBox [] [ bin ListBoxRow [] (todoesWidget s)
+             ] $ container ListBox [] [ bin ListBoxRow [] $ todoesWidget s
+                                      , bin ListBoxRow [] $ widget Separator []
                                       , bin ListBoxRow [] $ newItemWidget s
                                       ]
   
