@@ -125,7 +125,11 @@ view' s =
              ] $ container ListBox [] [ bin ListBoxRow [] $ todoesWidget s
                                       , bin ListBoxRow [] $ widget Separator []
                                       , bin ListBoxRow [] $ newItemWidget s
+                                      , bin ListBoxRow [] $ widget Gtk.ProgressBar [#fraction := percentage]
                                       ]
+  where
+    doneItems = Lens.views items . M.filter $ (==) DONE . Lens.view todoState
+    percentage = (fromIntegral . M.size $ doneItems s) / (Lens.views items (fromIntegral . M.size) s)
   
 -- | Making ToDo App
 main = void $ run App { view = view'
