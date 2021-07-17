@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       StatusBar.Type
+      StatusBar.Units.Pactl
   other-modules:
       Paths_status_bar_gtk
   hs-source-dirs:
