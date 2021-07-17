@@ -29,13 +29,16 @@ sliders s = container Box [#orientation := Gtk.OrientationVertical
 
 update' _ AppClose = Exit
 
-app = App { view = bin Window [#name := "Status-bar-gtk"
-                              , on #deleteEvent (const (True, AppClose))
-                              ] . sliders
-          , update = update'
-          , inputs = []
-          , initialState = State []
-          }
+  
 
 main :: IO  ()
-main = void $ run app
+main = do
+  let app = App { view = bin Window [#name := "Status-bar-gtk"
+                                    , on #deleteEvent (const (True, AppClose))
+                                    ] . sliders
+                , update = update'
+                , inputs = []
+                , initialState = State [(VolumeSink False 0.1), (VolumeSink False 0.8)]
+                }
+
+  void $ run app
