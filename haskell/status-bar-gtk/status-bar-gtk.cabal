@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       StatusBar.Type
+      StatusBar.Units.Brightness
       StatusBar.Units.Pactl
   other-modules:
       Paths_status_bar_gtk
@@ -37,6 +38,7 @@ library
     , gi-gtk-declarative
     , gi-gtk-declarative-app-simple
     , lens
+    , pipes
     , vector
   default-language: Haskell2010
 
@@ -53,6 +55,7 @@ executable status-bar-gtk-exe
     , gi-gtk-declarative
     , gi-gtk-declarative-app-simple
     , lens
+    , pipes
     , status-bar-gtk
     , vector
   default-language: Haskell2010
@@ -71,6 +74,7 @@ test-suite status-bar-gtk-test
     , gi-gtk-declarative
     , gi-gtk-declarative-app-simple
     , lens
+    , pipes
     , status-bar-gtk
     , vector
   default-language: Haskell2010

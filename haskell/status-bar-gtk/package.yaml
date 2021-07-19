@@ -26,6 +26,7 @@ dependencies:
 - gi-gtk-declarative-app-simple
 - lens
 - vector
+- pipes
 
 
 library:
