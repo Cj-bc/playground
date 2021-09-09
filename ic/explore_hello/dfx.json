@@ -1,0 +1,35 @@
+{
+  "canisters": {
+    "explore_hello": {
+      "main": "src/explore_hello/main.mo",
+      "type": "motoko"
+    },
+    "explore_hello_assets": {
+      "dependencies": [
+        "explore_hello"
+      ],
+      "frontend": {
+        "entrypoint": "src/explore_hello_assets/src/index.html"
+      },
+      "source": [
+        "src/explore_hello_assets/assets",
+        "dist/explore_hello_assets/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "dfx": "0.8.1",
+  "networks": {
+    "local": {
+      "bind": "127.0.0.1:8000",
+      "type": "ephemeral"
+    }
+  },
+  "version": 1
+}
