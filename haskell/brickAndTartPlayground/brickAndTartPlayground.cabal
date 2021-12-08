@@ -41,8 +41,8 @@ library
     , data-default
   default-language: Haskell2010
 
-executable brickAndTartPlayground-exe
-  main-is: Main.hs
+executable brickAndTartPlayground
+  main-is: Ascii3d/Main.hs 
   other-modules:
       Paths_brickAndTartPlayground
   hs-source-dirs:
@@ -51,4 +51,12 @@ executable brickAndTartPlayground-exe
   build-depends:
       base >=4.7 && <5
     , brickAndTartPlayground
+    , brick
+    , vty
+    , data-default
+    , mtl
+    , microlens-platform
+    , tart
+    , linear
   default-language: Haskell2010
+

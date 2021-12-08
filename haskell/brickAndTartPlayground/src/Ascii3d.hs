@@ -39,6 +39,8 @@ initAscii3d aspectR screenW fv = do
 moveCamera :: V3 Float -> Ascii3d ()
 moveCamera p = cameraPos %= (+ p)
 
+addVertex :: VertexData -> Ascii3d()
+addVertex vd = vertexBuffer %= (<> (singleton vd))
 
 draw :: Ascii3d ()
 draw = do
@@ -60,11 +62,3 @@ drawPoint :: Float -> VertexData -> V2 Float
 drawPoint flength vertex =
   let ratio = flength/(vertex^.position^._z)
   in V2 ((vertex^.position^._x)*ratio) ((vertex^.position^._y)*ratio)
-
-flush :: Ascii3d Image
-flush = do
-  c <- use mainBuffer
-  maybe (return ()) pure $ do
-    c' <- c
-    let img = canvasLayersToImage [c']
-    return img
