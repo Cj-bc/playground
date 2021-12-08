@@ -1,0 +1,54 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.34.4.
+--
+-- see: https://github.com/sol/hpack
+
+name:           brickAndTartPlayground
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/Cj-bc/brickAndTartPlayground#readme>
+homepage:       https://github.com/Cj-bc/brickAndTartPlayground#readme
+bug-reports:    https://github.com/Cj-bc/brickAndTartPlayground/issues
+author:         Cj.bc-sd a.k.a Cj-bc
+maintainer:     cj.bc-sd@outlook.jp
+copyright:      2021 Cj.bc-sd a.k.a Cj-bc
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/Cj-bc/brickAndTartPlayground
+
+library
+  exposed-modules:
+      Ascii3d
+  other-modules:
+      Paths_brickAndTartPlayground
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , brick
+    , tart
+    , vector
+    , mtl
+    , microlens-platform
+    , linear
+    , data-default
+  default-language: Haskell2010
+
+executable brickAndTartPlayground-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_brickAndTartPlayground
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , brickAndTartPlayground
+  default-language: Haskell2010
