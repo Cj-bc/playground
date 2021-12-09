@@ -61,5 +61,5 @@ draw = do
 
 drawPoint :: Float -> VertexData -> V2 Float
 drawPoint flength vertex =
-  let ratio = flength/(vertex^.position^._z)
+  let ratio = (-flength)/(vertex^.position^._z)
   in V2 ((vertex^.position^._x)*ratio) ((vertex^.position^._y)*ratio)
