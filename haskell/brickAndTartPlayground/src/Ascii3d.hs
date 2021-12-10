@@ -46,7 +46,7 @@ draw :: Ascii3d ()
 draw = do
   state <- get
   let facialLength = 1 / (tan (state^.hFov/2))
-      screenBuffer = fmap (drawPoint facialLength (state^.cameraPos)) (state^.vertexBuffer) :: Vector (V2 Float)
+      (screenBuffer, zbuff) = Data.Vector.unzip $ fmap (drawPoint facialLength (state^.cameraPos)) (state^.vertexBuffer)
       screenW = fromRational . toRational $ state^.screenWidth
       buffer = state^.mainBuffer
       halfScreen = screenW/2
@@ -59,7 +59,8 @@ draw = do
       mainBuffer .= (Just newC)
 
 
-drawPoint :: Float -> Position -> VertexData -> V2 Float
+drawPoint :: Float -> Position -> VertexData -> (V2 Float, Float)
 drawPoint flength cam vertex =
-  let ratio = (-flength)/(vertex^.position^._z-(cam^._z))
-  in V2 ((vertex^.position^._x-(cam^._x))*ratio) ((vertex^.position^._y-(cam^._y))*ratio)
+  let zDelta = (vertex^.position^._z-(cam^._z))
+      ratio = (-flength)/zDelta
+  in (V2 ((vertex^.position^._x-(cam^._x))*ratio) ((vertex^.position^._y-(cam^._y))*ratio), 1/zDelta)
