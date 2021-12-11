@@ -54,7 +54,8 @@ draw = do
   case buffer of
     Nothing -> return ()
     Just b' -> do
-      newC <- lift $ canvasSetMany b' $ toList (fmap (\c -> ((round $ (c^._x)*screenW + halfScreen, round $ (c^._y)*(screenW*(state^.aspectRatio)) + halfScreen)
+      b'' <- lift $ clearCanvas b'
+      newC <- lift $ canvasSetMany b'' $ toList (fmap (\c -> ((round $ (c^._x)*screenW + halfScreen, round $ (c^._y)*(screenW*(state^.aspectRatio)) + halfScreen)
                                                             , '*', mempty)) screenBuffer)
       mainBuffer .= (Just newC)
 
