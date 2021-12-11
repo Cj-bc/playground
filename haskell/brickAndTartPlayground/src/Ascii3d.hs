@@ -48,14 +48,16 @@ draw = do
   let facialLength = 1 / (tan (state^.hFov/2))
       (screenBuffer, zbuff) = Data.Vector.unzip $ fmap (drawPoint facialLength (state^.cameraPos)) (state^.vertexBuffer)
       screenW = fromRational . toRational $ state^.screenWidth
+      screenH = screenW*(state^.aspectRatio)
       buffer = state^.mainBuffer
-      halfScreen = screenW/2
+      halfScreenW = screenW/2
+      halfScreenH = screenH/2
 
   case buffer of
     Nothing -> return ()
     Just b' -> do
       b'' <- lift $ clearCanvas b'
-      newC <- lift $ canvasSetMany b'' $ toList (fmap (\c -> ((round $ (c^._x)*screenW + halfScreen, round $ (c^._y)*(screenW*(state^.aspectRatio)) + halfScreen)
+      newC <- lift $ canvasSetMany b'' $ toList (fmap (\c -> ((round $ (c^._x)*screenW + halfScreenW, round $ (c^._y)*screenH + halfScreenH)
                                                             , '*', mempty)) screenBuffer)
       mainBuffer .= (Just newC)
 
