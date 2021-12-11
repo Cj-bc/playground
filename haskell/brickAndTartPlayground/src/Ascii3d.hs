@@ -57,9 +57,19 @@ draw = do
     Nothing -> return ()
     Just b' -> do
       b'' <- lift $ clearCanvas b'
-      newC <- lift $ canvasSetMany b'' $ toList (fmap (\c -> ((round $ (c^._x)*screenW + halfScreenW, round $ (c^._y)*screenH + halfScreenH)
-                                                            , '*', mempty)) screenBuffer)
+      newC <- lift $ canvasSetMany b'' $ toList (Data.Vector.zipWith  (\c idx -> ((round $ (c^._x)*halfScreenW + halfScreenW, round $ (c^._y)*halfScreenH + halfScreenH)
+                                                            , pickLetter ".,-~:;=!*#$@" idx, mempty)) screenBuffer zbuff)
+                                                            -- , chr (48+idx), mempty)) screenBuffer (fromList [0..] :: Vector Int))
       mainBuffer .= (Just newC)
+
+pickLetter :: String -> Float -> Char
+pickLetter letters z = maybe lastLetter id $ letters !? ((round $ (abs z)*(fromRational . toRational . Prelude.length $ letters)) - 1)
+  where
+    lastLetter = letters !! (Prelude.length letters - 1)
+
+    (!?) :: [a] -> Int -> Maybe a
+    list !? idx | 0 <= idx && idx < Prelude.length list = Just $ list !! idx
+                | otherwise = Nothing
 
 
 drawPoint :: Float -> Position -> VertexData -> (V2 Float, Float)
