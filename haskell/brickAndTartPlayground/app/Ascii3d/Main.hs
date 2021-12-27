@@ -1,10 +1,13 @@
+{-# LANGUAGE OverloadedStrings #-}
 import Tart.Canvas
 import Lens.Micro.Platform
 import Brick
+import Brick.Util (bg)
 import Brick.Widgets.Border (border)
 import Brick.Widgets.Table
 import Ascii3d
 import qualified Graphics.Vty as V
+import Graphics.Vty.Attributes.Color as VColor
 import Data.Default (def)
 import Control.Monad.State.Strict
 import Linear.V3 (V3(..), _x, _y, _z)
@@ -19,7 +22,8 @@ app = App { appDraw = ui
           , appChooseCursor = neverShowCursor
           , appHandleEvent = eventHandler
           , appStartEvent = liftIO . execStateT draw
-          , appAttrMap = const $ attrMap V.defAttr []
+          , appAttrMap = const $ attrMap V.defAttr [("Supported", bg VColor.green)
+                                                   ,("Unsupported", bg VColor.red)]
           }
 
 
@@ -44,14 +48,34 @@ verticesInfo vs = renderTable . table $ [str " ", str "x", str "y", str "z"] : (
                  , str . show $ p^.position^._z
                  ]
 
+supportedFeatures :: Widget n
+supportedFeatures = withAttr "features-table" . renderTable . table $ fmap convert featureList
+  where
+    convert :: (Bool, String) -> [Widget n]
+    convert (True, feature)  = [withAttr "Supported"   $ str " ", str feature]
+    convert (False, feature) = [withAttr "Unsupported" $ str " ", str feature]
+    featureList :: [(Bool, String)]
+    featureList = [(True, "WASD Camera Movement")
+                  ,(True, "Vertex shading")
+                  ,(False, "Clipping")
+                  ,(False, "Shape assembly")
+                  ,(False, "Lighting")
+                  ]
+                  
+
   
 ui :: Ascii3dState -> [Widget n]
 ui s = case s^.mainBuffer  of
          Nothing -> [str "hello there!"]
          Just c -> [hBox [border . raw $ canvasLayersToImage [c]
                          , vBox [positionView (s^.cameraPos)
-                                , str "Vertices"
-                                , verticesInfo (s^.vertexBuffer)
+                                , hBox [ vBox [str "Vertices"
+                                              , verticesInfo (s^.vertexBuffer)
+                                              ]
+                                       , vBox [ str "Features"
+                                              , supportedFeatures
+                                              ]
+                                       ]
                                 ]
                          ]
                    
