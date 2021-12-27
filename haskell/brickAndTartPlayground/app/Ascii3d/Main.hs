@@ -106,26 +106,11 @@ eventHandler s _ = continue s
 main = do
   initialState <- flip execStateT def $ do
                       initAscii3d 0.8 100 60
-                      -- sequence $ do
-                      --   x<- [-3,3]
-                      --   y<- [-3,3]
-                      --   z<- [-1,-3]
-                      --   return $ addVertex $ VertexData (V3 x y z)
-                      sequence $ do
-                        x<- [-3..3]
-                        y<- [-3,3]
-                        z<- [-1,-3]
-                        return $ addVertex $VertexData (V3 x y z)
-                      sequence $ do
-                        x<- [-3,3]
-                        y<- [-3..3]
-                        z<- [-1,-3]
-                        return $ addVertex $VertexData (V3 x y z)
                       sequence $ do
                         x<- [-3,3]
                         y<- [-3,3]
-                        z<- (negate) <$> [1..3]
-                        return $ addVertex $VertexData (V3 x y z)
+                        z<- [-1,-3]
+                        return $ addVertex $ VertexData (V3 x y z)
   finalState <- defaultMain app initialState
   putStrLn . show $ fmap (\v -> show $v^.position) (finalState^.vertexBuffer)
   putStrLn . show . fmap canvasSize $ finalState^.mainBuffer
