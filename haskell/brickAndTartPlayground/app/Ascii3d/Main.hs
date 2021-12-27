@@ -105,7 +105,7 @@ eventHandler s _ = continue s
 
 main = do
   initialState <- flip execStateT def $ do
-                      initAscii3d 0.8 100 60
+                      initAscii3d 0.8 50 60
                       sequence $ do
                         x<- [-3,3]
                         y<- [-3,3]
