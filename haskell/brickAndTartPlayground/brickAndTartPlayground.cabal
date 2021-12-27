@@ -58,5 +58,6 @@ executable brickAndTartPlayground
     , microlens-platform
     , tart
     , linear
+    , vector
   default-language: Haskell2010
 
