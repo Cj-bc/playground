@@ -1,19 +1,23 @@
 use std::collections::HashMap;
 
 fn main() {
-    let input = "Add Sally to Engineering";
     let mut db: HashMap<String, Vec<String>> = HashMap::new();
+    interpreter(&mut db, String::from("Add Sally to Engineering"));
+    interpreter(&mut db, String::from("List Engineering"));
+}
 
+fn interpreter(db: &mut HashMap<String, Vec<String>>, i: String) {
     let inputs: Vec<_> = i.split(' ').collect();
     match inputs[..] {
 	["Add", name, "to", office] => {
-	    add_entry(&mut db, &name, &office);
+	    add_entry(db, &name, &office);
 	},
 	["List", office] => {
-	    list_entry(&mut db, &office);
+	    list_entry(db, &office);
 	}
 	_ => (),
     }
+
 }
 
 fn add_entry(db: &mut HashMap<String, Vec<String>>, name: &str, office: &str) {
