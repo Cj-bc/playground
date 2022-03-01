@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 fn main() {
     let input = "Add Sally to Engineering";
-    let mut db: HashMap<String, String> = HashMap::new();
+    let mut db: HashMap<String, Vec<String>> = HashMap::new();
 
     let inputs: Vec<_> = input.split(' ').collect();
     match inputs.get(0) {
@@ -13,8 +13,8 @@ fn main() {
     }
 }
 
-fn add_entry(db: &mut HashMap<String, String>, i: Vec<&str>) {
+fn add_entry(db: &mut HashMap<String, Vec<String>>, i: Vec<&str>) {
 }
 
-fn list_entry(db: &mut HashMap<String, String>, i: Vec<&str>) {
+fn list_entry(db: &mut HashMap<String, Vec<String>>, i: Vec<&str>) {
 }
