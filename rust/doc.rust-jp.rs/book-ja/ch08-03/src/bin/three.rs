@@ -4,17 +4,20 @@ fn main() {
     let input = "Add Sally to Engineering";
     let mut db: HashMap<String, Vec<String>> = HashMap::new();
 
-    let inputs: Vec<_> = input.split(' ').collect();
-    match inputs.get(0) {
-	None => (),
-	Some(&"Add") => add_entry(&mut db, inputs),
-	Some(&"List") => list_entry(&mut db, inputs),
+    let inputs: Vec<_> = i.split(' ').collect();
+    match inputs[..] {
+	["Add", name, "to", office] => {
+	    add_entry(&mut db, &name, &office);
+	},
+	["List", office] => {
+	    list_entry(&mut db, &office);
+	}
 	_ => (),
     }
 }
 
-fn add_entry(db: &mut HashMap<String, Vec<String>>, i: Vec<&str>) {
+fn add_entry(db: &mut HashMap<String, Vec<String>>, name: &str, office: &str) {
 }
 
-fn list_entry(db: &mut HashMap<String, Vec<String>>, i: Vec<&str>) {
+fn list_entry(db: &mut HashMap<String, Vec<String>>, office: &str) {
 }
