@@ -2,7 +2,10 @@ use std::collections::HashMap;
 
 fn main() {
     let mut db: HashMap<String, Vec<String>> = HashMap::new();
+    let mut input = String::new();
+    //io::stdin().read_line(&input);
     interpreter(&mut db, String::from("Add Sally to Engineering"));
+    interpreter(&mut db, String::from("Add John to Engineering"));
     interpreter(&mut db, String::from("List Engineering"));
 }
 
