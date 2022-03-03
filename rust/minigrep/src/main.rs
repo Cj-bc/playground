@@ -2,6 +2,7 @@ use std::env;
 use std::io::prelude::*;
 use std::fs::File;
 use std::process;
+use std::error::Error;
 
 fn main() {
     let args: Vec<String> =  env::args().collect();
@@ -10,14 +11,23 @@ fn main() {
 	process::exit(1);
     });
 
-    let mut f = File::open(&cfg.filename).expect("Couldn't open file");
+    if let Err(e) = run(cfg) {
+	println!("Application error: {}", e);
+	process::exit(1);
+    };
 
-    let mut content = String::new();
-    f.read_to_string(&mut content).expect("Couldn't read from file");
-
-    println!("{}: {}", cfg.filename, content);
 }
 
+fn run(config: Config) -> Result<(), Box<Error>> {
+    let mut f = File::open(&config.filename)?;
+
+    let mut content = String::new();
+    f.read_to_string(&mut content)?;
+
+    println!("{}: {}", config.filename, content);
+
+    Ok(())
+}
 
 struct Config {
     query: String,
