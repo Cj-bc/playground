@@ -13,6 +13,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+#[derive(PartialEq,Debug)]
 pub struct Config {
     query: String,
     filename: String,
@@ -27,5 +28,27 @@ impl Config {
 	let query = args[1].clone();
 	let filename = args[2].clone();
 	Ok(Config { query, filename })
+    }
+}
+
+#[cfg(test)]
+mod test {
+    mod Config {
+	use super::super::Config;
+	#[test]
+	fn new_success() {
+	    assert_eq!(Ok(Config {query: String::from("a"), filename: String::from("b")})
+		       , Config::new(&[String::from("binary name")
+				       , String::from("a")
+				       , String::from("b")]));
+	}
+
+	#[test]
+	fn new_not_enough_arguments() {
+	    assert_eq!(Err("Not enough arguments")
+		       , Config::new(&[String::from("binary name")
+				       , String::from("b")]));
+	}
+
     }
 }
