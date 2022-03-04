@@ -69,6 +69,7 @@ impl Config {
 
 	    if searching_options && &arg == "--" {
 		searching_options = false;
+		continue;
 	    }
 
 	    if arg.starts_with("--") && &arg != "--" {
