@@ -2,6 +2,7 @@ use std::env;
 use std::io::prelude::*;
 use std::fs::File;
 use std::error::Error;
+use std::collections::HashMap;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut f = File::open(&config.filename)?;
@@ -56,6 +57,27 @@ impl Config {
 
     pub fn separate_options_and_args(args: impl Iterator<Item = String>)
 					 -> (HashMap<String, String>, impl Iterator<Item = String>) {
+	let mut searching_options = true;
+	let mut options: HashMap<String, String> = HashMap::new();
+	let mut arguments: Vec<String> = vec![];
+	let mut next_option: Option<String> = None;
+	for arg in args {
+	    if let Some(opt) = next_option {
+		options.insert(opt, arg.clone());
+		next_option = None;
+	    }
+
+	    if searching_options && &arg == "--" {
+		searching_options = false;
+	    }
+
+	    if arg.starts_with("--") {
+		next_option = Some(arg);
+	    } else {
+		arguments.push(arg);
+	    }
+	};
+	(options,arguments.into_iter())
     }
 }
 
