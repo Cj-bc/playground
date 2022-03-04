@@ -61,7 +61,7 @@ impl Config {
 	let mut options: HashMap<String, String> = HashMap::new();
 	let mut arguments: Vec<String> = vec![];
 	let mut next_option: Option<String> = None;
-	for arg in args {
+	for arg in args.skip(1) {
 	    if let Some(opt) = next_option {
 		options.insert(opt, arg.clone());
 		next_option = None;
