@@ -81,6 +81,16 @@ mod test {
 				       , String::from("b")].into_iter()));
 	}
 
+	fn new_flag_context() {
+	    assert_eq!(Ok(Config {query: String::from("a")
+				  , filename: String::from("b")
+				  , context: 2
+	    }), Config::new([String::from("--context")
+			    , String::from("2")
+			    , String::from("a")
+			    , String::from("b")].into_iter()))
+	}
+
     }
 
     #[cfg(test)]
