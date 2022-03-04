@@ -65,6 +65,7 @@ impl Config {
 	    if let Some(opt) = next_option {
 		options.insert(opt, arg.clone());
 		next_option = None;
+		continue;
 	    }
 
 	    if searching_options && &arg == "--" {
