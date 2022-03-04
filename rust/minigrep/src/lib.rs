@@ -8,9 +8,23 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut content = String::new();
     f.read_to_string(&mut content)?;
 
-    println!("{}: {}", config.filename, content);
+    for line in search(&config.query, &content) {
+	println!("{}", line);
+    }
 
     Ok(())
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut result = vec![];
+    for l in contents.lines() {
+	if l.contains(query) {
+	    result.push(l);
+	}
+    }
+    result
+
+
 }
 
 #[derive(PartialEq,Debug)]
@@ -33,8 +47,9 @@ impl Config {
 
 #[cfg(test)]
 mod test {
-    mod Config {
-	use super::super::Config;
+    #[cfg(test)]
+    mod config {
+	use super::super::*;
 	#[test]
 	fn new_success() {
 	    assert_eq!(Ok(Config {query: String::from("a"), filename: String::from("b")})
@@ -50,5 +65,35 @@ mod test {
 				       , String::from("b")]));
 	}
 
+    }
+
+    #[cfg(test)]
+    mod query {
+	use super::super::*;
+	#[test]
+	fn one_result() {
+	    let query = "duct";
+	    let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+
+	    assert_eq!(
+		vec!["safe, fast, productive."],
+		search(query, contents)
+	    );
+	}
+
+	#[test]
+	fn no_result() {
+	    let query = "DOESNOTEXIST";
+	    let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+
+	    let expect: Vec<&str> = vec![];
+	    assert_eq!(expect, search(query, contents));
+	}
     }
 }
