@@ -39,7 +39,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+    pub fn new(mut args:impl Iterator<Item = String>) -> Result<Config, &'static str> {
 	args.next();
 
 	let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
@@ -64,9 +64,9 @@ mod test {
 	fn new_success() {
 	    assert_eq!(Ok(Config {query: String::from("a"), filename: String::from("b")
 				  , case_sensitive: true})
-		       , Config::new(&[String::from("binary name")
+		       , Config::new([String::from("binary name")
 				       , String::from("a")
-				       , String::from("b")]));
+				       , String::from("b")].into_iter()));
 	}
 
 	#[test]
