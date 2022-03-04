@@ -71,7 +71,7 @@ impl Config {
 		searching_options = false;
 	    }
 
-	    if arg.starts_with("--") {
+	    if arg.starts_with("--") && &arg != "--" {
 		next_option = Some(arg);
 	    } else {
 		arguments.push(arg);
