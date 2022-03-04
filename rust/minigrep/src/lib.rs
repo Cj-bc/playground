@@ -53,6 +53,10 @@ impl Config {
 	};
 	Ok(Config { query, filename, case_sensitive })
     }
+
+    pub fn separate_options_and_args(args: impl Iterator<Item = String>)
+					 -> (HashMap<String, String>, impl Iterator<Item = String>) {
+    }
 }
 
 #[cfg(test)]
@@ -92,6 +96,61 @@ mod test {
 			    , String::from("b")].into_iter()))
 	}
 
+
+	#[cfg(test)]
+	mod separate_options_and_args {
+	    use std::collections::HashMap;
+	    use super::Config;
+
+	    #[test]
+	    fn with_dash() {
+		let (opts, mut args) = Config::separate_options_and_args(vec!["binary_name".to_string()
+									      , "--context".to_string()
+									      , "2".to_string()
+									      , "--".to_string()
+									      , "target".to_string()
+									      , "filename".to_string()].into_iter());
+		assert_eq!(HashMap::from([("--context".to_string()
+					   , "2".to_string())])
+			   , opts);
+		assert_eq!(Some("target".to_string()), args.next());
+		assert_eq!(Some("filename".to_string()), args.next());
+		assert_eq!(None, args.next());
+	    }
+
+	    #[test]
+	    fn without_dash() {
+		let (opts, mut args) = Config::separate_options_and_args(vec!["binary_name".to_string()
+									      , "--context".to_string()
+									      , "2".to_string()
+									      , "target".to_string()
+									      , "filename".to_string()].into_iter());
+		assert_eq!(HashMap::from([("--context".to_string(), "2".to_string())])
+			   , opts);
+		assert_eq!(Some("target".to_string()), args.next());
+		assert_eq!(Some("filename".to_string()), args.next());
+		assert_eq!(None, args.next());
+	    }
+
+	    #[test]
+	    fn without_options() {
+		let (opts, mut args) = Config::separate_options_and_args(vec!["binary_name".to_string()
+									      , "target".to_string()
+									      , "filename".to_string()].into_iter());
+		assert_eq!(HashMap::new(), opts);
+		assert_eq!(Some("target".to_string()), args.next());
+		assert_eq!(Some("filename".to_string()), args.next());
+	    }
+
+	    #[test]
+	    fn without_arguments() {
+		let (opts, mut args) = Config::separate_options_and_args(vec!["binary_name".to_string()
+									      , "--context".to_string()
+									      , "2".to_string()].into_iter());
+		assert_eq!(HashMap::from([("--context".to_string(), "2".to_string())]), opts);
+		assert_eq!(None, args.next());
+	    }
+	}
     }
 
     #[cfg(test)]
