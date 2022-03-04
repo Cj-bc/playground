@@ -23,23 +23,12 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut result = vec![];
-    for l in contents.lines() {
-	if l.contains(query) {
-	    result.push(l);
-	}
-    }
-    result
+    contents.lines().filter(|l| l.contains(query)).collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut result = vec![];
-    for l in contents.lines() {
-	if l.to_lowercase().contains(&query.to_lowercase()) {
-	    result.push(l);
-	}
-    }
-    result
+    let query = query.to_lowercase();
+    contents.lines().filter(|l| l.to_lowercase().contains(&query)).collect()
 }
 
 #[derive(PartialEq,Debug)]
@@ -50,14 +39,18 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-	if args.len() < 3 {
-	    return Err("Not enough arguments");
-	}
+    pub fn new(mut args: std::env::Args) -> Result<Config, &'static str> {
+	args.next();
 
 	let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
-	let query = args[1].clone();
-	let filename = args[2].clone();
+	let query = match args.next() {
+	    Some(arg) => arg,
+	    None => return Err("Didn't get a query string"),
+	};
+	let filename = match args.next() {
+	    Some(arg) => arg,
+	    None => return Err("Didn't get a filename"),
+	};
 	Ok(Config { query, filename, case_sensitive })
     }
 }
@@ -77,10 +70,15 @@ mod test {
 	}
 
 	#[test]
-	fn new_not_enough_arguments() {
-	    assert_eq!(Err("Not enough arguments")
-		       , Config::new(&[String::from("binary name")
-				       , String::from("b")]));
+	fn new_no_query_string() {
+	    assert_eq!(Err("Didn't get a query string")
+		       , Config::new([String::from("binary name")].into_iter()));
+	}
+	#[test]
+	fn new_no_filename() {
+	    assert_eq!(Err("Didn't get a filename")
+		       , Config::new([String::from("binary name")
+				       , String::from("b")].into_iter()));
 	}
 
     }
