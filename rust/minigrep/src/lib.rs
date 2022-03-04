@@ -1,3 +1,4 @@
+use std::env;
 use std::io::prelude::*;
 use std::fs::File;
 use std::error::Error;
@@ -8,7 +9,13 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut content = String::new();
     f.read_to_string(&mut content)?;
 
-    for line in search(&config.query, &content) {
+    let result = if config.case_sensitive {
+	search(&config.query, &content)
+    } else {
+	search_case_insensitive(&config.query, &content)
+    };
+
+    for line in result {
 	println!("{}", line);
     }
 
@@ -23,14 +30,23 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 	}
     }
     result
+}
 
-
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut result = vec![];
+    for l in contents.lines() {
+	if l.to_lowercase().contains(&query.to_lowercase()) {
+	    result.push(l);
+	}
+    }
+    result
 }
 
 #[derive(PartialEq,Debug)]
 pub struct Config {
     query: String,
     filename: String,
+    case_sensitive: bool,
 }
 
 impl Config {
@@ -39,9 +55,10 @@ impl Config {
 	    return Err("Not enough arguments");
 	}
 
+	let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 	let query = args[1].clone();
 	let filename = args[2].clone();
-	Ok(Config { query, filename })
+	Ok(Config { query, filename, case_sensitive })
     }
 }
 
@@ -52,7 +69,8 @@ mod test {
 	use super::super::*;
 	#[test]
 	fn new_success() {
-	    assert_eq!(Ok(Config {query: String::from("a"), filename: String::from("b")})
+	    assert_eq!(Ok(Config {query: String::from("a"), filename: String::from("b")
+				  , case_sensitive: true})
 		       , Config::new(&[String::from("binary name")
 				       , String::from("a")
 				       , String::from("b")]));
@@ -71,12 +89,13 @@ mod test {
     mod query {
 	use super::super::*;
 	#[test]
-	fn one_result() {
+	fn case_sensitive() {
 	    let query = "duct";
 	    let contents = "\
 Rust:
 safe, fast, productive.
-Pick three.";
+Pick three.
+Duct tape.";
 
 	    assert_eq!(
 		vec!["safe, fast, productive."],
@@ -94,6 +113,20 @@ Pick three.";
 
 	    let expect: Vec<&str> = vec![];
 	    assert_eq!(expect, search(query, contents));
+	}
+
+	#[test]
+	fn case_insensitive() {
+	    let query = "rUsT";
+	    let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+	    assert_eq!(vec!["Rust:", "Trust me."]
+		       , search_case_insensitive(query, contents)
+	    );
+
 	}
     }
 }
