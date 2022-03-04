@@ -84,6 +84,7 @@ mod test {
 	fn new_flag_context() {
 	    assert_eq!(Ok(Config {query: String::from("a")
 				  , filename: String::from("b")
+				  , case_sensitive: true
 				  , context: 2
 	    }), Config::new([String::from("--context")
 			    , String::from("2")
