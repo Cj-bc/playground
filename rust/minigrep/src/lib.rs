@@ -40,6 +40,15 @@ pub struct Config {
 }
 
 impl Config {
+    fn convert_option<F, T, E>(options: &HashMap<String, String>, reader: F, default: T, opt_name: &str) -> T
+    where
+	F: Fn(&str) -> Result<T, E>
+    {
+	match options.get(opt_name) {
+	    Some(val) => reader(val).unwrap_or(default),
+	    None => default,
+	}
+    }
     pub fn new(args:impl Iterator<Item = String>) -> Result<Config, &'static str> {
 	let (options, mut args) = Config::separate_options_and_args(args);
 
@@ -123,6 +132,21 @@ mod test {
 			    , String::from("b")].into_iter()))
 	}
 
+	#[cfg(test)]
+	mod convert_option {
+	    use super::Config;
+	    use std::collections::HashMap;
+	    use std::str::FromStr;
+
+	    #[test]
+	    fn success() {
+		assert_eq!(3
+			   , Config::convert_option(&HashMap::from([("--after".to_string()
+								     , "3".to_string())
+								    , ("--before".to_string(), "9".to_string())])
+						    , i32::from_str, 0, "--after"))
+	    }
+	}
 
 	#[cfg(test)]
 	mod separate_options_and_args {
