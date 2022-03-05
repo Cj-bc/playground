@@ -40,8 +40,8 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(mut args:impl Iterator<Item = String>) -> Result<Config, &'static str> {
-	args.next();
+    pub fn new(args:impl Iterator<Item = String>) -> Result<Config, &'static str> {
+	let (options, mut args) = Config::separate_options_and_args(args);
 
 	let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 	let query = match args.next() {
