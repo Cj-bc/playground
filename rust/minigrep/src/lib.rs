@@ -109,12 +109,15 @@ mod test {
 				       , String::from("b")].into_iter()));
 	}
 
+	#[test]
 	fn new_flag_context() {
 	    assert_eq!(Ok(Config {query: String::from("a")
 				  , filename: String::from("b")
 				  , case_sensitive: true
-				  , context: 2
-	    }), Config::new([String::from("--context")
+				  , before_context: 0
+				  , after_context: 2
+	    }), Config::new([ String::from("binary_name")
+			    , String::from("--after")
 			    , String::from("2")
 			    , String::from("a")
 			    , String::from("b")].into_iter()))
