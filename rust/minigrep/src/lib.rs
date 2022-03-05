@@ -3,6 +3,7 @@ use std::io::prelude::*;
 use std::fs::File;
 use std::error::Error;
 use std::collections::HashMap;
+use std::str::FromStr;
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let mut f = File::open(&config.filename)?;
@@ -37,6 +38,8 @@ pub struct Config {
     query: String,
     filename: String,
     case_sensitive: bool,
+    before_context: u32,
+    after_context: u32,
 }
 
 impl Config {
@@ -49,8 +52,12 @@ impl Config {
 	    None => default,
 	}
     }
+
     pub fn new(args:impl Iterator<Item = String>) -> Result<Config, &'static str> {
 	let (options, mut args) = Config::separate_options_and_args(args);
+
+	let before_context = Config::convert_option(&options, u32::from_str, 0, "--before");
+	let after_context = Config::convert_option(&options, u32::from_str, 0, "--after");
 
 	let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
 	let query = match args.next() {
@@ -61,7 +68,7 @@ impl Config {
 	    Some(arg) => arg,
 	    None => return Err("Didn't get a filename"),
 	};
-	Ok(Config { query, filename, case_sensitive })
+	Ok(Config { query, filename, case_sensitive, before_context, after_context })
     }
 
     pub fn separate_options_and_args(args: impl Iterator<Item = String>)
@@ -100,7 +107,9 @@ mod test {
 	#[test]
 	fn new_success() {
 	    assert_eq!(Ok(Config {query: String::from("a"), filename: String::from("b")
-				  , case_sensitive: true})
+				  , case_sensitive: true
+				  , before_context: 0
+				  , after_context: 0})
 		       , Config::new([String::from("binary name")
 				       , String::from("a")
 				       , String::from("b")].into_iter()));
