@@ -24,10 +24,16 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
+/// Internal function so that I don't have to write almost same code twice
+/// in search and search_case_insensitive
+fn _search<'a, F>(string_converter: F, query: &str, contents: &'a str, config: &Config) -> Vec<&'a str>
+where
+    F: Fn(&str) -> String 
+{
+    let query = string_converter(query);
     let lines: Vec<_> = contents.lines().collect();
     let found_match_idx: Vec<u32> = lines.iter().enumerate().fold(vec![], |mut store, (idx, line)| {
-	if line.contains(query) {
+	if string_converter(line).contains(&query) {
 	    store.push(idx as u32);
 	};
 	store
@@ -41,22 +47,12 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
 	.collect()
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
-    let lines: Vec<_> = contents.lines().collect();
-    let query = query.to_lowercase();
-    let found_match_idx: Vec<u32> = lines.iter().enumerate().fold(vec![], |mut store, (idx, line)| {
-	if line.to_lowercase().contains(&query) {
-	    store.push(idx as u32);
-	};
-	store
-    });
+pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
+    _search(|x| x.to_string(), query, contents, config)
+}
 
-    found_match_idx.into_iter()
-	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
-	.flatten()
-	.filter_map(|idx| lines.get(idx as usize))
-	.map(|val| *val)
-	.collect()
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
+    _search(|x| x.to_lowercase(), query, contents, config)
 }
 
 #[derive(PartialEq,Debug)]
