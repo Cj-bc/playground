@@ -56,9 +56,7 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Conf
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
 	// I need to 'clone' here to ensure that index number stays same
-	.map(|idx| lines.clone().nth(usize::try_from(idx).unwrap()))
-	.filter(|idx| idx.is_some())
-	.map(|idx| idx.unwrap())
+	.filter_map(|idx| lines.get(usize::try_from(idx).unwrap()))
 	.collect()
 }
 
