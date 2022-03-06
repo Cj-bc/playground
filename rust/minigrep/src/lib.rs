@@ -28,7 +28,7 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
     let lines: Vec<_> = contents.lines().collect();
     let found_match_idx: Vec<u32> = lines.iter().enumerate().fold(vec![], |mut store, (idx, line)| {
 	if line.contains(query) {
-	    store.push(u32::try_from(idx).unwrap());
+	    store.push(idx as u32);
 	};
 	store
     });
@@ -47,7 +47,7 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Conf
     let query = query.to_lowercase();
     let found_match_idx: Vec<u32> = lines.clone().enumerate().fold(vec![], |mut store, (idx, line)| {
 	if line.to_lowercase().contains(&query) {
-	    store.push(u32::try_from(idx).unwrap());
+	    store.push(idx as u32);
 	};
 	store
     });
@@ -56,7 +56,7 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Conf
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
 	// I need to 'clone' here to ensure that index number stays same
-	.filter_map(|idx| lines.get(usize::try_from(idx).unwrap()))
+	.filter_map(|idx| lines.get(idx as usize))
 	.collect()
 }
 
