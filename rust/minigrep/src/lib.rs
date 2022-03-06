@@ -14,7 +14,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let result = if config.case_sensitive {
 	search(&config.query, &content, &config)
     } else {
-	search_case_insensitive(&config.query, &content)
+	search_case_insensitive(&config.query, &content, &config)
     };
 
     for line in result {
@@ -42,9 +42,24 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
 	.collect()
 }
 
-pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
+    let mut lines = contents.lines();
     let query = query.to_lowercase();
-    contents.lines().filter(|l| l.to_lowercase().contains(&query)).collect()
+    let found_match_idx: Vec<u32> = lines.clone().enumerate().fold(vec![], |mut store, (idx, line)| {
+	if line.to_lowercase().contains(&query) {
+	    store.push(u32::try_from(idx).unwrap());
+	};
+	store
+    });
+
+    found_match_idx.into_iter()
+	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
+	.flatten()
+	// I need to 'clone' here to ensure that index number stays same
+	.map(|idx| lines.clone().nth(usize::try_from(idx).unwrap()))
+	.filter(|idx| idx.is_some())
+	.map(|idx| idx.unwrap())
+	.collect()
 }
 
 #[derive(PartialEq,Debug)]
@@ -274,7 +289,10 @@ safe, fast, productive.
 Pick three.
 Trust me.";
 	    assert_eq!(vec!["Rust:", "Trust me."]
-		       , search_case_insensitive(query, contents)
+		       , search_case_insensitive(query, contents, &Config::new([String::from("binary name")
+								     , String::from("regex")
+								     , String::from("filename")
+	    ].into_iter()).unwrap())
 	    );
 
 	}
