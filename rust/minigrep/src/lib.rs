@@ -41,8 +41,9 @@ where
 
     found_match_idx.into_iter()
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
+	.map(|range| range.filter_map(|idx| lines.get(idx as usize)).into_iter().collect::<Vec<&&str>>())
+	.intersperse(vec![&&"---"])
 	.flatten()
-	.filter_map(|idx| lines.get(idx as usize))
 	.map(|val| *val)
 	.collect()
 }
