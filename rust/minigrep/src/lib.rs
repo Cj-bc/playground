@@ -25,8 +25,8 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
-    let lines = contents.lines();
-    let found_match_idx: Vec<u32> = lines.clone().enumerate().fold(vec![], |mut store, (idx, line)| {
+    let lines: Vec<_> = contents.lines().collect();
+    let found_match_idx: Vec<u32> = lines.iter().enumerate().fold(vec![], |mut store, (idx, line)| {
 	if line.contains(query) {
 	    store.push(u32::try_from(idx).unwrap());
 	};
@@ -36,9 +36,9 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
     found_match_idx.into_iter()
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
-	.map(|idx| lines.clone().nth(usize::try_from(idx).unwrap()))
+	.map(|idx| lines.get(idx as usize))
 	.filter(|idx| idx.is_some())
-	.map(|idx| idx.unwrap())
+	.map(|idx| *idx.unwrap())
 	.collect()
 }
 
