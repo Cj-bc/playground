@@ -12,7 +12,7 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     f.read_to_string(&mut content)?;
 
     let result = if config.case_sensitive {
-	search(&config.query, &content)
+	search(&config.query, &content, &config)
     } else {
 	search_case_insensitive(&config.query, &content)
     };
@@ -24,8 +24,22 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    contents.lines().filter(|l| l.contains(query)).collect()
+pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
+    let lines = contents.lines();
+    let found_match_idx: Vec<u32> = lines.clone().enumerate().fold(vec![], |mut store, (idx, line)| {
+	if line.contains(query) {
+	    store.push(u32::try_from(idx).unwrap());
+	};
+	store
+    });
+
+    found_match_idx.into_iter()
+	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
+	.flatten()
+	.map(|idx| lines.clone().nth(usize::try_from(idx).unwrap()))
+	.filter(|idx| idx.is_some())
+	.map(|idx| idx.unwrap())
+	.collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
@@ -227,7 +241,10 @@ Duct tape.";
 
 	    assert_eq!(
 		vec!["safe, fast, productive."],
-		search(query, contents)
+		search(query, contents, &Config::new([String::from("binary name")
+						      , String::from("regex")
+						      , String::from("filename")
+		].into_iter()).unwrap())
 	    );
 	}
 
@@ -240,7 +257,12 @@ safe, fast, productive.
 Pick three.";
 
 	    let expect: Vec<&str> = vec![];
-	    assert_eq!(expect, search(query, contents));
+	    assert_eq!(expect, search(query, contents, &Config::new([String::from("binary name")
+								     , String::from("--after")
+								     , String::from("2")
+								     , String::from("regex")
+								     , String::from("filename")
+	    ].into_iter()).unwrap()));
 	}
 
 	#[test]
