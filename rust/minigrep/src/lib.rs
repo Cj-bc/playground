@@ -37,6 +37,7 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
 	.filter_map(|idx| lines.get(idx as usize))
+	.map(|val| *val)
 	.collect()
 }
 
@@ -54,6 +55,7 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Conf
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
 	.filter_map(|idx| lines.get(idx as usize))
+	.map(|val| *val)
 	.collect()
 }
 
