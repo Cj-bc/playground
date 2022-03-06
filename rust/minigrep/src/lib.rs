@@ -52,9 +52,9 @@ where
 	    .map(|val| *val)
 	    .collect()
     } else {
-	// Append '---' between each context
+	// Append '--' between each context
 	result_lines
-	    .intersperse(vec![&&"---"])
+	    .intersperse(vec![&&"--"])
 	    .flatten()
 	    .map(|val| *val)
 	    .collect()
