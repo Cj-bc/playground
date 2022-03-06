@@ -36,16 +36,14 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
     found_match_idx.into_iter()
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
-	.map(|idx| lines.get(idx as usize))
-	.filter(|idx| idx.is_some())
-	.map(|idx| *idx.unwrap())
+	.filter_map(|idx| lines.get(idx as usize))
 	.collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
-    let mut lines = contents.lines();
+    let mut lines = contents.lines().collect();
     let query = query.to_lowercase();
-    let found_match_idx: Vec<u32> = lines.clone().enumerate().fold(vec![], |mut store, (idx, line)| {
+    let found_match_idx: Vec<u32> = lines.iter().enumerate().fold(vec![], |mut store, (idx, line)| {
 	if line.to_lowercase().contains(&query) {
 	    store.push(idx as u32);
 	};
@@ -55,7 +53,6 @@ pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Conf
     found_match_idx.into_iter()
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
 	.flatten()
-	// I need to 'clone' here to ensure that index number stays same
 	.filter_map(|idx| lines.get(idx as usize))
 	.collect()
 }
