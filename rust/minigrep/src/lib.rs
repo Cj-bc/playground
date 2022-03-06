@@ -42,7 +42,7 @@ pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a st
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
-    let mut lines = contents.lines().collect();
+    let lines: Vec<_> = contents.lines().collect();
     let query = query.to_lowercase();
     let found_match_idx: Vec<u32> = lines.iter().enumerate().fold(vec![], |mut store, (idx, line)| {
 	if line.to_lowercase().contains(&query) {
