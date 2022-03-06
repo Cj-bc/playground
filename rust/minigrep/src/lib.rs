@@ -303,5 +303,67 @@ Trust me.";
 	    );
 
 	}
+
+	#[cfg(test)]
+	mod options {
+	    #[cfg(test)]
+	    mod after_context {
+		use crate::Config;
+		use crate::search;
+
+		#[test]
+		fn no_overlap() {
+		    let query = "one:";
+		    let content = "\
+one: level
+foo
+bar
+baz
+one: another
+";
+		    let args = [String::from("binary name")
+				, String::from("--after")
+				, String::from("3")
+				, String::from("regex")
+				, String::from("filename")
+		    ];
+
+		    assert_eq!(vec![String::from("one: level")
+				    , String::from("foo")
+				    , String::from("bar")
+				    , String::from("baz")
+				    , String::from("--")
+				    , String::from("one: another")
+				    ], search(&query, &content, &Config::new(args.into_iter()).unwrap()));
+		}
+
+		/// Contextの範囲が被った場合、そこの間には"--"を挟まない
+		#[test]
+		fn overlap() {
+		    let query = "one:";
+		    let content = "\
+one: level
+foo
+bar
+one: another
+";
+		    let args = [String::from("binary name")
+				, String::from("--after")
+				, String::from("3")
+				, String::from("regex")
+				, String::from("filename")
+		    ];
+
+		    assert_eq!(vec![String::from("one: level")
+				    , String::from("foo")
+				    , String::from("bar")
+				    , String::from("one: another")
+				    ], search(&query, &content, &Config::new(args.into_iter()).unwrap()));
+		}
+
+
+	    }
+	}
     }
+
 }
