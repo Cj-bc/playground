@@ -40,13 +40,25 @@ where
 	store
     });
 
-    found_match_idx.into_iter()
+    let result_lines = found_match_idx.into_iter()
 	.map(|idx| (idx - config.before_context)..(idx + config.after_context + 1)) // before/after context ids
-	.map(|range| range.filter_map(|idx| lines.get(idx as usize)).into_iter().collect::<Vec<&&str>>())
-	.intersperse(vec![&&"---"])
-	.flatten()
-	.map(|val| *val)
-	.collect()
+	.map(|range| range.filter_map(|idx| lines.get(idx as usize))
+	     .into_iter()
+	     .collect::<Vec<&&str>>());
+
+    if config.before_context == 0 && config.after_context == 0 {
+	result_lines
+	    .flatten()
+	    .map(|val| *val)
+	    .collect()
+    } else {
+	// Append '---' between each context
+	result_lines
+	    .intersperse(vec![&&"---"])
+	    .flatten()
+	    .map(|val| *val)
+	    .collect()
+    }
 }
 
 pub fn search<'a>(query: &str, contents: &'a str, config: &Config) -> Vec<&'a str> {
