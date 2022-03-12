@@ -44,9 +44,7 @@ impl Config {
     }
 }
 
-pub fn run(config: Config) {
-    let mut stdin = io::stdin();
-    let mut stdout = io::stdout();
+pub fn run(mut stdin: io::Stdin, mut writer: impl Write,config: Config) {
     let mut buf = String::new();
 
     match config.mode {
@@ -55,7 +53,7 @@ pub fn run(config: Config) {
 		if bytes == 0 {
 		    break;
 		}
-		stdout.write_all(buf.replace(&s1, s2.as_str()).as_bytes());
+		writer.write_all(buf.replace(&s1, s2.as_str()).as_bytes());
 		buf.clear();
 	    }
 	}
