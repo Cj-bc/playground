@@ -51,7 +51,7 @@ pub fn run(config: Config) {
 
     match config.mode {
 	TrMode::Replace(s1, s2) => {
-	    while let Ok(bytes) = stdin.read_to_string(&mut buf) {
+	    while let Ok(bytes) = stdin.read_line(&mut buf) {
 		if bytes == 0 {
 		    break;
 		}
