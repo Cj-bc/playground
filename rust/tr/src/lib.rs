@@ -68,9 +68,36 @@ pub fn run(mut stdin: io::Stdin, mut writer: impl Write,config: Config) {
 		buf.clear();
 	    }
 	},
-	_ => {
+	TrMode::SqueezeRepeats(s1) => {
+	    while let Ok(bytes) = stdin.read_line(&mut buf) {
+		if bytes == 0 {
+		    break;
+		}
 
-	}
+		let mut output_buffer = String::new();
+		let mut charsIter = buf.chars();
+		let mut previous_c = match charsIter.next() {
+		    Some(c) => c,
+		    None => {
+			// no input
+			continue;
+		    }
+		};
+
+		// previous_cはバッファに追加されていることを想定しているので、
+		// 最初の文字も入れてあげる
+		output_buffer.push(previous_c);
+		for c in charsIter {
+		    if previous_c != c || !s1.contains(c) {
+			output_buffer.push(c);
+			previous_c = c;
+		    }
+		}
+
+		writer.write_all(output_buffer.as_bytes());
+		output_buffer.clear();
+	    }
+	},
     }
 }
 
