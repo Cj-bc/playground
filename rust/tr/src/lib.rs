@@ -1,3 +1,4 @@
+#![feature(string_remove_matches)]
 use std::io;
 use std::io::Write;
 use std::io::Read;
@@ -56,7 +57,17 @@ pub fn run(mut stdin: io::Stdin, mut writer: impl Write,config: Config) {
 		writer.write_all(buf.replace(&s1, s2.as_str()).as_bytes());
 		buf.clear();
 	    }
-	}
+	},
+	TrMode::Delete(target) => {
+	    while let Ok(bytes) = stdin.read_line(&mut buf) {
+		if bytes == 0 {
+		    break;
+		}
+		buf.remove_matches(&target);
+		writer.write_all(buf.as_bytes());
+		buf.clear();
+	    }
+	},
 	_ => {
 
 	}
