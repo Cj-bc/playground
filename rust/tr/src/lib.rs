@@ -45,42 +45,44 @@ impl Config {
     }
 }
 
+/// stdinからEOFまで各行を行毎に読み込み、指定された関数を実行していく関数
+fn run_with_loadedVal(mut stdin: io::Stdin, mut f: impl FnMut(&String)) {
+    let mut buf = String::new();
+
+    while let Ok(bytes) = stdin.read_line(&mut buf) {
+	if bytes == 0 {
+	    break;
+	}
+	f(&buf);
+	buf.clear();
+    }
+}
+
 pub fn run(mut stdin: io::Stdin, mut writer: impl Write,config: Config) {
     let mut buf = String::new();
 
     match config.mode {
 	TrMode::Replace(s1, s2) => {
-	    while let Ok(bytes) = stdin.read_line(&mut buf) {
-		if bytes == 0 {
-		    break;
-		}
-		writer.write_all(buf.replace(&s1, s2.as_str()).as_bytes());
-		buf.clear();
-	    }
+	    run_with_loadedVal(stdin, |s| {
+		writer.write_all(s.replace(&s1, s2.as_str()).as_bytes());
+	    })
 	},
 	TrMode::Delete(target) => {
-	    while let Ok(bytes) = stdin.read_line(&mut buf) {
-		if bytes == 0 {
-		    break;
-		}
+	    run_with_loadedVal(stdin, |s| {
+		let mut buf = s.clone();
 		buf.remove_matches(&target);
 		writer.write_all(buf.as_bytes());
-		buf.clear();
-	    }
+	    })
 	},
 	TrMode::SqueezeRepeats(s1) => {
-	    while let Ok(bytes) = stdin.read_line(&mut buf) {
-		if bytes == 0 {
-		    break;
-		}
-
+	    run_with_loadedVal(stdin, |s| {
 		let mut output_buffer = String::new();
 		let mut charsIter = buf.chars();
 		let mut previous_c = match charsIter.next() {
 		    Some(c) => c,
 		    None => {
 			// no input
-			continue;
+			return;
 		    }
 		};
 
@@ -96,7 +98,7 @@ pub fn run(mut stdin: io::Stdin, mut writer: impl Write,config: Config) {
 
 		writer.write_all(output_buffer.as_bytes());
 		output_buffer.clear();
-	    }
+	    })
 	},
     }
 }
