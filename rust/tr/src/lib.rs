@@ -64,3 +64,30 @@ pub fn run(config: Config) {
 	}
     }
 }
+
+
+#[cfg(test)]
+mod test {
+    #[cfg(test)]
+    mod config {
+	use crate::Config;
+	use crate::TrMode;
+
+	#[test]
+	fn new_correct() {
+	    let args1 = ["binary name", "-d", "a"].map(|s| s.to_string()).into_iter();
+	    let result1 = Config { mode: TrMode::Delete("a".to_string()) };
+
+	    assert_eq!(Ok(result1), Config::new(args1));
+
+	    let args2 = ["binary name", "-s", "a"].map(|s| s.to_string()).into_iter();
+	    let result2 = Config { mode: TrMode::SqueezeRepeats("a".to_string()) };
+	    assert_eq!(Ok(result2), Config::new(args2));
+
+	    let args3 = ["binary name", "a", "b"].map(|s| s.to_string()).into_iter();
+	    let result3 = Config { mode: TrMode::Replace("a".to_string(), "b".to_string()) };
+	    assert_eq!(Ok(result3), Config::new(args3));
+	    
+	}
+    }
+}
