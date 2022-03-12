@@ -1,4 +1,3 @@
-use std::env;
 use std::io;
 use std::io::Write;
 use std::io::Read;
@@ -14,7 +13,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(mut args: env::Args) -> Result<Config, String> {
+    pub fn new(mut args: impl Iterator<Item = String>) -> Result<Config, String> {
 	args.next(); // 引数0はバイナリ名
 
 	// 本体がスコープを外れてしまうため、
