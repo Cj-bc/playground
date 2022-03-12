@@ -89,5 +89,11 @@ mod test {
 	    assert_eq!(Ok(result3), Config::new(args3));
 	    
 	}
+
+	#[test]
+	fn new_noargs() {
+	    assert!(Config::new(["binary name".to_string()].into_iter()).is_err());
+	}
     }
+
 }
