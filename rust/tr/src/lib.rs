@@ -2,12 +2,14 @@ use std::io;
 use std::io::Write;
 use std::io::Read;
 
+#[derive(PartialEq, Debug)]
 enum TrMode {
     Replace(String, String),
     Delete(String),
     SqueezeRepeats(String),
 }
 
+#[derive(PartialEq, Debug)]
 pub struct Config {
     mode: TrMode,
 }
