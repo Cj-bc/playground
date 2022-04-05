@@ -42,37 +42,33 @@ impl Application for KeyboardStatus {
     }
 
     fn view(&mut self) -> Element<'_, Self::Message> {
-	let create_row = |to_text: &dyn Fn(KeyCode) -> String, key_codes: &[KeyCode]| {
+	let create_row = |key_codes: &[KeyCode]| {
 	    key_codes.iter().fold(Row::new(), |row: Row<'_, Message>, key_code| {
 		if self.pushed_keys.contains(&key_code) {
-		    row.push(Text::new(to_text(*key_code)).color(iced_native::Color::BLACK))
+		    row.push(Container::new(Text::new(to_key_face(key_code)).color(iced_native::Color::BLACK))
 		} else {
-		    row.push(Text::new(to_text(*key_code))
+		    row.push(Text::new(to_key_face(key_code))
 			     .color(iced_native::Color::from_rgb(0.8, 0.8, 0.8)))
 		}
 	    })};
 
 	let first_row = 
-	    create_row(&|k| format!("{:?}", k).strip_prefix("Key").unwrap().to_string(),
-		       &[KeyCode::Key1, KeyCode::Key2, KeyCode::Key3,
+	    create_row(&[KeyCode::Key1, KeyCode::Key2, KeyCode::Key3,
 			 KeyCode::Key4, KeyCode::Key5, KeyCode::Key6,
 			 KeyCode::Key7, KeyCode::Key8, KeyCode::Key9,
 			 KeyCode::Key0]);
 	let second_row =
-	    create_row(&|k| format!("{:?}", k),
-	               &[KeyCode::Q, KeyCode::W, KeyCode::E, KeyCode::R,
+	    create_row(&[KeyCode::Q, KeyCode::W, KeyCode::E, KeyCode::R,
 			KeyCode::T, KeyCode::Y, KeyCode::U, KeyCode::I,
 			KeyCode::O, KeyCode::P]);
 
 	let third_row =
-	    create_row(&|k| format!("{:?}", k),
-	               &[KeyCode::A, KeyCode::S, KeyCode::D, KeyCode::F,
+	    create_row(&[KeyCode::A, KeyCode::S, KeyCode::D, KeyCode::F,
 			KeyCode::G, KeyCode::H, KeyCode::J, KeyCode::K,
 			KeyCode::L]);
 
 	let fourth_row =
-	    create_row(&|k| format!("{:?}", k),
-	               &[KeyCode::Z, KeyCode::X, KeyCode::C, KeyCode::V,
+	    create_row(&[KeyCode::Z, KeyCode::X, KeyCode::C, KeyCode::V,
 			 KeyCode::B, KeyCode::N, KeyCode::M, KeyCode::Comma,
 			 KeyCode::Period]);
 
@@ -105,6 +101,62 @@ impl Application for KeyboardStatus {
 		_ => None,
 	    }
 	})
+    }
+}
+
+fn to_key_face(key_code: &KeyCode) -> &str {
+    match key_code {
+	KeyCode::Key1 => "1",
+	KeyCode::Key2 => "2",
+	KeyCode::Key3 => "3",
+	KeyCode::Key4 => "4",
+	KeyCode::Key5 => "5",
+	KeyCode::Key6 => "6",
+	KeyCode::Key7 => "7",
+	KeyCode::Key8 => "8",
+	KeyCode::Key9 => "9",
+	KeyCode::Key0 => "0",
+
+	KeyCode::A => "A",
+	KeyCode::B => "B",
+	KeyCode::C => "C",
+	KeyCode::D => "D",
+	KeyCode::E => "E",
+	KeyCode::F => "F",
+	KeyCode::G => "G",
+	KeyCode::H => "H",
+	KeyCode::I => "I",
+	KeyCode::J => "J",
+	KeyCode::K => "K",
+	KeyCode::L => "L",
+	KeyCode::M => "M",
+	KeyCode::N => "N",
+	KeyCode::O => "O",
+	KeyCode::P => "P",
+	KeyCode::Q => "Q",
+	KeyCode::R => "R",
+	KeyCode::S => "S",
+	KeyCode::T => "T",
+	KeyCode::U => "U",
+	KeyCode::V => "V",
+	KeyCode::W => "W",
+	KeyCode::X => "X",
+	KeyCode::Y => "Y",
+	KeyCode::Z => "Z",
+
+	KeyCode::Apostrophe => "'",
+	KeyCode::Backslash => "\\",
+	KeyCode::Colon => ":",
+	KeyCode::Comma => ",",
+	KeyCode::Equals => "=",
+	KeyCode::LBracket => "[",
+	KeyCode::Minus => "-",
+	KeyCode::Period => ".",
+	KeyCode::Plus => "+",
+	KeyCode::RBracket => "]",
+	KeyCode::Semicolon => ";",
+	KeyCode::Slash => "/",
+	_ => "?",
     }
 }
 
