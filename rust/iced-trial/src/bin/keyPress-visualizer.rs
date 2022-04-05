@@ -1,8 +1,9 @@
 use std::collections::HashSet;
 use iced_native::keyboard::KeyCode;
 use iced_native::subscription::{self, Subscription};
-use iced::{Text, Element, Row, Column, Application, Command, Settings, Clipboard};
-use iced::executor;
+use iced::{Text, Element, Row, Column, Application, Command, Settings, Clipboard, Container,
+	   Background, Color};
+use iced::{executor, widget::container};
 use std::fmt::Debug;
 
 pub struct KeyboardStatus {
@@ -13,6 +14,32 @@ pub struct KeyboardStatus {
 pub enum Message {
     KeyPressed(KeyCode),
     KeyReleased(KeyCode),
+}
+
+struct ContainerStyle {
+    is_pressed: bool,
+}
+
+impl container::StyleSheet for ContainerStyle {
+    fn style(&self) -> container::Style {
+	let bg = if self.is_pressed {
+	    Color::from_rgb(0.0, 0.0, 0.0)
+	} else {
+	    Color::from_rgb(1.0, 1.0, 1.0)
+	};
+
+	let text = if self.is_pressed {
+	    Color::from_rgb(1.0, 1.0, 1.0)
+	} else {
+	    Color::from_rgb(0.0, 0.0, 0.0)
+	};
+
+	container::Style {
+	    background: Some(Background::Color(bg)),
+	    text_color: Some(text),
+	    ..container::Style::default()
+	}
+    }
 }
 
 impl Application for KeyboardStatus {
@@ -45,10 +72,11 @@ impl Application for KeyboardStatus {
 	let create_row = |key_codes: &[KeyCode]| {
 	    key_codes.iter().fold(Row::new(), |row: Row<'_, Message>, key_code| {
 		if self.pushed_keys.contains(&key_code) {
-		    row.push(Container::new(Text::new(to_key_face(key_code)).color(iced_native::Color::BLACK))
+		    row.push(Container::new(Text::new(to_key_face(key_code)))
+			     .style(ContainerStyle { is_pressed: true }))
 		} else {
-		    row.push(Text::new(to_key_face(key_code))
-			     .color(iced_native::Color::from_rgb(0.8, 0.8, 0.8)))
+		    row.push(Container::new(Text::new(to_key_face(key_code)))
+			     .style(ContainerStyle { is_pressed: false }))
 		}
 	    })};
 
