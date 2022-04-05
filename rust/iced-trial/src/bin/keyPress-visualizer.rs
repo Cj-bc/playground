@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::HashSet;
 use iced_native::keyboard::KeyCode;
 use iced_native::subscription::{self, Subscription};
 use iced::{Text, Element, Row, Column, Application, Command, Settings, Clipboard};
@@ -6,7 +6,7 @@ use iced::executor;
 use std::fmt::Debug;
 
 pub struct KeyboardStatus {
-    pub keys: HashMap<KeyCode, bool>,
+    pub pushed_keys: HashSet<KeyCode>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -25,28 +25,16 @@ impl Application for KeyboardStatus {
     }
 
     fn new(_flags: Self::Flags) -> (Self, Command<Self::Message>) {
-	let initial = HashMap::from(
-	    [ KeyCode::A, KeyCode::B, KeyCode::C, KeyCode::D
-	      , KeyCode::E, KeyCode::F, KeyCode::G, KeyCode::H
-	      , KeyCode::I, KeyCode::J, KeyCode::K, KeyCode::L
-	      , KeyCode::M, KeyCode::N, KeyCode::O, KeyCode::P
-	      , KeyCode::Q, KeyCode::R, KeyCode::S, KeyCode::T
-	      , KeyCode::U, KeyCode::V, KeyCode::W, KeyCode::X
-	      , KeyCode::Y, KeyCode::Z, KeyCode::Key0, KeyCode::Key1
-	      , KeyCode::Key2, KeyCode::Key3, KeyCode::Key4, KeyCode::Key5
-	      , KeyCode::Key6, KeyCode::Key7, KeyCode::Key8, KeyCode::Key9
-	    ].map(|k| (k, false)));
-
-	(KeyboardStatus {keys: initial}, Command::none())
+	(KeyboardStatus {pushed_keys: HashSet::new()}, Command::none())
     }
 
     fn update(&mut self, message: Message, _clipboard: &mut Clipboard) -> Command<Message> {
 	match message {
 	    Message::KeyPressed(keycode) => {
-		self.keys.entry(keycode).and_modify(|e| {*e = true});
+		self.pushed_keys.insert(keycode);
 	    }
 	    Message::KeyReleased(keycode) => {
-		self.keys.entry(keycode).and_modify(|e| {*e = false});
+		self.pushed_keys.remove(&keycode);
 	    }
 	};
 
@@ -56,7 +44,7 @@ impl Application for KeyboardStatus {
     fn view(&mut self) -> Element<'_, Self::Message> {
 	let create_row = |to_text: &dyn Fn(KeyCode) -> String, key_codes: &[KeyCode]| {
 	    key_codes.iter().fold(Row::new(), |row: Row<'_, Message>, key_code| {
-		if self.keys[key_code] {
+		if self.pushed_keys.contains(&key_code) {
 		    row.push(Text::new(to_text(*key_code)).color(iced_native::Color::BLACK))
 		} else {
 		    row.push(Text::new(to_text(*key_code))
