@@ -56,22 +56,22 @@ impl Application for KeyboardStatus {
 	    create_row(&[KeyCode::Key1, KeyCode::Key2, KeyCode::Key3,
 			 KeyCode::Key4, KeyCode::Key5, KeyCode::Key6,
 			 KeyCode::Key7, KeyCode::Key8, KeyCode::Key9,
-			 KeyCode::Key0]);
+			 KeyCode::Key0, KeyCode::Minus, KeyCode::Equals]);
 	let second_row =
 	    create_row(&[KeyCode::Q, KeyCode::W, KeyCode::E, KeyCode::R,
 			KeyCode::T, KeyCode::Y, KeyCode::U, KeyCode::I,
-			KeyCode::O, KeyCode::P]);
+			KeyCode::O, KeyCode::P, KeyCode::LBracket, KeyCode::RBracket]);
 
 	let third_row =
 	    create_row(&[KeyCode::A, KeyCode::S, KeyCode::D, KeyCode::F,
 			KeyCode::G, KeyCode::H, KeyCode::J, KeyCode::K,
-			KeyCode::L]);
+			KeyCode::L, KeyCode::Semicolon, KeyCode::Apostrophe,
+			KeyCode::Backslash]);
 
 	let fourth_row =
 	    create_row(&[KeyCode::Z, KeyCode::X, KeyCode::C, KeyCode::V,
 			 KeyCode::B, KeyCode::N, KeyCode::M, KeyCode::Comma,
-			 KeyCode::Period]);
-
+			 KeyCode::Period, KeyCode::Slash]);
 
 	Column::new()
 	    .push(first_row)
