@@ -1,6 +1,10 @@
 use iced::button;
 use iced::{Button,Column,Text,Settings,Element};
-use iced::Sandbox;
+use iced::Application;
+use iced::executor;
+use iced::Command;
+use iced::Clipboard;
+use iced::Subscription;
 
 struct Counter {
     // The counter value
@@ -18,18 +22,26 @@ pub enum Message {
 }
 
 
-impl Sandbox for Counter {
-    type Message = Message;
+impl Application for Counter {
 
-    fn new () -> Self {
-	Counter{
+    type Executor = executor::Default;
+    type Message = Message;
+    type Flags = ();
+
+    fn new (flags: Self::Flags) -> (Self, Command<Self::Message>) {
+	(Counter{
 	    value: 0,
 	    increment_button: button::State::new(),
 	    decrement_button: button::State::new()
-	}
+	},
+	 Command::none())
     }
 
-    fn update(&mut self, message: Message) {
+    fn title(&self) -> String {
+	String::from("test app")
+    }
+
+    fn update(&mut self, message: Message, clipboard: &mut Clipboard) -> Command<Message> {
 	match message {
 	    Message::IncrementPressed => {
 		self.value += 1;
@@ -37,12 +49,11 @@ impl Sandbox for Counter {
 	    Message::DecrementPressed => {
 		self.value -= 1;
 	    }
-	}
+	};
+
+	Command::none()
     }
 
-    fn title(&self) -> String {
-	String::from("test app")
-    }
     fn view(&mut self) -> Element<'_, Self::Message> {
 	Column::new()
 	    .push(
@@ -59,6 +70,23 @@ impl Sandbox for Counter {
 	    ).into()
     }
 
+    fn subscription(&self) -> Subscription<Self::Message> {
+	use iced_native::keyboard;
+	use iced_native::Event;
+	
+	iced_native::subscription::events_with(|event, status|
+		match event {
+		    Event::Keyboard(keyboard::Event::KeyPressed {
+			key_code,
+			modifiers: _,}) => match key_code {
+			keyboard::KeyCode::J => Some(Message::DecrementPressed),
+			keyboard::KeyCode::K => Some(Message::IncrementPressed),
+			_ => None,
+		    }
+
+		    _ => None
+	    })
+    }
 
 }
 
