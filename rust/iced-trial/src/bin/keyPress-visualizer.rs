@@ -73,7 +73,8 @@ impl Application for KeyboardStatus {
 	let fourth_row =
 	    create_row(&|k| format!("{:?}", k),
 	               &[KeyCode::Z, KeyCode::X, KeyCode::C, KeyCode::V,
-			 KeyCode::B, KeyCode::N, KeyCode::M]);
+			 KeyCode::B, KeyCode::N, KeyCode::M, KeyCode::Comma,
+			 KeyCode::Period]);
 
 
 	Column::new()
