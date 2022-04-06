@@ -1,5 +1,6 @@
 use iced_graphics::widget::canvas::{self, Canvas, Cursor, Fill, Frame, Geometry, Path, Program, Stroke};
-use iced::{Color, Rectangle, Settings, Sandbox, Element};
+use iced::{Color, Rectangle, Settings, Application, Element,
+	   Executor, executor, Clipboard, Command};
 
 use std::time::Instant;
 
@@ -35,25 +36,30 @@ enum Message {
     Tick
 }
 
-impl Sandbox for Rings {
+impl Application for Rings {
     type Message = Message;
+    type Executor = executor::Default;
+    type Flags = ();
 
-    fn new() -> Self {
-	Rings { inner_ring_radius: 5.0,
-		outer_ring_radius: 10.0,
-		start: Instant::now(),
-		now: Instant::now(),
-	}
+    fn new(_flags: Self::Flags) -> (Self, Command<Message>) {
+	(Rings { inner_ring_radius: 5.0,
+		 outer_ring_radius: 10.0,
+		 start: Instant::now(),
+		 now: Instant::now(),
+	}, Command::none())
     }
 
     fn title(&self) -> String {
 	String::from("test")
     }
 
-    fn update(&mut self, message: Self::Message) {
+    fn update(&mut self, message: Self::Message,
+	      _clipboard: &mut Clipboard) -> Command<Message> {
 	match message {
 	    Tick => self.now = Instant::now(),
-	}
+	};
+
+	Command::none()
     }
 
     fn view(&mut self) -> Element<'_, Self::Message> {
