@@ -1,17 +1,24 @@
 use iced_graphics::widget::canvas::{self, Canvas, Cursor, Fill, Frame, Geometry, Path, Program, Stroke};
 use iced::{Color, Rectangle, Settings, Sandbox, Element};
 
+use std::time::Instant;
+
 struct Rings {
     inner_ring_radius: f32,
     outer_ring_radius: f32,
+    start: Instant,
+    now: Instant,
 }
 
 impl Program<Message> for Rings {
     fn draw(&self, bounds: Rectangle, _cursor: Cursor) -> Vec<Geometry> {
 	let mut frame = Frame::new(bounds.size());
 
-	let inner_circle = Path::circle(frame.center(), self.inner_ring_radius);
-	let outer_circle = Path::circle(frame.center(), self.outer_ring_radius);
+	let elapsed = self.now - self.start;
+	let inner_circle = Path::circle(frame.center(), (elapsed.as_secs() as f32).sin() * self.inner_ring_radius);
+	let outer_circle = Path::circle(frame.center(), (elapsed.as_secs() as f32).cos() * self.outer_ring_radius);
+
+	
 
 	frame.stroke(&inner_circle, Stroke::default());
 	frame.stroke(&outer_circle, Stroke {
@@ -25,7 +32,7 @@ impl Program<Message> for Rings {
 
 #[derive(Debug)]
 enum Message {
-    NoMessage
+    Tick
 }
 
 impl Sandbox for Rings {
@@ -33,7 +40,10 @@ impl Sandbox for Rings {
 
     fn new() -> Self {
 	Rings { inner_ring_radius: 5.0,
-		outer_ring_radius: 10.0}
+		outer_ring_radius: 10.0,
+		start: Instant::now(),
+		now: Instant::now(),
+	}
     }
 
     fn title(&self) -> String {
@@ -41,7 +51,9 @@ impl Sandbox for Rings {
     }
 
     fn update(&mut self, message: Self::Message) {
-
+	match message {
+	    Tick => self.now = Instant::now(),
+	}
     }
 
     fn view(&mut self) -> Element<'_, Self::Message> {
