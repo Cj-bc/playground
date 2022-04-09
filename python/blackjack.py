@@ -89,32 +89,34 @@ class Player:
 
 class BlackJack:
   dealer: Player
-  player: Player
+  players: List[Player]
   deck: Deck
 
   def run(self):
     self.deck = Deck()
     self.dealer = Player([self.deck.draw() for _ in range(2)])
-    self.player = Player([self.deck.draw() for _ in range(2)])
+    self.players = [Player([self.deck.draw() for _ in range(2)])]
 
 
     print(f"One of dealer's card is: {self.dealer.cards[0]}")
-    self.player_loop()
+    for p in self.players:
+      self.player_loop(p)
+
     self.dealer_loop()
     print(f"winner players are: {self.get_winner_players()}")
 
-  def player_loop(self):
+  def player_loop(self, player: Player):
     """ Player's one turn
     
         Player can choose hit or stand,
         unless they're busted already.
     """
-    print(f"Your cards are: {self.player.show_cards()}")
+    print(f"Your cards are: {player.show_cards()}")
     cmd = input("Hit?(h = hit, s = stand): ")
     if cmd == "h":
-      self.player.hit(self.deck)
-      if not self.player.is_busted():
-        self.player_loop()
+      player.hit(self.deck)
+      if not player.is_busted():
+        self.player_loop(player)
     elif cmd == "s":
       pass
 
@@ -137,7 +139,7 @@ class BlackJack:
         Note: As blackjack is 1vs1 card game, 
               dealer won against all other players not listed here.
     """
-    alive_players = filter(lambda p: not p.is_busted(), [self.player])
+    alive_players = filter(lambda p: not p.is_busted(), self.players)
 
     # When dealer is busted, all players who isn't busted will win
     if self.dealer.is_busted():
