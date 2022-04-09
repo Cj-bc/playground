@@ -99,12 +99,12 @@ class BlackJack:
   players: List[Player]
   deck: Deck
 
-  def run(self):
+  def __init__(self):
     self.deck = Deck()
     self.dealer = Player([self.deck.draw() for _ in range(2)], name="Dealer")
     self.players = [Player([self.deck.draw() for _ in range(2)])]
 
-
+  def run(self):
     print(f"One of dealer's card is: {self.dealer.cards[0]}")
     for p in self.players:
       self.player_loop(p)
