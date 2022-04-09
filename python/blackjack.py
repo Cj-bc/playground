@@ -62,10 +62,17 @@ class Suit(Enum):
 
 class Player:
   cards: List[Card]
+  name: str
 
-  def __init__(self, cards: List[Card]):
+  def __init__(self, cards: List[Card], name=None):
     self.cards = cards
+    self.name = name if name is not None else random.choice(["alice", "bob"])
 
+
+  def __str__(self) -> str:
+    return f"{self.name}(total: {self.total()})"
+
+    
   def hit(self, deck: Deck):
     """ Hit new card from deck and store it
     """
@@ -94,7 +101,7 @@ class BlackJack:
 
   def run(self):
     self.deck = Deck()
-    self.dealer = Player([self.deck.draw() for _ in range(2)])
+    self.dealer = Player([self.deck.draw() for _ in range(2)], name="Dealer")
     self.players = [Player([self.deck.draw() for _ in range(2)])]
 
 
