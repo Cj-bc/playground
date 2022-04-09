@@ -110,7 +110,7 @@ class BlackJack:
       self.player_loop(p)
 
     self.dealer_loop()
-    print(f"winner players are: {self.get_winner_players()}")
+    print(self.mkResult())
 
   def player_loop(self, player: Player):
     """ Player's one turn
@@ -157,7 +157,10 @@ class BlackJack:
   def mkResult(self) -> str:
     """ Make one string that reports result of the game
     """
-    return ""
+    winners = self.get_winner_players()
+    return (reduce(lambda s, n: s+"\n"+n
+                  , map(lambda p: f"{p} won agains {self.dealer}" if p in winners else f"{self.dealer} won against {p}"
+                        , self.players)))
     
 
 BlackJack().run()
