@@ -1,0 +1,7 @@
+* neural-network
+  :PROPERTIES:
+  :CUSTOM_ID: neural-network
+  :END:
+
+Really tiny implementation of neural network in Haskell.
+
