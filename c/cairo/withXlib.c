@@ -62,10 +62,6 @@ void cairo_get_resize_event (cairo_surface_t *sfc, int *w, int *h) {
       return;
     
     switch (e.type) {
-        case ResizeRequest:
-	  *w = ((XResizeRequestEvent)e).width;
-	  *h = ((XResizeRequestEvent)e).height;
-	  return;
     }
   }
 }
@@ -103,6 +99,8 @@ int main (int argc, char *argv[]) {
   cairo_surface_t *surface;
   cairo_t *cr;
   int x, y;
+  XWindowAttributes winAttr;
+
   x = y = 500;
   struct timespec ts = {0, 5000000};
   int running;
@@ -115,6 +113,12 @@ int main (int argc, char *argv[]) {
 
   // Await until some key is pressed
   for (running = 1; running;) {
+    XGetWindowAttributes(cairo_xlib_surface_get_display(surface)
+			 , cairo_xlib_surface_get_drawable(surface),
+			 &winAttr);
+    x = winAttr.width;
+    y = winAttr.height;
+    cairo_xlib_surface_set_size(surface, x, y);
 
     cairo_set_source_rgb(cr, 0.5, 0.0, 0.5);
     cairo_paint(cr);
