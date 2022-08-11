@@ -118,7 +118,7 @@ int main (int argc, char *argv[]) {
 
     cairo_set_source_rgb(cr, 0.5, 0.0, 0.5);
     cairo_paint(cr);
-    cairo_rectangle(cr, 10, 10, *x - 10, *y - 10);
+    cairo_rectangle(cr, 10, 10, x - 10, y - 10);
 
   switch (cairo_check_event(surface, 0)) {
     case 0xff1b: // Esc
