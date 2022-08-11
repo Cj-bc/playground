@@ -102,8 +102,8 @@ void cairo_close_x11_surface(cairo_surface_t *sfc) {
 int main (int argc, char *argv[]) {
   cairo_surface_t *surface;
   cairo_t *cr;
-  int *x, *y;
-  *x = *y = 500;
+  int x, y;
+  x = y = 500;
   struct timespec ts = {0, 5000000};
   int running;
 
@@ -115,7 +115,6 @@ int main (int argc, char *argv[]) {
 
   // Await until some key is pressed
   for (running = 1; running;) {
-    cairo_get_resize_event(surface, x, y);
 
     cairo_set_source_rgb(cr, 0.5, 0.0, 0.5);
     cairo_paint(cr);
