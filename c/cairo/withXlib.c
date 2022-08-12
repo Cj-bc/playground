@@ -122,7 +122,10 @@ int main (int argc, char *argv[]) {
 
     cairo_set_source_rgb(cr, 0.5, 0.0, 0.5);
     cairo_paint(cr);
-    cairo_rectangle(cr, 10, 10, x - 10, y - 10);
+    cairo_move_to(cr, 50, 100);
+    cairo_set_font_size(cr, 100);
+    cairo_set_source_rgb(cr, 1.0, 0.0, 0.0);
+    cairo_show_text(cr, "This is test to show something!");
 
   switch (cairo_check_event(surface, 0)) {
     case 0xff1b: // Esc
