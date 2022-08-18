@@ -2,7 +2,7 @@
 module Main (main) where
 
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Control.Monad (void)
+import Control.Monad (forever)
 import Control.Concurrent.MVar
 import Data.Conduit
 import Data.ByteString (ByteString)
@@ -19,34 +19,22 @@ main = do
   run 3126 $ websocketsOr defaultConnectionOptions (wsApp wsConnection) (app wsConnection)
 
 
-app :: MVar Connection -> Application
-app connBox req respond | requestMethod req == methodPost = do
-                         conn <- tryReadMVar connBox
-                         case conn of
-                           Nothing -> do
-                             liftIO $ putStrLn "Peer doesn't exist yet"
-                             respond $ responseLBS notModified304 [] "Peer doesn't exist yet"
-                           Just conn' -> do
-                             let sendData txt = liftIO $ case txt of
-                                   Nothing -> return ()
-                                   Just txt' -> sendTextData conn' txt'
-                                 logOutput txt = liftIO $ do
-                                   putStrLn "---"
-                                   print txt
-                                   putStrLn "---"
-                             liftIO $ connect (sourceRequestBody req) $ do
-                               txt <- await
-                               -- sendData txt
-                               logOutput txt
-                               -- (await >>= \txt -> sendData txt >> logOutput txt)
+app :: MVar ByteString -> Application
+app txtBox req respond | requestMethod req == methodPost = do
+                             connect (sourceRequestBody req) (sendDataSink txtBox)
                              respond $ responseLBS ok200 [] ""
 app _ _ respond = do
   liftIO $ putStrLn "POST is only option available"
   respond $ responseLBS methodNotAllowed405 [] ""
 
--- | Accept Websocket request, and put it to the box
-wsApp :: MVar Connection -> ServerApp
-wsApp connBox conn = do
+sendDataSink :: MonadIO m => MVar ByteString -> ConduitT ByteString Void m ()
+sendDataSink txtBox = await >>= (maybe (return ()) (liftIO . putMVar txtBox))
+
+-- | Accept Websocket request, await for receiving text from HTTP server,
+-- and send it to the websocket client
+wsApp :: MVar ByteString -> ServerApp
+wsApp txtBox conn = do
   conn' <- acceptRequest conn
-  forkPingThread conn' 30
-  void $ tryPutMVar connBox conn'
+  forever $ do
+    txt <- takeMVar txtBox
+    sendTextData conn' txt
