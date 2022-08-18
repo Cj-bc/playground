@@ -14,6 +14,7 @@ import Network.WebSockets
 import Network.HTTP.Types.Status
 import Network.HTTP.Types.Method
 
+main :: IO ()
 main = do
   wsConnection <- newEmptyMVar
   run 3126 $ websocketsOr defaultConnectionOptions (wsApp wsConnection) (app wsConnection)
