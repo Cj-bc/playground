@@ -1,0 +1,9 @@
+resolver: lts-19.16
+
+allow-newer: true
+
+packages:
+- .
+
+extra-deps:
+- reanimate-1.1.6.0@sha256:53abeabd24eba7ad7fbf86938d9d21f34dc9783f9384e4b324e6a1ae211f112e,6241
