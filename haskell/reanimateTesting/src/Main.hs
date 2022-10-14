@@ -43,11 +43,12 @@ main = reanimate $ slidingTransition "white" 2 0.5 ["skyblue", "dodgerblue", "ro
 -- Based on the AE transition tutorial: https://www.youtube.com/watch?v=pxFLnPPB-R4
 slidingTransition :: String -> Duration -> Double -> [String] -> Animation
 slidingTransition bgColor duration steepness colors = scene $ do
-  cPath <- flip simpleVar screenLeft $ \d -> clipPathTree $ defaultSvg
+  cPath <- flip simpleVar 0 $ \d -> clipPathTree $ defaultSvg
                                         &clipPathContent.~[rectangleTree $ defaultSvg
-                                                           &SvgTreeTy.transform.~(Just [SvgTreeTy.Translate d (-screenHeight)])
-                                                           &SvgTreeTy.rectWidth.~(Just $ Percent 100)
-                                                           &SvgTreeTy.rectHeight.~(Just $ Percent 100)]
+                                                           &SvgTreeTy.transform.~(Just [SvgTreeTy.Translate d 0])
+                                                           &SvgTreeTy.rectUpperLeftCorner.~(Num (-screenWidth/2), Num (-screenHeight/2))
+                                                           &SvgTreeTy.rectWidth?~Num screenWidth
+                                                           &SvgTreeTy.rectHeight?~Num screenHeight]
                                         &attrId.~(Just "slidingTransition.Mask")
 
   slides <-  forM (zip colors [0,steepness..]) $ \(color, offset) -> do
@@ -55,7 +56,7 @@ slidingTransition bgColor duration steepness colors = scene $ do
     oModifyS obj (oContext.=(clipPathRef.~Just (Ref "slidingTransition.Mask")))
 
   wait 2.1
-  tweenVar cPath 2 $ \_ -> \t ->  (-screenWidth*2) + (screenWidth*2)*(curveS 3 t)
+  tweenVar cPath 2 $ \_ -> fromToS 0 (screenWidth*2)
   return ()
   
 
