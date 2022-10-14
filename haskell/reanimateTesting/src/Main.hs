@@ -55,7 +55,7 @@ slidingTransition bgColor duration steepness colors = scene $ do
     obj <- fork $ slidingPlane duration offset color
     oModifyS obj (oContext.=(clipPathRef.~Just (Ref "slidingTransition.Mask")))
 
-  wait 2.1
+  wait 2
   tweenVar cPath 2 $ \_ -> fromToS 0 (screenWidth*2)
   return ()
   
