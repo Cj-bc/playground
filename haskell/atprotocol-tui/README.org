@@ -1,0 +1,3 @@
+* atprotocol-tui
+Playing around to be familiar with AT Protocol.
+I want to make haskell library for AT Protocol, and this is investigation for it.
