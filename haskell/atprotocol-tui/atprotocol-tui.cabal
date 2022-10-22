@@ -20,7 +20,10 @@ description:         Trying AT protocol by bluesky
 
 library
   hs-source-dirs:      src
+  exposed-modules:     Web.ATProto.Lexicons.Com.Atproto.RepoDescribe
   build-depends:       base >= 4.7 && < 5
+                     , text
+                     , template-haskell
   default-language:    Haskell2010
   ghc-options:         -Wall
                        -Wcompat
