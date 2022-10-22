@@ -38,6 +38,9 @@ executable atprotocol-tui-exe
   main-is:             Main.hs
   build-depends:       base
                      , atprotocol-tui
+                     , http-client
+                     , http-types
+                     , http-conduit
   default-language:    Haskell2010
   ghc-options:         -Wall
                        -Wcompat
