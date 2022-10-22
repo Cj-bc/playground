@@ -20,7 +20,6 @@ description:         Trying AT protocol by bluesky
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib
   build-depends:       base >= 4.7 && < 5
   default-language:    Haskell2010
   ghc-options:         -Wall
