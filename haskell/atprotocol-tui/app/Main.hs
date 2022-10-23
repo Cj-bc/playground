@@ -16,10 +16,6 @@ data DidDoc = DidDoc { context :: [Text]
                      , alsoKnownAs :: [Text]
                      -- TODO: Unimplemented
                      }
-                     
--- {{{ Codes for com.atproto.repoDescribe
-instance FromJSON RepoDescribeOutput
--- }}}
 
 -- {{{ Codes for com.atproto.repoListRecords
 type CID = Text

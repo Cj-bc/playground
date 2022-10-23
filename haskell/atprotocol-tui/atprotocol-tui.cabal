@@ -24,6 +24,7 @@ library
   build-depends:       base >= 4.7 && < 5
                      , text
                      , template-haskell
+                     , aeson
   default-language:    Haskell2010
   ghc-options:         -Wall
                        -Wcompat
