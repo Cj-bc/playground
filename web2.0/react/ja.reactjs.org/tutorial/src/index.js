@@ -15,7 +15,8 @@ class Board extends React.Component {
     super(props);
 
     this.state = {
-      cells: Array(9).fill(null)
+	cells: Array(9).fill(null),
+	IsNextX: true
     };
   }
 
@@ -26,12 +27,13 @@ class Board extends React.Component {
   handleClick(index) {
       console.log("handle click called!");
       const cells  = this.state.cells.slice();
-      cells[index] = 'X';
-      this.setState({cells: cells});
+      cells[index] = this.state.IsNextX ? 'X' : 'O';
+      this.setState({cells: cells
+		     , IsNextX: !this.state.IsNextX});
   }
 
   render() {
-    const status = 'Next player: X';
+    const status = 'Next player: ' + (this.state.IsNextX ? 'X' : 'O');
 
     return (
       <div>
