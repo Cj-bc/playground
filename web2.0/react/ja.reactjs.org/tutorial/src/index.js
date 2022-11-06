@@ -22,6 +22,12 @@ function calculateWinner(squares) {
   return null;
 }
 
+function indexToCellCoordinate(index) {
+    let x = index % 3 + 1;
+    let y = Math.floor(index/3) + 1;
+    return {x: x, y: y};
+}
+
 
 function Square(props) {
     return (
@@ -64,18 +70,34 @@ class Game extends React.Component {
 	super(props);
 
 	this.state = {
-	    history: [{cells: Array(9).fill(null)}],
+	    history: [{cells: Array(9).fill(null), newCell: null}
+		      ],
+	    stepNumber: 0,
 	    isNextX: true
 	};
     }
 
     render() {
 	let history = this.state.history;
-	let current = history[history.length - 1]
+	let current = history[this.state.stepNumber]
 	let winner = calculateWinner(current.cells);
 	const status = winner ? ('Winner: ' + winner)
 	      : 'Next player: ' + (this.props.isNextX ? 'X' : 'O');
 
+	let historyList = history.map((histEntry, idx) => {
+	    let c = indexToCellCoordinate(histEntry.newCell)
+	    let descStr = (idx == 0) ? "Go to game start"
+		: "added: ("+c.x+","+c.y+")"+"; Go to #"+idx+" move"
+
+	    let desc = (idx === this.state.stepNumber) ? <b>{descStr}</b>
+		: descStr
+	    
+	    return (<li key={idx}>
+			<button onClick={() => this.jumpTo(idx)}>
+			    {desc}
+			</button>
+		    </li>);
+	});
 	return (
 	    <div className="game">
 		<div className="game-board">
@@ -85,7 +107,7 @@ class Game extends React.Component {
 		</div>
 		<div className="game-info">
 		    <div>{status}</div>
-		    <ol>{/* TODO */}</ol>
+		    <ol>{historyList}</ol>
 		</div>
 	    </div>
 	);
@@ -93,14 +115,22 @@ class Game extends React.Component {
 
     handleClick(index) {
 	console.log("handle click called!");
-	const history = this.state.history
+	const history = this.state.history.slice(0, this.state.stepNumber + 1);
 	const cells   = history[history.length - 1].cells.slice();
 	if (calculateWinner(cells) || cells[index])
 	    return;
 
 	cells[index] = this.state.isNextX ? 'X' : 'O';
-	this.setState({history: history.concat([{cells: cells}]),
-		       isNextX: !this.state.isNextX});
+	this.setState({history: history.concat([{cells: cells, newCell: index}]),
+		       isNextX: !this.state.isNextX,
+		       stepNumber: history.length,
+		      });
+    }
+
+    jumpTo(index) {
+	this.setState({stepNumber: index,
+		       isNextX: (index % 2) === 0
+		      })
     }
 
 }
