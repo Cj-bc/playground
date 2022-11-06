@@ -63,7 +63,8 @@ class Game extends React.Component {
 	    history: [{cells: Array(9).fill(null), newCell: null}
 		      ],
 	    stepNumber: 0,
-	    isNextX: true
+	    isNextX: true,
+	    historyIncremental: true,
 	};
     }
 
@@ -73,6 +74,7 @@ class Game extends React.Component {
 	let winner = calculateWinner(current.cells);
 	const status = winner ? ('Winner: ' + winner)
 	      : 'Next player: ' + (this.props.isNextX ? 'X' : 'O');
+	const historyIncremental = this.state.historyIncremental;
 
 	let historyList = history.map((histEntry, idx) => {
 	    let c = indexToCellCoordinate(histEntry.newCell)
@@ -97,7 +99,12 @@ class Game extends React.Component {
 		</div>
 		<div className="game-info">
 		    <div>{status}</div>
-		    <ol>{historyList}</ol>
+		    <div>
+			<button onClick={() => this.setState({historyIncremental: !historyIncremental})}>
+			    {historyIncremental ? "show history decrementally" : "show history incrementally"}
+			</button>
+		    </div>
+		    <ol>{historyIncremental ? historyList : historyList.reverse()}</ol>
 		</div>
 	    </div>
 	);
