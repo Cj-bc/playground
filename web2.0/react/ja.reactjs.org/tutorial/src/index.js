@@ -48,6 +48,9 @@ class Board extends React.Component {
   handleClick(index) {
       console.log("handle click called!");
       const cells  = this.state.cells.slice();
+      if (calculateWinner(cells) || cells[index])
+	  return;
+
       cells[index] = this.state.IsNextX ? 'X' : 'O';
       this.setState({cells: cells
 		     , IsNextX: !this.state.IsNextX});
