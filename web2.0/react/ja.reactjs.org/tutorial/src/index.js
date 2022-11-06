@@ -32,38 +32,13 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-	cells: Array(9).fill(null),
-	IsNextX: true
-    };
-  }
-
   renderSquare(i) {
-    return <Square value={this.state.cells[i]} handleClick={() => this.handleClick(i)} />;
-  }
-
-  handleClick(index) {
-      console.log("handle click called!");
-      const cells  = this.state.cells.slice();
-      if (calculateWinner(cells) || cells[index])
-	  return;
-
-      cells[index] = this.state.IsNextX ? 'X' : 'O';
-      this.setState({cells: cells
-		     , IsNextX: !this.state.IsNextX});
+    return <Square value={this.props.cells[i]} handleClick={() => this.props.handleClick(i)} />;
   }
 
   render() {
-      const winner = calculateWinner(this.state.cells);
-      const status = winner ? ('Winner: ' + winner)
-	    : 'Next player: ' + (this.state.IsNextX ? 'X' : 'O');
-
     return (
       <div>
-        <div className="status">{status}</div>
         <div className="board-row">
           {this.renderSquare(0)}
           {this.renderSquare(1)}
@@ -85,19 +60,49 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+    constructor(props) {
+	super(props);
+
+	this.state = {
+	    history: [{cells: Array(9).fill(null)}],
+	    isNextX: true
+	};
+    }
+
     render() {
+	let history = this.state.history;
+	let current = history[history.length - 1]
+	let winner = calculateWinner(current.cells);
+	const status = winner ? ('Winner: ' + winner)
+	      : 'Next player: ' + (this.props.isNextX ? 'X' : 'O');
+
 	return (
 	    <div className="game">
 		<div className="game-board">
-		    <Board />
+		    <Board cells={current.cells}
+			   handleClick={(i) => this.handleClick(i)}
+		    />
 		</div>
 		<div className="game-info">
-		    <div>{/* status */}</div>
+		    <div>{status}</div>
 		    <ol>{/* TODO */}</ol>
 		</div>
 	    </div>
 	);
     }
+
+    handleClick(index) {
+	console.log("handle click called!");
+	const history = this.state.history
+	const cells   = history[history.length - 1].cells.slice();
+	if (calculateWinner(cells) || cells[index])
+	    return;
+
+	cells[index] = this.state.isNextX ? 'X' : 'O';
+	this.setState({history: history.concat([{cells: cells}]),
+		       isNextX: !this.state.isNextX});
+    }
+
 }
 
 // ========================================
