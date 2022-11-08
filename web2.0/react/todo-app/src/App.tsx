@@ -18,8 +18,14 @@ function TodoItem(props: {entry: TodoItem, toggle: () => void}) {
 	    </div>)
 }
 
-function TodoList(props: TodoItem[]) {
+function TodoList(props: {todoes: TodoItem[], toggle: (arg0: number) => void}) {
+    const items = props.todoes.map((item) =>
+	<li> <TodoItem entry={item} toggle={() => props.toggle(item.id)} /> </li>)
 
+    return (<div className="Todo-List">
+		<p> Todoes </p>
+		<ol> {items} </ol>
+	    </div>)
 }
 
 class App extends React.Component<{}, {todoes: TodoItem[]}> {
@@ -45,7 +51,7 @@ class App extends React.Component<{}, {todoes: TodoItem[]}> {
 	return (
 	    <div className="App">
 		<ol>
-		    {items}
+		    <TodoList todoes={todoes} toggle={(id) => this.toggleStateAt(id)} />
 		</ol>
 	    </div>
 	);
