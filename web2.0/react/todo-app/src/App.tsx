@@ -51,50 +51,30 @@ const TodoField = (props: TodoFieldProps) => {
 
 }
 
-class App extends React.Component<{}, {todoes: TodoItem[]}> {
-    constructor(props: any) {
-	super(props);
+const App = () => {
+    const [todoes, setTodoes] = useState([] as TodoItem[]);
 
-	const todoes: TodoItem[] = [{id: 0, name: "Example", isDone: false },
-		     {id: 1, name: "2nd", isDone: false }
-		    ]
- 
-	this.state = {
-	    todoes: todoes
-	};
-    }
-    
-    render() {
-	const todoes = this.state.todoes;
-	const items = todoes.map((item, idx) => {
-	    return (<li>
-			<TodoItem entry={item} toggle={() => this.toggleStateAt(item.id)} />
-		    </li>)})
-	
-	return (
-	    <div className="App">
-		<ol>
-		    <TodoList todoes={todoes} toggle={(id) => this.toggleStateAt(id)} />
-		</ol>
-		<div className="Todo-Field">
-		    <TodoField adder={(s) => this.createNewTodo(s)} />
-		</div>
-	    </div>
-	);
-    }
 
-    toggleStateAt(id: number) {
-	const todoes = this.state.todoes;
-
-	this.setState({todoes: todoes.map((item) =>
+    const toggleStateAt = (id: number) => {
+	setTodoes(todoes.map((item) =>
 	    (item.id === id) ? {...item, isDone: !item.isDone} : item
-	)
-		      });
+			    ));
     }
 
-    createNewTodo(name: string) {
-	this.setState({todoes: this.state.todoes.concat({id: new Date().getTime(), name: name, isDone: false})});
+    const createNewTodo = (name: string) => {
+	setTodoes(todoes.concat({id: new Date().getTime(), name: name, isDone: false}));
     }
+
+    return (
+      	<div className="App">
+      	    <ol>
+      		<TodoList todoes={todoes} toggle={toggleStateAt} />
+      	    </ol>
+      	    <div className="Todo-Field">
+      		<TodoField adder={createNewTodo} />
+      	    </div>
+      	</div>
+    );
 }
 
 export default App;
