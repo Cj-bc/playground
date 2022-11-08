@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormEvent, ChangeEvent} from 'react';
+import {FormEvent, ChangeEvent, useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -32,28 +32,23 @@ interface TodoFieldProps {
     adder: (arg0: string) => void
 }
 
-class TodoField extends React.Component<TodoFieldProps, {value: string}> {
-    constructor(props: TodoFieldProps) {
-	super(props);
+const TodoField = (props: TodoFieldProps) => {
+    const [value, setValue] = useState("");
 
-	this.state = { value: "" };
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+	setValue(event.target.value);
     }
 
-    render() {
-	return (<form onSubmit={(e) => this.handleSubmit(e)}>
-		    <input type="text" value={this.state.value} onChange={(e) => this.handleChange(e)} />
-		</form>)
-    }
-
-    handleChange(event: ChangeEvent<HTMLInputElement>) {
-	this.setState({value: event.target.value});
-    }
-
-    handleSubmit(event: FormEvent) {
+    const handleSubmit = (event: FormEvent) => {
 	event.preventDefault();
-	this.props.adder(this.state.value);
-	this.setState({value: ""});
+	props.adder(value);
+	setValue("");
     }
+
+    return (<form onSubmit={handleSubmit}>
+		<input type="text" value={value} onChange={handleChange} />
+	    </form>)
+
 }
 
 class App extends React.Component<{}, {todoes: TodoItem[]}> {
