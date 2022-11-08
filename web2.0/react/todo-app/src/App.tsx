@@ -1,4 +1,5 @@
 import React from 'react';
+import {FormEvent} from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -27,6 +28,34 @@ function TodoList(props: {todoes: TodoItem[], toggle: (arg0: number) => void}) {
 	    </div>)
 }
 
+interface TodoFieldProps {
+    adder: (arg0: string) => void
+}
+
+class TodoField extends React.Component<TodoFieldProps, {value: string}> {
+    constructor(props: TodoFieldProps) {
+	super(props);
+
+	this.state = { value: "" };
+    }
+
+    render() {
+	return (<form onSubmit={(e) => this.handleSubmit(e)}>
+		    <input type="text" value={this.state.value} onChange={(e) => this.handleChange(e)} />
+		</form>)
+    }
+
+    handleChange(event: {target: HTMLInputElement}) {
+	this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event: FormEvent) {
+	event.preventDefault();
+	this.props.adder(this.state.value);
+	this.setState({value: ""});
+    }
+}
+
 class App extends React.Component<{}, {todoes: TodoItem[]}> {
     constructor(props: any) {
 	super(props);
@@ -52,6 +81,9 @@ class App extends React.Component<{}, {todoes: TodoItem[]}> {
 		<ol>
 		    <TodoList todoes={todoes} toggle={(id) => this.toggleStateAt(id)} />
 		</ol>
+		<div className="Todo-Field">
+		    <TodoField adder={(s) => this.createNewTodo(s)} />
+		</div>
 	    </div>
 	);
     }
@@ -63,7 +95,10 @@ class App extends React.Component<{}, {todoes: TodoItem[]}> {
 	    (item.id === id) ? {...item, isDone: !item.isDone} : item
 	)
 		      });
-	
+    }
+
+    createNewTodo(name: string) {
+	this.setState({todoes: this.state.todoes.concat({id: new Date().getTime(), name: name, isDone: false})});
     }
 }
 
