@@ -11,10 +11,9 @@ interface TodoItem {
 
 function TodoItem(props: {entry: TodoItem, toggle: () => void}) {
     const entry = props.entry;
-    return (<div className="Todo-Item">
-		<button className="Todo-done" onClick={props.toggle}> {entry.isDone ? "DONE" : "TODO"} </button>
+    return (<div className={`Todo-Item ${entry.isDone ? "done" : ""}`}>
+		<button className="Todo-status-Toggle" onClick={props.toggle}> {entry.isDone ? "DONE" : "TODO"} </button>
 		<div className="Todo-Name"> {entry.name} </div>
-
 	    </div>)
 }
 
