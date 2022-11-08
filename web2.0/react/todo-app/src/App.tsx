@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormEvent} from 'react';
+import {FormEvent, ChangeEvent} from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -45,7 +45,7 @@ class TodoField extends React.Component<TodoFieldProps, {value: string}> {
 		</form>)
     }
 
-    handleChange(event: {target: HTMLInputElement}) {
+    handleChange(event: ChangeEvent<HTMLInputElement>) {
 	this.setState({value: event.target.value});
     }
 
