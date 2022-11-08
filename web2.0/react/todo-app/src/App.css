@@ -18,13 +18,23 @@ body {
     display: flex;
     flex-direction: row;
     padding: 0.2rem;
+    background: darkcyan;
+    width: 100%;
 }
+
+li {
+    background: red;
+}
+
 .Todo-Item > div {
     flex-grow: 1;
+    padding-left: 0.5rem;
 }
+
 
 .Todo-Item.done {
     background: var(--background-done);
+    color: #aaa;
 }
 .App {
   height: 100%;
@@ -38,8 +48,12 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* background: blue; */
 }
 
+.Todo-List > ol {
+    width: 80%;
+}
 .Todo-Field {
     width: 100%;
     position: fixed;
