@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, FormEvent, ChangeEvent} from 'react';
 import './App.css';
 
 interface UserActorProperty {
@@ -24,10 +24,9 @@ const UserActor = (props: {user: UserActorProperty | null}) => {
 }
 
 function App() {
-    // const [userId, setUserId] = useState(null as (string | null));
     const [user, setUser] = useState(null as (UserActorProperty | null));
-
-    const userId = "https://misskey.io/@cj_bc_sd";
+    const [userIdPartial, setUserIdPartial] = useState("");
+    const [userId, setUserId] = useState(null as (string | null))
 
     useEffect(() => {
 	if (userId === null) return;
@@ -38,9 +37,21 @@ function App() {
 	    .then((json) => setUser(json));
     });
 
+    const onSubmit = (e: FormEvent) => {
+	e.preventDefault();
+	setUserId(userIdPartial);
+    }
+
+    const onChange = (e: ChangeEvent<HTMLInputElement>) => {
+	setUserIdPartial(e.target.value);
+    }
+
     return (
 	<div className="App">
 	    <UserActor user={user} />
+	    <form onSubmit={onSubmit}>
+		<input type="text" onChange={onChange} value={userIdPartial} />
+	    </form>
 	</div>
     );
 }
