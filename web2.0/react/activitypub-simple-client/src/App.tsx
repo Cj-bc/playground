@@ -1,10 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import './App.css';
 
-interface UserActorProps {
-    id: string,
-}
-
 interface UserActorProperty {
     id: string,
     name: string,
@@ -12,36 +8,15 @@ interface UserActorProperty {
     outbox: string,
 }
 
-const UserActor = (props: UserActorProps) => {
-    const [user, setUser] = useState(null as (UserActorProperty | null));
-
-    useEffect(() => {
-	if (user) { return; }
-
-	fetch(props.id,
-	      {headers: new Headers({'Accept': 'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
-				    }),
-	       method: 'GET'
-	      }
-	     ).then((response) => {
-		 console.log(response);
-		 if (response.ok) {
-		     response.json().then((json) => setUser(json));
-		 } else {
-		     console.log(`Couldn't success user calling: ${response.status}`);
-		 }
-
-	     });
-    });
-
-    if (!user) {
+const UserActor = (props: {user: UserActorProperty | null}) => {
+    if (props.user == null) {
 	return (<div> loading ... </div>);
     } else {
-	return (<div>
+	return (<div className="UserProfile">
+		    <div className="UserName">{props.user.name}</div>
 		    <ul>
-			<li> name: {user.name} </li>
-			<li> inbox: {user.inbox} </li>
-			<li> outbox: {user.outbox} </li>
+			<li> inbox: {props.user.inbox} </li>
+			<li> outbox: {props.user.outbox} </li>
 		    </ul>
 		</div>
 	);
@@ -49,11 +24,25 @@ const UserActor = (props: UserActorProps) => {
 }
 
 function App() {
-  return (
-    <div className="App">
-	<UserActor id="https://misskey.io/@cj_bc_sd" />
-    </div>
-  );
+    // const [userId, setUserId] = useState(null as (string | null));
+    const [user, setUser] = useState(null as (UserActorProperty | null));
+
+    const userId = "https://misskey.io/@cj_bc_sd";
+
+    useEffect(() => {
+	if (userId === null) return;
+	if (user) return;
+
+	fetch(userId, {headers: {'Accept': 'application/ld+json; profile="https://www.w3.org/ns/activitystreams'}})
+	    .then((res) => res.json())
+	    .then((json) => setUser(json));
+    });
+
+    return (
+	<div className="App">
+	    <UserActor user={user} />
+	</div>
+    );
 }
 
 export default App;
