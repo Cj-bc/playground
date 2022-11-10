@@ -6,6 +6,12 @@ interface UserActorProperty {
     name: string,
     inbox: string,
     outbox: string,
+    following: string,
+    followers: string,
+    liked: string | null,
+    streams: string[] | null,
+    preferredUsername: string | null,
+    summary: string,
 }
 
 const UserActor = (props: {user: UserActorProperty | null}) => {
