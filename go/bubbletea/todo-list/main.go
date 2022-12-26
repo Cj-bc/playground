@@ -32,7 +32,10 @@ func (t task) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (t task) View() string {
-	return t.title
+	isDone := " "
+	if t.isDone { isDone = "x"; }
+
+	return fmt.Sprintf("[%s] %s", isDone, t.title)
 }
 // }}}
 
@@ -78,10 +81,7 @@ func (m model) View() string {
 		cursor := " "
 		if i == m.cursor { cursor = ">"; }
 
-		isDone := " "
-		if item.isDone { isDone = "x"; }
-		
-		s += fmt.Sprintf("%s [%s] %s\n", cursor, isDone, item.title)
+		s += fmt.Sprintf("%s %s\n", cursor, item.View())
 	}
 	return s
 }
