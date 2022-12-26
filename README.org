@@ -1,0 +1,12 @@
+* playground
+
+This is _my_ playground.
+There're some practical codes/tools.
+
+* Some playable programs 
+
+- [[haskell/blackjack/README.md][haskell/blackjack]] :: CUI Black jack program in Haskell
+- [[haskell/faceWithShgif/README.md][haskell/faceWithShgif]] :: Control AA face model with keyboard
+- [[haskell/oniOrHuman/README.md][haskell/oniOrHuman]] :: Simple CUI timing game
+- [[haskell/qotd-hs/README.md][haskell/qotd-hs]] :: Quote of the day server (RFC865)
+- [[haskell/echo-server/README.md][haskell/echo-server]] :: Echo server (RFC862)
