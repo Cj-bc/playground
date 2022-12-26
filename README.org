@@ -3,6 +3,11 @@
 This is _my_ playground.
 There're some practical codes/tools.
 
+** Code quality isn't guaranteed; Do not expect "Good code" here
+All codes here are not planned to be maintained. Even I acknoledge
+that [[https://github.com/Cj-bc/playground/security/dependabot][dependabot]] have alerted me a lot of problems, I'm not going to
+fix them because those codes here aren't used anymore.
+
 * Some playable programs 
 
 - [[haskell/blackjack/README.md][haskell/blackjack]] :: CUI Black jack program in Haskell
