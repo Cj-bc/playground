@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/bubbles/list"
 )
 
 // Task Model {{{
@@ -12,7 +13,8 @@ type task struct {
 	description string
 }
 
-type updateMsg func(task) task
+type updateTitleMsg string
+type updateDescriptionMsg string
 type toggleDoneMsg struct{}
 
 func (t task) Init() tea.Cmd {
@@ -20,10 +22,11 @@ func (t task) Init() tea.Cmd {
 }
 
 func (t task) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg.(type) {
-		//case updateMsg:
-		//	//return func(task) task(msg)(t), nil
-	//	task(msg).title
+	switch msg := msg.(type) {
+	case updateTitleMsg:
+		t.title = string(msg)
+	case updateDescriptionMsg:
+		t.description = string(msg)
 	case toggleDoneMsg:
 		t.isDone = !t.isDone
 	}
@@ -33,15 +36,20 @@ func (t task) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (t task) View() string {
 	isDone := " "
-	if t.isDone { isDone = "x"; }
+
 
 	return fmt.Sprintf("[%s] %s", isDone, t.title)
 }
+
+func (t task) Title() string { return t.title }
+func (t task) Description() string { return t.description }
+func (t task) FilterValue() string { return t.title }
+
 // }}}
 
 // Model declarations {{{
 type model struct {
-	tasks []task
+	tasks list.Model
 	cursor int
 }
 
@@ -50,49 +58,22 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.String() {
-		case "q":
-			return m, tea.Quit
-		case "j":
-			if m.cursor < len(m.tasks)-1 {
-				m.cursor++
-			}
-		case "k":
-			if m.cursor > 0 {
-				m.cursor--
-			}
-		case " ":
-			updatedTask, cmd := m.tasks[m.cursor].Update(toggleDoneMsg{})
-			if task, ok := updatedTask.(task); ok {
-				m.tasks[m.cursor] = task
-			}
-			
-			return m, cmd
-		}
-	}
-	return m, nil
+	newTasks, cmd := m.tasks.Update(msg)
+	m.tasks = newTasks
+	return m, cmd
 }
 
 func (m model) View() string {
-	s := ""
-	for i, item := range m.tasks {
-		cursor := " "
-		if i == m.cursor { cursor = ">"; }
-
-		s += fmt.Sprintf("%s %s\n", cursor, item.View())
-	}
-	return s
+	return m.tasks.View()
 }
 // }}}
 
 func main() {
-	testTasks := []task{
+	testTasks := list.New([]list.Item {
 		task{title: "FooBar"},
 		task{title: "English"},
 		task{title: "This is absolutely nonsence btw"},
-	}
+	}, list.NewDefaultDelegate(), 100, 50)
 
 	tea.NewProgram(model{tasks: testTasks, cursor: 0}).Run()
 }
