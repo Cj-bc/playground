@@ -19,6 +19,7 @@
 // most of codes are from: https://github.com/mltframework/mlt/blob/531aa1a19df55cc378c9c79b86c7cbb187487f37/src/modules/core/factory.c
 
 #include <framework/mlt.h>
+#include <framework/mlt_types.h>
 #include <limits.h>
 #include <string.h>
 
@@ -31,6 +32,6 @@ static mlt_properties metadata(mlt_service_type type, const char *id, void *data
 }
 
 MLT_REPOSITORY {
-  MLT_REGISTER(filter_type, "noEffectImage", filter_noEffectImage_init);
-  MLT_REGISTER_METADATA(filter_type, "noEffectImage", metadata, "filter_noEffectImage.yml");
+  MLT_REGISTER(mlt_service_filter_type, "noEffectImage", filter_noEffectImage_init);
+  MLT_REGISTER_METADATA(mlt_service_filter_type, "noEffectImage", metadata, "filter_noEffectImage.yml");
 }
