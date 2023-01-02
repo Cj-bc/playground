@@ -1,0 +1,6 @@
+<!DOCTYPE kpartgui>
+<effect tag="noEffectImage" id="noEffectImage" type="video" unique="1">
+  <name>no effect image</name>
+  <description>Sample effect treating image. Do nothing</description>
+  <author>Cj-bc</author>
+</effect>
