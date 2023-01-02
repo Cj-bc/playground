@@ -18,6 +18,7 @@
  */
 // most of codes are from: https://github.com/mltframework/mlt/blob/531aa1a19df55cc378c9c79b86c7cbb187487f37/src/modules/core/factory.c
 
+#include "filter_noEffectImage.h"
 #include <framework/mlt.h>
 #include <framework/mlt_types.h>
 #include <limits.h>
