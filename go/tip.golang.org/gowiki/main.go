@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
+	"net/http"
+	"log"
 )
+
 type Page struct {
 	Title string
 	Body []byte
@@ -23,13 +26,14 @@ func loadPage(title string) (*Page, error) {
 	return &Page{Title: title, Body: body}, nil	
 }
 
-func main() {
-	p1 := &Page{Title: "TestPage", Body: []byte("This is a sample Page.")}
-	p1.save()
+func viewHandler(w http.ResponseWriter, r *http.Request) {
+	title := r.URL.Path[6:]
+	page, _ := loadPage(title)
+	fmt.Fprintf(w, "<h1>%s</h1><div>%s</div>", page.Title, page.Body)
+}
 
-	p2, err := loadPage("TestPage")
-	if err != err {
-		fmt.Println("Failed to read file")
-	}
-	fmt.Println(string(p2.Body))
+
+func main() {
+	http.HandleFunc("/view/", viewHandler)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 }
