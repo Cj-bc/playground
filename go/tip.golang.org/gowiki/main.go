@@ -31,7 +31,7 @@ func loadPage(title string) (*Page, error) {
 }
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
-	err := templates.ExecuteTemplate(w, tmpl, p)
+	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -43,7 +43,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-	renderTemplate(w, "view.html", page)
+	renderTemplate(w, "view", page)
 }
 
 func editHandler(w http.ResponseWriter, r *http.Request, title string) {
@@ -52,7 +52,7 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 		page = &Page{Title: title}
 	}
 
-	renderTemplate(w, "edit.html", page)
+	renderTemplate(w, "edit", page)
 }
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
