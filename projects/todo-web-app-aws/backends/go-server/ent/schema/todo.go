@@ -1,6 +1,9 @@
 package schema
 
-import "entgo.io/ent"
+import (
+	"entgo.io/ent"
+	"entgo.io/ent/schema/field"
+)
 
 // Todo holds the schema definition for the Todo entity.
 type Todo struct {
@@ -9,7 +12,10 @@ type Todo struct {
 
 // Fields of the Todo.
 func (Todo) Fields() []ent.Field {
-	return nil
+	return []ent.Field{
+		field.String("title"),
+		field.Bool("isDone"),
+	}
 }
 
 // Edges of the Todo.
