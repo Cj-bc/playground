@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"go-server/ent"
-	"go-server/ent/todo"
 	"log"
 
 	"github.com/gin-gonic/gin"
