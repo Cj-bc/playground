@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+
+  ############################ Basic Configurations ###########################
+  myVpc:
+    Type: AWS::EC2:VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+
+
+  # Private Subnet that hosts webAPI
+  backend:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.1.0/24
+      AvailabilityZone: ap-northeast-1
+      VpcId: !Ref myVpc
+
+  backendAcl:
+    Type: AWS::EC2::NetworkAcl
+
+  frontendAcl:
+    Type: AWS::EC2::NetworkAcl
+    
+  # Public Subet that hosts web site
+  frontend:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: ap-northeast-1
+      VpcId: !Ref myVpc
+
+  ###################### Configure Network Access ###############
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway  
+    Properties:
+
+  myInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref myInternetGateway
+      VpcId: !Ref myVpc
+
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVpc
+

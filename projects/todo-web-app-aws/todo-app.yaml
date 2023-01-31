@@ -1,0 +1,42 @@
+openapi: 3.0.0
+paths:
+  /todoes:
+    get:
+      summary: Returns all todoes registered
+      responses:
+        '200':
+          description: List of Todo object
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Todo"
+  /todo/{todo-id}:
+    get:
+      summary: Returns details of one todo
+      responses:
+        '200':
+          description: Detailed information about the todo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+   # patch:
+   #   summary: Update Content of todo
+  /todo/new:
+    post:
+      summary: Create new todo
+
+
+components:
+  schemas:
+    Todo:
+      type: object
+      properties:
+        title:
+          type: string
+        isDone:
+          type: bool
+        id:
+          type: string

@@ -1,0 +1,3 @@
+* Projects dir
+
+All of subdirectories are tiny playground for "project"s which consists of several languages & services.
