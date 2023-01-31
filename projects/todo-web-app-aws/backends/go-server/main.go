@@ -18,7 +18,7 @@ func main() {
 	}
 	defer client.Close()
 
-	if err := client.Schema.Create(context.Background); err != nil {
+	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Fatalf ("failed creating schema resources: %v", err)
 	}
 	// Preparing client done
