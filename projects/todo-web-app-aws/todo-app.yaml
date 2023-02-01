@@ -22,6 +22,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Todo"
+        '404':
+          description: Given id isn't exist
+        '400':
+          description: given `todo-id` was not integer
+
    # patch:
    #   summary: Update Content of todo
   /todo:
