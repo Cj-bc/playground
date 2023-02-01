@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"go-server/ent"
+	"go-server/ent/todo"
 	"log"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -29,6 +32,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/todoes", endpointTodoesHandler(client))
+	router.GET("/todo/:todo_id", todoController(client))
 	router.Run(":3000")
 }
 
@@ -48,5 +52,21 @@ func endpointTodoesHandler(client *ent.Client) gin.HandlerFunc {
 		msg.title = "FooBar"
 
 		c.JSON(200, struct {Todoes []*ent.Todo} {Todoes: result})
+func todoController(client *ent.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id_str := c.Param("todo_id")
+		id, err := strconv.Atoi(id_str)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, struct{}{})
+			return
+		}
+
+		entry, err := client.Todo.Query().Where(todo.ID(id)).Only(c)
+		if err != nil {
+			c.JSON(http.StatusNotFound, struct{}{})
+			return
+		}
+
+		c.JSON(http.StatusOK, entry)
 	}
 }
