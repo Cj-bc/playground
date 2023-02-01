@@ -34,13 +34,14 @@ func main() {
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{"*"},
-		AllowMethods: []string{"PATCH", "POST", "GET"},
+		AllowMethods: []string{"PATCH", "POST", "GET", "DELETE"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
 	router.GET("/todoes", endpointTodoesHandler(client))
 	router.POST("/todo", newTodoController(client))
 	router.GET("/todo/:todo_id", todoController(client))
 	router.PATCH("/todo/:todo_id", updateTodoController(client))
+	router.DELETE("/todo/:todo_id", removeTodoController(client))
 	router.Run(":3000")
 }
 
@@ -136,5 +137,22 @@ func newTodoController(client *ent.Client) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, todo)
+	}
+}
+
+func removeTodoController(client *ent.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id_str := c.Param("todo_id")
+		id, err := strconv.Atoi(id_str)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, struct{}{})
+			return
+		}
+
+		if err := client.Todo.DeleteOneID(id).Exec(c); err != nil {
+			c.Status(http.StatusInternalServerError)
+			return
+		}
+		c.Status(http.StatusOK)
 	}
 }
