@@ -27,8 +27,15 @@ paths:
         '400':
           description: given `todo-id` was not integer
 
-   # patch:
-   #   summary: Update Content of todo
+  patch:
+    summary: Update Content of todo
+    responses:
+      '200':
+        description: Update succeed
+      '400':
+        description: neither "title" nor "isDone" are provided in body
+      '500':
+        description: Failed to save the change
   /todo:
     post:
       summary: Create new todo

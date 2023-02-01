@@ -34,6 +34,7 @@ func main() {
 	router.GET("/todoes", endpointTodoesHandler(client))
 	router.POST("/todo", newTodoController(client))
 	router.GET("/todo/:todo_id", todoController(client))
+	router.PATCH("/todo/:todo_id", updateTodoController(client))
 	router.Run(":3000")
 }
 
@@ -72,6 +73,40 @@ func todoController(client *ent.Client) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, entry)
+	}
+}
+
+func updateTodoController(client *ent.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id_str := c.Param("todo_id")
+		id, err := strconv.Atoi(id_str)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, struct{}{})
+			return
+		}
+
+		var body struct {
+			Title  *string `json:"title"`
+			IsDone *bool   `json:"isDone"`
+		}
+		if err := c.ShouldBindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, struct{}{})
+			return
+		}
+
+		updater := client.Todo.UpdateOneID(id)
+		if body.IsDone != nil {
+			updater.SetIsDone(*body.IsDone)
+		}
+		if body.Title != nil {
+			updater.SetTitle(*body.Title)
+		}
+
+		if err := updater.Exec(c); err != nil {
+			c.JSON(http.StatusInternalServerError, struct{}{})
+			return
+		}
+		c.JSON(http.StatusOK, struct{}{})
 	}
 }
 
