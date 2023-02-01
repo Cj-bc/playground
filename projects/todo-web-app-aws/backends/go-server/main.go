@@ -22,7 +22,7 @@ func main() {
 	defer client.Close()
 
 	if err := client.Schema.Create(context.Background()); err != nil {
-		log.Fatalf ("failed creating schema resources: %v", err)
+		log.Fatalf("failed creating schema resources: %v", err)
 	}
 	// Preparing client done
 
@@ -46,12 +46,15 @@ func endpointTodoesHandler(client *ent.Client) gin.HandlerFunc {
 
 		var msg struct {
 			todoes []*ent.Todo `json:"todoes"`
-			title string `json:"title"`
+			title  string      `json:"title"`
 		}
 		msg.todoes = result
 		msg.title = "FooBar"
 
-		c.JSON(200, struct {Todoes []*ent.Todo} {Todoes: result})
+		c.JSON(http.StatusOK, struct{ Todoes []*ent.Todo }{Todoes: result})
+	}
+}
+
 func todoController(client *ent.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		id_str := c.Param("todo_id")
