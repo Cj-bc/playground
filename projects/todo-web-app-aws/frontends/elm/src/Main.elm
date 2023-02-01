@@ -4,7 +4,7 @@ import Http
 import Html.Attributes as Attr
 import Html.Events as AttrEvent
 
-import Html exposing (Html, div, text, ul, li, input)
+import Html exposing (Html, div, text, ul, li, input, form)
 import Json.Decode as D
 import Json.Encode as E
 
@@ -31,8 +31,9 @@ main = Browser.element
                
 type Msg = ListTodoes
          | CallUpdateTodo Todo
-         | CallCreateTodo Todo
+         | CallCreateTodo String
          | ToggleDone Todo Bool
+         | UpdateNewTodo String
          | GotListTodoes (Result Http.Error (List Todo))
          | GotUpdateTodo (Result Http.Error ())
          | GotCreateTodo (Result Http.Error ())
@@ -61,13 +62,16 @@ update msg model =
     case msg of
         ListTodoes -> (model, listTodoes)
         CallUpdateTodo todo -> (model, patchTodo todo)
-        CallCreateTodo todo -> Debug.todo "it's in todo"
+        CallCreateTodo title -> (model, createNewTodo title)
         ToggleDone todo isDoneState -> (model, patchTodo { todo | isDone = isDoneState })
+        UpdateNewTodo title -> ({model | newTodoField = title}, Cmd.none)
         GotListTodoes ts -> case ts of
                                 Ok todoes -> ({model | todoes = todoes, error = Nothing }, Cmd.none) 
                                 Err err -> ({ model | error = Just err }, Cmd.none)
         GotUpdateTodo res -> (model, listTodoes)
-        GotCreateTodo _ -> Debug.todo "It's in todo"
+        GotCreateTodo res -> case res of
+                                 Ok _ -> ({model | newTodoField = "" }, listTodoes)
+                                 Err err -> ({model | error = Just err }, Cmd.none)
 
 -- Commands
 patchTodo : Todo -> Cmd Msg
@@ -86,12 +90,19 @@ listTodoes = Http.get { url = backendUrlBase++"/todoes"
                       , expect = Http.expectJson GotListTodoes todoListDecoder
                       }
 
+createNewTodo : String -> Cmd Msg
+createNewTodo title = Http.post { url = backendUrlBase++"/todo"
+                                , body = Http.jsonBody (E.object [("title", E.string title)])
+                                , expect = Http.expectWhatever GotCreateTodo
+                                }
+
 -- View
 view : Model -> Html Msg
 view model =
     div []  [text "Todo list:"
             , ul [Attr.class "todo-list"] (List.map todoView model.todoes)
             , errorToast model.error
+            , newTodoView model
             ]
 
 todoView : Todo -> Html Msg
@@ -100,6 +111,13 @@ todoView todo =
                         , Attr.checked todo.isDone
                         , AttrEvent.onCheck (ToggleDone todo)] []
     in li [Attr.class "todo-item"] [doneBtn, text todo.title]
+
+newTodoView : Model -> Html Msg
+newTodoView model =
+    form [AttrEvent.onSubmit (CallCreateTodo model.newTodoField)]
+        [input [Attr.type_ "input", AttrEvent.onInput UpdateNewTodo
+               , Attr.value model.newTodoField
+               ] []]
 
 errorToast : Maybe Http.Error -> Html msg
 errorToast err = case err of
