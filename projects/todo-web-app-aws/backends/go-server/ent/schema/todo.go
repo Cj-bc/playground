@@ -14,7 +14,7 @@ type Todo struct {
 func (Todo) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("title"),
-		field.Bool("isDone"),
+		field.Bool("isDone").Nillable(),
 	}
 }
 
