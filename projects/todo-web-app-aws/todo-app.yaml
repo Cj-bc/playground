@@ -24,7 +24,7 @@ paths:
                 $ref: "#/components/schemas/Todo"
    # patch:
    #   summary: Update Content of todo
-  /todo/new:
+  /todo:
     post:
       summary: Create new todo
 

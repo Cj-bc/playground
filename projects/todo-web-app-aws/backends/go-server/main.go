@@ -32,6 +32,7 @@ func main() {
 
 	router := gin.Default()
 	router.GET("/todoes", endpointTodoesHandler(client))
+	router.POST("/todo", newTodoController(client))
 	router.GET("/todo/:todo_id", todoController(client))
 	router.Run(":3000")
 }
@@ -71,5 +72,28 @@ func todoController(client *ent.Client) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, entry)
+	}
+}
+
+func newTodoController(client *ent.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var newTodo struct {
+			Title string `json:"title"`
+		}
+		if err := c.ShouldBindJSON(&newTodo); err != nil {
+			c.JSON(http.StatusBadRequest, struct{}{})
+			return
+		}
+
+		todo, err := client.Todo.Create().
+			SetTitle(newTodo.Title).
+			SetIsDone(false).
+			Save(c)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, struct{}{})
+			return
+		}
+
+		c.JSON(http.StatusOK, todo)
 	}
 }
