@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -31,6 +32,11 @@ func main() {
 	// 	SetIsDone(false).Save(context.Background())
 
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"PATCH", "POST", "GET"},
+		AllowHeaders: []string{"Content-Type"},
+	}))
 	router.GET("/todoes", endpointTodoesHandler(client))
 	router.POST("/todo", newTodoController(client))
 	router.GET("/todo/:todo_id", todoController(client))
