@@ -29,7 +29,7 @@ main = Browser.element
        , subscriptions = always Sub.none
        }
                
-type Msg = ListTodoes
+type Msg = CallListTodoes
          | CallUpdateTodo Todo
          | CallCreateTodo String
          | ToggleDone Todo Bool
@@ -60,7 +60,7 @@ todoEncode todo =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        ListTodoes -> (model, listTodoes)
+        CallListTodoes -> (model, listTodoes)
         CallUpdateTodo todo -> (model, patchTodo todo)
         CallCreateTodo title -> (model, createNewTodo title)
         ToggleDone todo isDoneState -> (model, patchTodo { todo | isDone = isDoneState })
