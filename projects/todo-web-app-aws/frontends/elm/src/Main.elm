@@ -1,8 +1,10 @@
 module Main exposing (..)
 import Browser
 import Http
+import Html.Attributes as Attr
+import Html.Events as AttrEvent
 
-import Html exposing (Html, div, text, ul, li)
+import Html exposing (Html, div, text, ul, li, input)
 import Json.Decode as D
 import Json.Encode as E
 
@@ -30,6 +32,7 @@ main = Browser.element
 type Msg = ListTodoes
          | CallUpdateTodo Todo
          | CallCreateTodo Todo
+         | ToggleDone Todo Bool
          | GotListTodoes (Result Http.Error (List Todo))
          | GotUpdateTodo (Result Http.Error ())
          | GotCreateTodo (Result Http.Error ())
@@ -59,6 +62,7 @@ update msg model =
         ListTodoes -> (model, listTodoes)
         CallUpdateTodo todo -> (model, patchTodo todo)
         CallCreateTodo todo -> Debug.todo "it's in todo"
+        ToggleDone todo isDoneState -> (model, patchTodo { todo | isDone = isDoneState })
         GotListTodoes ts -> case ts of
                                 Ok todoes -> ({model | todoes = todoes, error = Nothing }, Cmd.none) 
                                 Err err -> ({ model | error = Just err }, Cmd.none)
@@ -90,7 +94,11 @@ view model =
             ]
 
 todoView : Todo -> Html msg
-todoView todo = li [] [text (String.fromInt todo.id), text todo.title]
+todoView todo =
+    let doneBtn = input [Attr.type_ "checkbox"
+                        , Attr.checked todo.isDone
+                        , AttrEvent.onCheck (ToggleDone todo)] []
+    in li [Attr.class "todo-item"] [doneBtn, text todo.title]
 
 errorToast : Maybe Http.Error -> Html msg
 errorToast err = case err of
