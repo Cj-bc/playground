@@ -38,7 +38,7 @@ type Msg = ListTodoes
          | GotCreateTodo (Result Http.Error ())
 
 init : () -> (Model, Cmd Msg)
-init _ = (Model [Todo 1 "AAA" False] "" Nothing, listTodoes)
+init _ = (Model [] "" Nothing, listTodoes)
        
 todoListDecoder : D.Decoder (List Todo)
 todoListDecoder =
@@ -86,14 +86,15 @@ listTodoes = Http.get { url = backendUrlBase++"/todoes"
                       , expect = Http.expectJson GotListTodoes todoListDecoder
                       }
 
+-- View
 view : Model -> Html Msg
 view model =
     div []  [text "Todo list:"
-            , ul [] (List.map todoView model.todoes)
+            , ul [Attr.class "todo-list"] (List.map todoView model.todoes)
             , errorToast model.error
             ]
 
-todoView : Todo -> Html msg
+todoView : Todo -> Html Msg
 todoView todo =
     let doneBtn = input [Attr.type_ "checkbox"
                         , Attr.checked todo.isDone
