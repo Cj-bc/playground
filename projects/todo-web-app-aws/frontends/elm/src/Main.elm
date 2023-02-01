@@ -32,11 +32,13 @@ main = Browser.element
 type Msg = CallListTodoes
          | CallUpdateTodo Todo
          | CallCreateTodo String
+         | CallDeleteTodo Int
          | ToggleDone Todo Bool
          | UpdateNewTodo String
          | GotListTodoes (Result Http.Error (List Todo))
          | GotUpdateTodo (Result Http.Error ())
          | GotCreateTodo (Result Http.Error ())
+         | GotDeleteTodo (Result Http.Error ())
 
 init : () -> (Model, Cmd Msg)
 init _ = (Model [] "" Nothing, listTodoes)
@@ -63,6 +65,7 @@ update msg model =
         CallListTodoes -> (model, listTodoes)
         CallUpdateTodo todo -> (model, patchTodo todo)
         CallCreateTodo title -> (model, createNewTodo title)
+        CallDeleteTodo id -> (model, deleteTodo id)
         ToggleDone todo isDoneState -> (model, patchTodo { todo | isDone = isDoneState })
         UpdateNewTodo title -> ({model | newTodoField = title}, Cmd.none)
         GotListTodoes ts -> case ts of
@@ -71,6 +74,9 @@ update msg model =
         GotUpdateTodo res -> (model, listTodoes)
         GotCreateTodo res -> case res of
                                  Ok _ -> ({model | newTodoField = "" }, listTodoes)
+                                 Err err -> ({model | error = Just err }, Cmd.none)
+        GotDeleteTodo res -> case res of
+                                 Ok _ -> (model, listTodoes)
                                  Err err -> ({model | error = Just err }, Cmd.none)
 
 -- Commands
@@ -95,6 +101,16 @@ createNewTodo title = Http.post { url = backendUrlBase++"/todo"
                                 , body = Http.jsonBody (E.object [("title", E.string title)])
                                 , expect = Http.expectWhatever GotCreateTodo
                                 }
+deleteTodo : Int -> Cmd Msg
+deleteTodo id = Http.request
+                { method = "DELETE"
+                , headers = []
+                , url = backendUrlBase++"/todo/"++String.fromInt(id)
+                , body = Http.emptyBody
+                , expect = Http.expectWhatever GotDeleteTodo
+                , timeout = Nothing
+                , tracker = Nothing
+                }
 
 -- View
 view : Model -> Html Msg
@@ -110,12 +126,16 @@ todoView todo =
     let doneBtn = input [Attr.type_ "checkbox"
                         , Attr.checked todo.isDone
                         , AttrEvent.onCheck (ToggleDone todo)] []
-    in li [Attr.class "todo-item"] [doneBtn, text todo.title]
+        deleteBtn = input [Attr.type_ "button"
+                          , AttrEvent.onClick (CallDeleteTodo todo.id)
+                          , Attr.value "削除"] []
+    in li [Attr.class "todo-item"] [doneBtn, text todo.title, deleteBtn]
 
 newTodoView : Model -> Html Msg
 newTodoView model =
     form [AttrEvent.onSubmit (CallCreateTodo model.newTodoField)]
-        [input [Attr.type_ "input", AttrEvent.onInput UpdateNewTodo
+        [input [Attr.type_ "input"
+               , AttrEvent.onInput UpdateNewTodo
                , Attr.value model.newTodoField
                ] []]
 
