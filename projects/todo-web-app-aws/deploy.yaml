@@ -1,48 +1,266 @@
 AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  myEIP:
+    Type: 'AWS::EC2::EIP'
+    Description: フロントエンドサーバーのあるインスタンスへ紐付けるEIPです。外部からはこのIPにアクセスします。
+  EC2AccessableIamRole:
+    Type: 'AWS::IAM::Role'
+    Description: フロント・バック双方で用いられるIAMロールです。EC2へのアクセス権を付与してください
 Resources:
-
-  ############################ Basic Configurations ###########################
   myVpc:
-    Type: AWS::EC2:VPC
+    Type: 'AWS::EC2::VPC'
     Properties:
       CidrBlock: 10.0.0.0/16
-
-
-  # Private Subnet that hosts webAPI
-  backend:
-    Type: AWS::EC2::Subnet
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c43d7ac0-20b4-480b-91a0-a7942eb9a57d
+  Private:
+    Type: 'AWS::EC2::Subnet'
     Properties:
       CidrBlock: 10.0.1.0/24
       AvailabilityZone: ap-northeast-1
       VpcId: !Ref myVpc
-
-  backendAcl:
-    Type: AWS::EC2::NetworkAcl
-
-  frontendAcl:
-    Type: AWS::EC2::NetworkAcl
-    
-  # Public Subet that hosts web site
-  frontend:
-    Type: AWS::EC2::Subnet
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 325b9ae8-1655-4061-908e-9f4be153b1a3
+  backendServer:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      SubnetId: !Ref Private
+      SecurityGroupIds: !Ref allowPrivateHttp
+      InstanceType: t3.micro
+      IamInstanceProfile: !Ref ec2AccessIAMProfile
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 590dea0e-0fe1-4a3a-8461-71fbb0c4321a
+  Public:
+    Type: 'AWS::EC2::Subnet'
     Properties:
       CidrBlock: 10.0.2.0/24
       AvailabilityZone: ap-northeast-1
       VpcId: !Ref myVpc
-
-  ###################### Configure Network Access ###############
-  myInternetGateway:
-    Type: AWS::EC2::InternetGateway  
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+  frontendServer:
+    Type: 'AWS::EC2::Instance'
     Properties:
-
+      AvailabilityZone: ap-northeast-1
+      SubnetId: !Ref Public
+      SecurityGroupIds: !Ref allowPublicHttp
+      InstanceType: t3.micro
+      IamInstanceProfile: !Ref ec2AccessIAMProfile
+      Tags:
+        - Key: Name
+          Value: frontendServer
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: b64f9965-ef2a-4915-b91e-c7def6a503e0
+  allowPublicHttp:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/16
+          ToPort: 80
+          IpProtocol: tcp
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d25d5db2-1606-4e66-b64a-05744fa2261e
+  allowPrivateHttp:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      SecurityGroupIngress:
+        - CidrIp: 10.0.2.0/24
+          ToPort: 80
+          IpProtocol: tcp
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: fb5801a2-aded-48fe-b1f8-19d009ef7caa
+  myInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e1505522-65d9-4f89-b333-8fcdf48af4cd
   myInternetGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
+    Type: 'AWS::EC2::VPCGatewayAttachment'
     Properties:
       InternetGatewayId: !Ref myInternetGateway
       VpcId: !Ref myVpc
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6208e681-6b44-4699-bdba-9100be6a0534
   myRouteTable:
-    Type: AWS::EC2::RouteTable
+    Type: 'AWS::EC2::RouteTable'
     Properties:
       VpcId: !Ref myVpc
-
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 17d47aaa-f841-4e64-a306-d377c598410b
+  TransferToGlobalRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
+      RouteTableId: !Ref myRouteTable
+    DependsOn: myInternetGatewayAttachment
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 85209383-e950-47d8-bd96-30157f2e4e42
+  frontEIPAssociation:
+    Type: 'AWS::EC2::EIPAssociation'
+    Properties:
+      InstanceId: !Ref frontendServer
+      AllocationId:
+        Ref: myEIP
+  ec2AccessIAMProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Roles:
+        - Ref: EC2AccessableIamRole
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d6c54ae9-b407-4194-a4e4-adbe3340f7f5
+Metadata:
+  'AWS::CloudFormation::Designer':
+    e1505522-65d9-4f89-b333-8fcdf48af4cd:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 270
+        'y': 30
+      z: 1
+      embeds: []
+    d25d5db2-1606-4e66-b64a-05744fa2261e:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 510
+        'y': 360
+      z: 1
+      embeds: []
+    c43d7ac0-20b4-480b-91a0-a7942eb9a57d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 420
+        'y': 90
+      z: 1
+      embeds: []
+    17d47aaa-f841-4e64-a306-d377c598410b:
+      size:
+        width: 240
+        height: 240
+      position:
+        x: 60
+        'y': 90
+      z: 1
+      embeds:
+        - 85209383-e950-47d8-bd96-30157f2e4e42
+    85209383-e950-47d8-bd96-30157f2e4e42:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 180
+        'y': 240
+      z: 2
+      parent: 17d47aaa-f841-4e64-a306-d377c598410b
+      embeds: []
+      isassociatedwith:
+        - e1505522-65d9-4f89-b333-8fcdf48af4cd
+      iscontainedinside:
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+      dependson:
+        - 6208e681-6b44-4699-bdba-9100be6a0534
+    f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a:
+      size:
+        width: 270
+        height: 150
+      position:
+        x: 310
+        'y': 300
+      z: 1
+      embeds:
+        - b64f9965-ef2a-4915-b91e-c7def6a503e0
+    325b9ae8-1655-4061-908e-9f4be153b1a3:
+      size:
+        width: 240
+        height: 150
+      position:
+        x: 630
+        'y': 300
+      z: 1
+      embeds:
+        - 590dea0e-0fe1-4a3a-8461-71fbb0c4321a
+    6208e681-6b44-4699-bdba-9100be6a0534:
+      source:
+        id: c43d7ac0-20b4-480b-91a0-a7942eb9a57d
+      target:
+        id: e1505522-65d9-4f89-b333-8fcdf48af4cd
+      z: 1
+    fb5801a2-aded-48fe-b1f8-19d009ef7caa:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 630
+        'y': 360
+      z: 1
+      embeds: []
+    590dea0e-0fe1-4a3a-8461-71fbb0c4321a:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 750
+        'y': 360
+      z: 2
+      parent: 325b9ae8-1655-4061-908e-9f4be153b1a3
+      embeds: []
+      iscontainedinside:
+        - 325b9ae8-1655-4061-908e-9f4be153b1a3
+        - 325b9ae8-1655-4061-908e-9f4be153b1a3
+        - 325b9ae8-1655-4061-908e-9f4be153b1a3
+        - 325b9ae8-1655-4061-908e-9f4be153b1a3
+        - 325b9ae8-1655-4061-908e-9f4be153b1a3
+        - 325b9ae8-1655-4061-908e-9f4be153b1a3
+    b64f9965-ef2a-4915-b91e-c7def6a503e0:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 340
+        'y': 360
+      z: 2
+      parent: f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+      embeds: []
+      iscontainedinside:
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+    d6c54ae9-b407-4194-a4e4-adbe3340f7f5:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 590
+        'y': 490
+      z: 1
+      embeds: []
