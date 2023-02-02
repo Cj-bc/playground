@@ -16,6 +16,8 @@ import (
 )
 
 var FRONT_PORT int = 80
+var BACK_PORT int = 50321
+
 func main() {
 
 	// Preparing AWS stuff
@@ -50,7 +52,7 @@ func main() {
 	router.GET("/todo/:todo_id", todoController(client))
 	router.PATCH("/todo/:todo_id", updateTodoController(client))
 	router.DELETE("/todo/:todo_id", removeTodoController(client))
-	router.Run(":80")
+	router.Run(":" + strconv.Itoa(BACK_PORT))
 }
 
 func endpointTodoesHandler(client *ent.Client) gin.HandlerFunc {
