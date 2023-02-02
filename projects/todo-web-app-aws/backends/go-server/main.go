@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed retriving frontend server ip address: %v", err)
 	}
-	frontOrigin := "http://" + selfIp + ":" + strconv.Itoa(FRONT_PORT)
+	frontOrigin := "http://" + selfIp
 
 	// Preparing client
 	client, err := ent.Open("sqlite3", "./todoes.sqlite3?_fk=1")
