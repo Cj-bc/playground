@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"go-server/awsResources"
 	"go-server/ent"
 	"go-server/ent/todo"
 	"log"
@@ -15,6 +16,15 @@ import (
 )
 
 func main() {
+	var frontIp *string
+
+	// Preparing AWS stuff
+	ctx := context.Background()
+	frontIp, err := awsResources.FrontIpAddress(ctx)
+	if err != nil {
+		log.Fatalf("failed retriving frontend server ip address: %v", err)
+	}
+
 	// Preparing client
 	client, err := ent.Open("sqlite3", "./todoes.sqlite3?_fk=1")
 	if err != nil {
@@ -33,7 +43,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: []string{"http://" + *frontIp + ":80"},
 		AllowMethods: []string{"PATCH", "POST", "GET", "DELETE"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
