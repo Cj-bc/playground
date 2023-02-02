@@ -8,8 +8,6 @@ import Html exposing (Html, div, text, ul, li, input, form)
 import Json.Decode as D
 import Json.Encode as E
 
-backendUrlBase="http://localhost:3000"
-
 type alias Todo =
     { id : Int
     , title : String
@@ -20,6 +18,7 @@ type alias Model =
     {todoes : List Todo
     , newTodoField : String
     , error : Maybe Http.Error
+    , backendOrigin : String
     }
 
 main = Browser.element
@@ -40,8 +39,10 @@ type Msg = CallListTodoes
          | GotCreateTodo (Result Http.Error ())
          | GotDeleteTodo (Result Http.Error ())
 
-init : () -> (Model, Cmd Msg)
-init _ = (Model [] "" Nothing, listTodoes)
+
+init : String -> (Model, Cmd Msg)
+init selfIp = let model = Model [] "" Nothing ("http://" ++ selfIp ++ ":50321")
+              in (model, listTodoes model.backendOrigin)
        
 todoListDecoder : D.Decoder (List Todo)
 todoListDecoder =
@@ -62,57 +63,57 @@ todoEncode todo =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
-        CallListTodoes -> (model, listTodoes)
-        CallUpdateTodo todo -> (model, patchTodo todo)
-        CallCreateTodo title -> (model, createNewTodo title)
-        CallDeleteTodo id -> (model, deleteTodo id)
-        ToggleDone todo isDoneState -> (model, patchTodo { todo | isDone = isDoneState })
+        CallListTodoes -> (model, listTodoes model.backendOrigin)
+        CallUpdateTodo todo -> (model, patchTodo model.backendOrigin todo)
+        CallCreateTodo title -> (model, createNewTodo model.backendOrigin title)
+        CallDeleteTodo id -> (model, deleteTodo model.backendOrigin id)
+        ToggleDone todo isDoneState -> (model, patchTodo model.backendOrigin { todo | isDone = isDoneState })
         UpdateNewTodo title -> ({model | newTodoField = title}, Cmd.none)
         GotListTodoes ts -> case ts of
                                 Ok todoes -> ({model | todoes = todoes, error = Nothing }, Cmd.none) 
                                 Err err -> ({ model | error = Just err }, Cmd.none)
         GotUpdateTodo res -> case res of
-                                 Ok _ -> (model, listTodoes)
+                                 Ok _ -> (model, listTodoes model.backendOrigin)
                                  Err err -> ({model | error = Just err }, Cmd.none)
         GotCreateTodo res -> case res of
-                                 Ok _ -> ({model | newTodoField = "" }, listTodoes)
+                                 Ok _ -> ({model | newTodoField = "" }, listTodoes model.backendOrigin)
                                  Err err -> ({model | error = Just err }, Cmd.none)
         GotDeleteTodo res -> case res of
-                                 Ok _ -> (model, listTodoes)
+                                 Ok _ -> (model, listTodoes model.backendOrigin)
                                  Err err -> ({model | error = Just err }, Cmd.none)
 
 -- Commands
-patchTodo : Todo -> Cmd Msg
-patchTodo todo = Http.request
-                 { method = "PATCH"
-                 , headers = []
-                 , url = backendUrlBase++"/todo/"++String.fromInt(todo.id)
-                 , body = Http.jsonBody (todoEncode todo)
-                 , expect = Http.expectWhatever GotUpdateTodo
-                 , timeout = Nothing
-                 , tracker = Nothing
-                 }
+patchTodo : String -> Todo -> Cmd Msg
+patchTodo origin todo = Http.request
+                        { method = "PATCH"
+                        , headers = []
+                        , url = origin++"/todo/"++String.fromInt(todo.id)
+                        , body = Http.jsonBody (todoEncode todo)
+                        , expect = Http.expectWhatever GotUpdateTodo
+                        , timeout = Nothing
+                        , tracker = Nothing
+                        }
 
-listTodoes : Cmd Msg
-listTodoes = Http.get { url = backendUrlBase++"/todoes"
-                      , expect = Http.expectJson GotListTodoes todoListDecoder
-                      }
+listTodoes : String -> Cmd Msg
+listTodoes origin = Http.get { url = origin++"/todoes"
+                             , expect = Http.expectJson GotListTodoes todoListDecoder
+                             }
 
-createNewTodo : String -> Cmd Msg
-createNewTodo title = Http.post { url = backendUrlBase++"/todo"
-                                , body = Http.jsonBody (E.object [("title", E.string title)])
-                                , expect = Http.expectWhatever GotCreateTodo
-                                }
-deleteTodo : Int -> Cmd Msg
-deleteTodo id = Http.request
-                { method = "DELETE"
-                , headers = []
-                , url = backendUrlBase++"/todo/"++String.fromInt(id)
-                , body = Http.emptyBody
-                , expect = Http.expectWhatever GotDeleteTodo
-                , timeout = Nothing
-                , tracker = Nothing
-                }
+createNewTodo : String -> String -> Cmd Msg
+createNewTodo origin title = Http.post { url = origin++"/todo"
+                                       , body = Http.jsonBody (E.object [("title", E.string title)])
+                                       , expect = Http.expectWhatever GotCreateTodo
+                                       }
+deleteTodo : String -> Int -> Cmd Msg
+deleteTodo origin id = Http.request
+                       { method = "DELETE"
+                       , headers = []
+                       , url = origin++"/todo/"++String.fromInt(id)
+                       , body = Http.emptyBody
+                       , expect = Http.expectWhatever GotDeleteTodo
+                       , timeout = Nothing
+                       , tracker = Nothing
+                       }
 
 -- View
 view : Model -> Html Msg
