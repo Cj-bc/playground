@@ -52,7 +52,7 @@ func main() {
 	router.GET("/todo/:todo_id", todoController(client))
 	router.PATCH("/todo/:todo_id", updateTodoController(client))
 	router.DELETE("/todo/:todo_id", removeTodoController(client))
-	router.Run(":3000")
+	router.Run(":80")
 }
 
 func endpointTodoesHandler(client *ent.Client) gin.HandlerFunc {
