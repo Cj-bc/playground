@@ -71,7 +71,9 @@ update msg model =
         GotListTodoes ts -> case ts of
                                 Ok todoes -> ({model | todoes = todoes, error = Nothing }, Cmd.none) 
                                 Err err -> ({ model | error = Just err }, Cmd.none)
-        GotUpdateTodo res -> (model, listTodoes)
+        GotUpdateTodo res -> case res of
+                                 Ok _ -> (model, listTodoes)
+                                 Err err -> ({model | error = Just err }, Cmd.none)
         GotCreateTodo res -> case res of
                                  Ok _ -> ({model | newTodoField = "" }, listTodoes)
                                  Err err -> ({model | error = Just err }, Cmd.none)
