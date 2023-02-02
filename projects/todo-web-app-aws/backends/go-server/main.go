@@ -16,13 +16,19 @@ import (
 )
 
 func main() {
-	var frontIp *string
+	var frontIps []string
+	var frontOrigins []string // Those origins are allowed to do cors
 
 	// Preparing AWS stuff
 	ctx := context.Background()
-	frontIp, err := awsResources.FrontIpAddress(ctx)
+	frontIps, err := awsResources.FrontIpAddress(ctx)
 	if err != nil {
 		log.Fatalf("failed retriving frontend server ip address: %v", err)
+	} else if len(frontIps) == 0 {
+		log.Fatalf("Could not set list of CORS origins because frontend server instance isn't created; Aborting...")
+	}
+	for _, ip := range frontIps {
+		frontOrigins = append(frontOrigins, "http://"+ip+":80")
 	}
 
 	// Preparing client
@@ -43,7 +49,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://" + *frontIp + ":80"},
+		AllowOrigins: frontOrigins,
 		AllowMethods: []string{"PATCH", "POST", "GET", "DELETE"},
 		AllowHeaders: []string{"Content-Type"},
 	}))

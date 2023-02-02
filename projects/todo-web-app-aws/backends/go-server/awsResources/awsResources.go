@@ -17,13 +17,14 @@ func createClient(ctx context.Context) (*ec2.Client, error) {
 }
 
 // 今回は1度しか呼び出さないので、内部で ec2.Client を持たせる作りにしてしまう
-func FrontIpAddress(ctx context.Context) (*string, error) {
+// フロントサーバーが複数ある場合はその全てを返す
+func FrontIpAddress(ctx context.Context) ([]string, error) {
 	c, err := createClient(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	filterName := "Tag:Name"
+	filterName := "tag:Name"
 	input := &ec2.DescribeInstancesInput{
 		Filters: []types.Filter{{Name: &filterName, Values: []string{"a20dc036-todo-app-front"}}},
 	}
@@ -31,7 +32,12 @@ func FrontIpAddress(ctx context.Context) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	addr := output.Reservations[0].Instances[0].PrivateIpAddress
+	var addrs []string
+	for _, reservation := range output.Reservations {
+		for _, instance := range reservation.Instances {
+			addrs = append(addrs, *instance.PrivateIpAddress)
+		}
+	}
 
-	return addr, nil
+	return addrs, nil
 }
