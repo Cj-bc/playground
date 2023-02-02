@@ -15,21 +15,17 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var FRONT_PORT int = 80
 func main() {
-	var frontIps []string
-	var frontOrigins []string // Those origins are allowed to do cors
 
 	// Preparing AWS stuff
 	ctx := context.Background()
-	frontIps, err := awsResources.FrontIpAddress(ctx)
+
+	selfIp, err := awsResources.SelfIpAddress(ctx)
 	if err != nil {
 		log.Fatalf("failed retriving frontend server ip address: %v", err)
-	} else if len(frontIps) == 0 {
-		log.Fatalf("Could not set list of CORS origins because frontend server instance isn't created; Aborting...")
 	}
-	for _, ip := range frontIps {
-		frontOrigins = append(frontOrigins, "http://"+ip+":80")
-	}
+	frontOrigin := "http://" + selfIp + ":" + strconv.Itoa(FRONT_PORT)
 
 	// Preparing client
 	client, err := ent.Open("sqlite3", "./todoes.sqlite3?_fk=1")
@@ -45,7 +41,7 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins: frontOrigins,
+		AllowOrigins: []string{frontOrigin},
 		AllowMethods: []string{"PATCH", "POST", "GET", "DELETE"},
 		AllowHeaders: []string{"Content-Type"},
 	}))
