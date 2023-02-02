@@ -9,7 +9,7 @@ import (
 )
 
 func createClient(ctx context.Context) (*ec2.Client, error) {
-	cfg, err := config.LoadDefaultConfig(ctx)
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("ap-northeast-1"))
 	if err != nil {
 		return nil, fmt.Errorf("Failed to make AWS config: %w", err)
 	}
