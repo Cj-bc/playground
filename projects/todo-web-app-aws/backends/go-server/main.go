@@ -41,6 +41,7 @@ func main() {
 	}
 	// Preparing client done
 
+	// Preparing Gin server
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{frontOrigin},
