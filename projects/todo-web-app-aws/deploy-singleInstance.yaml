@@ -1,0 +1,246 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  myEIP:
+    Type: String
+    Description: Allocation id of the Elastic IP to access the app
+  EC2AccessableIamRoleProfile:
+    Type: String
+    Description: >-
+      Name of the iam role profile for instances. Please give it EC2 access
+      right
+  InstanceAMI:
+    Type: 'AWS::EC2::Image::Id'
+    Description: AMI that contains both backend and frontend
+Resources:
+  myVpc:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: 10.0.0.0/16
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: c43d7ac0-20b4-480b-91a0-a7942eb9a57d
+  Public:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: ap-northeast-1a
+      VpcId: !Ref myVpc
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+  frontendServer:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      AvailabilityZone: ap-northeast-1a
+      SubnetId: !GetAtt Public.SubnetId
+      SecurityGroupIds:
+        - !GetAtt allowPublicHttp.GroupId
+        - !GetAtt allowBackend.GroupId
+      InstanceType: t3.micro
+      IamInstanceProfile:
+        Ref: EC2AccessableIamRoleProfile
+      ImageId:
+        Ref: InstanceAMI
+      Tags:
+        - Key: Name
+          Value: frontendServer
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: b64f9965-ef2a-4915-b91e-c7def6a503e0
+  allowPublicHttp:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref myVpc
+      GroupDescription: Open 80 port for frontend
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          ToPort: 80
+          FromPort: 80
+          IpProtocol: tcp
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: d25d5db2-1606-4e66-b64a-05744fa2261e
+  myInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: e1505522-65d9-4f89-b333-8fcdf48af4cd
+  myInternetGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      InternetGatewayId: !Ref myInternetGateway
+      VpcId: !Ref myVpc
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 6208e681-6b44-4699-bdba-9100be6a0534
+  myRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref myVpc
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 17d47aaa-f841-4e64-a306-d377c598410b
+  TransferToGlobalRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref myInternetGateway
+      RouteTableId: !Ref myRouteTable
+    DependsOn:
+      - myInternetGatewayAttachment
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: 85209383-e950-47d8-bd96-30157f2e4e42
+  routeTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      RouteTableId: !Ref myRouteTable
+      SubnetId: !Ref Public
+
+  frontEIPAssociation:
+    Type: 'AWS::EC2::EIPAssociation'
+    Properties:
+      InstanceId: !Ref frontendServer
+      AllocationId:
+        Ref: myEIP
+  allowBackend:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      VpcId: !Ref myVpc
+      GroupDescription: Open 50321 port for backend
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          ToPort: 50321
+          FromPort: 50321
+          IpProtocol: tcp
+    Metadata:
+      'AWS::CloudFormation::Designer':
+        id: a04f18f4-e7f1-420a-8445-993e5f4b3bd7
+Metadata:
+  'AWS::CloudFormation::Designer':
+    e1505522-65d9-4f89-b333-8fcdf48af4cd:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 330
+        'y': 340
+      z: 1
+      embeds: []
+    d25d5db2-1606-4e66-b64a-05744fa2261e:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 550
+        'y': 450
+      z: 2
+      parent: f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+      embeds: []
+    c43d7ac0-20b4-480b-91a0-a7942eb9a57d:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 460
+        'y': 220
+      z: 1
+      embeds: []
+    17d47aaa-f841-4e64-a306-d377c598410b:
+      size:
+        width: 120
+        height: 110
+      position:
+        x: 210
+        'y': 190
+      z: 1
+      embeds:
+        - 85209383-e950-47d8-bd96-30157f2e4e42
+    85209383-e950-47d8-bd96-30157f2e4e42:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 250
+        'y': 220
+      z: 2
+      parent: 17d47aaa-f841-4e64-a306-d377c598410b
+      embeds: []
+      isassociatedwith:
+        - e1505522-65d9-4f89-b333-8fcdf48af4cd
+      iscontainedinside:
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+        - 17d47aaa-f841-4e64-a306-d377c598410b
+      dependson:
+        - 6208e681-6b44-4699-bdba-9100be6a0534
+    f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a:
+      size:
+        width: 200
+        height: 180
+      position:
+        x: 440
+        'y': 430
+      z: 1
+      embeds:
+        - a04f18f4-e7f1-420a-8445-993e5f4b3bd7
+        - d25d5db2-1606-4e66-b64a-05744fa2261e
+        - b64f9965-ef2a-4915-b91e-c7def6a503e0
+    6208e681-6b44-4699-bdba-9100be6a0534:
+      source:
+        id: c43d7ac0-20b4-480b-91a0-a7942eb9a57d
+      target:
+        id: e1505522-65d9-4f89-b333-8fcdf48af4cd
+      z: 1
+    b64f9965-ef2a-4915-b91e-c7def6a503e0:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 450
+        'y': 490
+      z: 2
+      parent: f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+      embeds: []
+      isassociatedwith:
+        - a04f18f4-e7f1-420a-8445-993e5f4b3bd7
+        - d25d5db2-1606-4e66-b64a-05744fa2261e
+      iscontainedinside:
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+        - f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+    a04f18f4-e7f1-420a-8445-993e5f4b3bd7:
+      size:
+        width: 60
+        height: 60
+      position:
+        x: 550
+        'y': 530
+      z: 2
+      parent: f7c0f9f0-136a-468a-b2aa-c9b9ab4dc83a
+      embeds: []
