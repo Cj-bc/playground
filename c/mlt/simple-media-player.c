@@ -27,6 +27,7 @@
   graceful exit from melt code above.
 */
 #include <stdio.h>
+#include <unistd.h>
 #include <framework/mlt.h>
 #include <signal.h>
 
@@ -38,6 +39,18 @@ void signal_handler(int signum) {
     mlt_properties prop = MLT_CONSUMER_PROPERTIES (consumer);
     mlt_properties_set_int(prop, "done", 1);
   }
+}
+
+
+mlt_playlist make_playlist(mlt_profile profile, int pathsLen, char* paths[]) {
+  mlt_playlist playlist = mlt_playlist_init();
+  for (int i=1; i < pathsLen; i++) {
+    mlt_producer prod = mlt_factory_producer(profile, NULL, paths[i]);
+    mlt_playlist_append(playlist, prod);
+    mlt_producer_close(prod);
+  }
+
+  return playlist;
 }
 
 int main (int argc, char *argv[]) {
@@ -54,13 +67,9 @@ int main (int argc, char *argv[]) {
 
   mlt_profile profile = mlt_profile_init(NULL);
 
-  mlt_playlist playlist = mlt_playlist_init();
-  
-  for (int i = 1; i < argc; i++) {
-    mlt_producer prod = mlt_factory_producer(profile, NULL, argv[i]);
+  // Creating playlist
+  mlt_playlist playlist = make_playlist(profile, argc, argv);
 
-    mlt_playlist_append(playlist, prod);
-    mlt_producer_close(prod);
   }
 
   for (int i = 0; i < mlt_playlist_count(playlist); i++) {
