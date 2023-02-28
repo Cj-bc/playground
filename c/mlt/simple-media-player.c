@@ -77,4 +77,6 @@ int main (int argc, char *argv[]) {
     mlt_playlist_get_clip_info(playlist, &info, i);
     fprintf(stdout, "playlist[%i]: %s\n", i, info.resource);
   }
+  mlt_playlist_close(playlist);
+  mlt_factory_close();
 }
