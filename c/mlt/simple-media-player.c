@@ -74,13 +74,33 @@ int main (int argc, char *argv[]) {
   mlt_profile_from_producer(profile, MLT_PLAYLIST_PRODUCER(playlist));
   mlt_playlist_close(playlist);
   playlist = make_playlist(profile, argc, argv);
+
+  consumer = mlt_factory_consumer(profile, NULL, NULL);
+  mlt_service pl_service =  mlt_playlist_service(playlist);
+  if (!pl_service) {
+    fprintf(stderr, "failed to cast playlist to service. Aborting\n");
+    return -1;
+  }
+  mlt_consumer_connect (consumer, pl_service);
+
+  mlt_consumer_start(consumer);
+
+
+  signal(SIGKILL, signal_handler);
+  signal(SIGINT, signal_handler);
+
+  mlt_properties consumer_prop = MLT_CONSUMER_PROPERTIES(consumer);
+  while (mlt_consumer_is_stopped(consumer) == 0 || mlt_properties_get_int(consumer_prop, "done") == 0) {
+    sleep(1);
   }
 
-  for (int i = 0; i < mlt_playlist_count(playlist); i++) {
-    mlt_playlist_clip_info info;
-    mlt_playlist_get_clip_info(playlist, &info, i);
-    fprintf(stdout, "playlist[%i]: %s\n", i, info.resource);
+  if (mlt_consumer_is_stopped(consumer)) {
+    mlt_consumer_stop(consumer);
   }
+
+  fprintf(stderr, "Start closing mlt resources\n");
+  mlt_consumer_close(consumer);
   mlt_playlist_close(playlist);
   mlt_factory_close();
+  fprintf(stderr, "All resources are closed\n");
 }
