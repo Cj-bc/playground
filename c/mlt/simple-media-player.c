@@ -70,6 +70,10 @@ int main (int argc, char *argv[]) {
   // Creating playlist
   mlt_playlist playlist = make_playlist(profile, argc, argv);
 
+  // Re create playlist with proper profile
+  mlt_profile_from_producer(profile, MLT_PLAYLIST_PRODUCER(playlist));
+  mlt_playlist_close(playlist);
+  playlist = make_playlist(profile, argc, argv);
   }
 
   for (int i = 0; i < mlt_playlist_count(playlist); i++) {
