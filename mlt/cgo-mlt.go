@@ -11,6 +11,34 @@ import ("fmt"
 	"unsafe"
 )
 
+// You should close both playlist and profile at caller side
+func makePlaylist(files []string) (pl C.mlt_playlist, profile C.mlt_profile) {
+	profile = C.mlt_profile_init(nil)
+	pl = makePlaylistWithProfile(profile, files)
+
+	pl_producer := C.mlt_playlist_producer(pl)
+	defer C.mlt_producer_close(pl_producer)
+
+	C.mlt_profile_from_producer(profile, pl_producer)
+
+	pl = makePlaylistWithProfile(profile, files)
+
+	return
+}
+
+func makePlaylistWithProfile(profile C.mlt_profile, files []string) (playlist C.mlt_playlist) {
+	playlist = C.mlt_playlist_init()
+	for _, f := range files {
+		fn := unsafe.Pointer(C.CString(f))
+		defer C.free(fn)
+		prod := C.mlt_factory_producer(profile, nil, fn)
+		C.mlt_playlist_append(playlist, prod)
+		C.mlt_producer_close(prod)
+	}
+
+	return
+}
+
 func main() {
 
 	flag.Parse()
@@ -31,18 +59,7 @@ func main() {
 		return
 	}
 
-	profile := C.mlt_profile_init(nil)
-
-	playlist := C.mlt_playlist_init()
-	defer C.mlt_playlist_close(playlist)
-	for _, v := range files {
-		fn := C.CString(v)
-		defer C.free(unsafe.Pointer(fn))
-		prod := C.mlt_factory_producer(profile, nil, unsafe.Pointer(fn))
-		defer C.mlt_producer_close(prod)
-
-		C.mlt_playlist_append(playlist, prod)
-	}
+	playlist, _ := makePlaylist(files)
 
 	for i := 0; i < int(C.mlt_playlist_count(playlist)); i++ {
 		var info C.mlt_playlist_clip_info
