@@ -1,0 +1,15 @@
+* widgetSystem
+This is my hobby attempt to build up TEA based TUI library by my self for practice.
+If you want to need something like this, [[https://pkg.go.dev/github.com/charmbracelet/bubbletea][charmbracelet/bubbletea]] is a good one.
+
+** Purpose of this module
++ Practice usage of channels/goroutines
++ Just wanted to make my own TUI library because I've used a lot before
+  + e.g. [[https://pkg.go.dev/github.com/charmbracelet/bubbletea][charmbracelet/bubbletea]] for golang, [[https://github.com/jtdaugherty/brick/][jtdaugherty/brick]] for haskell
+
+** Non-purpose of this module
++ Provide stable & good experience
++ For serious usage
++ Constant updates
++ Clever implementation design
+  + I want to do so as far as I can, but it's not my main goal
