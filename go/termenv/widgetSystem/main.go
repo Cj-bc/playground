@@ -8,6 +8,7 @@ import (
 	"example.com/cjbc/termenv/widgetSystem/widgets/hBox"
 	"example.com/cjbc/termenv/widgetSystem/widgets/border"
 	"example.com/cjbc/termenv/widgetSystem/widgets/str"
+	"example.com/cjbc/termenv/widgetSystem/widgets/progressBar"
 )
 
 type State struct {
@@ -33,6 +34,7 @@ func main() {
 			border.New(str.New("This is test program!")),
 			border.New(str.New("Second block here"))),
 		str.New("This should be below those two components, and be expanded"),
+		progressBar.New(0.25, 30),
 	)
 
 	fmt.Println(ui.Render())
