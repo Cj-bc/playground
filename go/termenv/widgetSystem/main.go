@@ -13,38 +13,50 @@ import (
 	"example.com/cjbc/termenv/widgetSystem/widgets/progressBar"
 )
 
-type model struct {
-	isEnded bool
+type sampleModel struct {
 	progress float64
 	text string
+}
+
+type model interface {
+	view() widgets.Widget
+	update() model
+}
+
+type state struct {
+	isEnded bool
+	model model
 }
 
 func main() {
 	o := termenv.DefaultOutput()
 	defer o.Reset()
-
-	model := model{}
+	state := state{model: sampleModel{}}
 
 	tick := time.Tick(5*time.Millisecond)
 	timeout := time.After(5*time.Second)
-	for !model.isEnded {
+	for !state.isEnded {
 		select {
 		case <-timeout:
-			model.isEnded = true
+			state.isEnded = true
 		case <-tick:
-			model.progress += 0.001
+			m := state.model.update()
+			state.model = m
 			o.ClearScreen()
-			fmt.Println(view(model).Render())
+			fmt.Println(state.model.view().Render())
 		}
 	}
 	fmt.Println("")
+func (m sampleModel) update() model {
+	m.progress += 0.01
+	return m
 }
 
 // +-----------------------++-------------------+
 // | This is test program! || Second block here |
 // +-----------------------++-------------------+
 // [============================================]
-func view(m model) widgets.Widget {
+func (m sampleModel) view() widgets.Widget {
 	return vBox.New(
 		hBox.New(
 			border.New(str.New("This is test program!")),
