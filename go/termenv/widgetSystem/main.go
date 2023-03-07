@@ -4,6 +4,8 @@ package main
 import (
 	"github.com/muesli/termenv"
 	"fmt"
+	"io"
+	"unicode/utf8"
 	"time"
 	"example.com/cjbc/termenv/widgetSystem/widgets"
 	"example.com/cjbc/termenv/widgetSystem/widgets/vBox"
@@ -26,15 +28,25 @@ type model interface {
 type state struct {
 	isEnded bool
 	model model
+	debug string
 }
 
 func main() {
+	run(sampleModel{})
+}
+
+func run(m model) {
 	o := termenv.DefaultOutput()
 	defer o.Reset()
+	o.AltScreen()
+	defer o.ExitAltScreen()
 	state := state{model: sampleModel{}}
 
 	tick := time.Tick(5*time.Millisecond)
 	timeout := time.After(5*time.Second)
+
+	keyEvent := make(chan rune)
+	go emitKeyEvent(o.TTY(), keyEvent)
 	for !state.isEnded {
 		select {
 		case <-timeout:
@@ -43,10 +55,27 @@ func main() {
 			m := state.model.update()
 			state.model = m
 			o.ClearScreen()
-			fmt.Println(state.model.view().Render())
+			fmt.Println(state.model.view().Render(), "\n", "debug: ", state.debug)
+		case s := <-keyEvent:
+			state.debug = "Pressed: " + string(s)
+			if s == 'q' {
+				state.isEnded = true
+			}
 		}
 	}
-	fmt.Println("")
+}
+
+func emitKeyEvent(fd io.Reader, ch chan rune) {
+	var buf [256]byte
+	for ;; {
+		if _, err := fd.Read(buf[:]); err == nil {
+			if r, size := utf8.DecodeRune(buf[:]); size > 1 {
+				ch <-r
+			}
+		}
+	}
+}
+
 func (m sampleModel) update() model {
 	m.progress += 0.01
 	return m
