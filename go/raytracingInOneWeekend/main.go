@@ -14,10 +14,8 @@ func main() {
 	for h := 0.0; h < height; h++ {
 		os.Stderr.WriteString(fmt.Sprintf("\rScanlines remaining: %d", int(height-h)))
 		for w := 0.0; w < width; w++ {
-			r := w / width * 255
-			g := h / height * 255
-			v := vec3.New(r, g, 0.0)
-			v.Write(file)
+			color := vec3.New(w/width, h/height, 0.0)
+			color.WriteAsColor(file)
 		}
 		file.WriteString("\n")
 	}

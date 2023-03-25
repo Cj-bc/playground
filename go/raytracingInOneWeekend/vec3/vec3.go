@@ -70,3 +70,8 @@ func (v Vec3) UnitVector() Vec3 {
 func (v Vec3) Write(writer io.Writer) {
 	io.WriteString(writer, fmt.Sprintf("%d %d %d\n", int(v.X), int(v.Y), int(v.Z)))
 }
+
+func (color Color) WriteAsColor(writer io.Writer) {
+	io.WriteString(writer, fmt.Sprintf("%d %d %d\n", int(255 * color.X),
+		int(255 * color.Y), int(255 * color.Z)))
+}
