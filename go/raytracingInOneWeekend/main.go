@@ -3,6 +3,7 @@ package main
 
 import "os"
 import "fmt"
+import "github.com/Cj-bc/playground/raytracingInOneWeekend/vec3"
 
 func main() {
 	width, height := 256.0, 256.0
@@ -15,7 +16,8 @@ func main() {
 		for w := 0.0; w < width; w++ {
 			r := w / width * 255
 			g := h / height * 255
-			file.WriteString(fmt.Sprintf("%d %d %d ", int(r), int(g), 0))
+			v := vec3.New(r, g, 0.0)
+			v.Write(file)
 		}
 		file.WriteString("\n")
 	}
