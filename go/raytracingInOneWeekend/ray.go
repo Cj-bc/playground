@@ -1,4 +1,5 @@
 package main
+import "github.com/Cj-bc/playground/raytracingInOneWeekend/vec3"
 
 type Ray struct {
 	Origin Vec3
