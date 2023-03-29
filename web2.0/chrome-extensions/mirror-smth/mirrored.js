@@ -4,3 +4,7 @@ chrome.runtime.onMessage.addListener((msg, sender, responseFunc) => {
 	    elem.textContent = msg.value;
 	}
 });
+
+window.addEventListener("load", (event) =>
+    chrome.runtime.sendMessage(null, {name: "mirrorReady"})
+);

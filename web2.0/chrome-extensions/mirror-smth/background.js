@@ -16,10 +16,16 @@ readTimstamp = () => {
 };
 
 chrome.action.onClicked.addListener(async (playerTab) => {
-    chrome.windows.create({url: 'mirrored.html'});
+    let newTab = await chrome.windows.create({url: 'mirrored.html'}).then((w) => w.tabs[0].id);
 
-    chrome.scripting.executeScript({
-	target: {tabId: playerTab.id},
-	func: readTimstamp
-    }).then((results) => console.log(results[0].result));
+    chrome.runtime.onMessage.addListener((msg, sender, responseFunc) => {
+	if (msg.name == "mirrorReady") {
+	    chrome.scripting.executeScript({
+		target: {tabId: playerTab.id},
+		func: readTimstamp
+	    }).then((results) =>
+		chrome.tabs.sendMessage(newTab, {name: "updateTimestamp", value: results[0].result})
+	    );
+	}
+    });
 });
