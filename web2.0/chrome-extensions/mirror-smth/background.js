@@ -15,12 +15,11 @@ readTimstamp = () => {
     return "0:0:0"
 };
 
-chrome.action.onClicked.addListener(async (tab) => {
-    let [targetTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+chrome.action.onClicked.addListener(async (playerTab) => {
     chrome.windows.create({url: 'mirrored.html'});
 
     chrome.scripting.executeScript({
-	target: {tabId: targetTab.id},
+	target: {tabId: playerTab.id},
 	func: readTimstamp
     }).then((results) => console.log(results[0].result));
 });
