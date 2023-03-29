@@ -23,7 +23,7 @@ readTimstamp = async () => {
 };
 
 chrome.action.onClicked.addListener(async (playerTab) => {
-    let newTab = await chrome.windows.create({url: 'mirrored.html'}).then((w) => w.tabs[0].id);
+    let newTab = await chrome.windows.create({url: 'mirrored.html', type: 'popup'}).then((w) => w.tabs[0].id);
 
     chrome.runtime.onMessage.addListener((msg, sender, responseFunc) => {
 	if (msg.name == "mirrorReady") {
