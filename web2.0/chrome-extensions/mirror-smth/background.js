@@ -10,6 +10,17 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 });
 
+// This function temporary returns dummy timestamp. It should reads from actual page.
+readTimstamp = () => {
+    return "0:0:0"
+};
+
 chrome.action.onClicked.addListener(async (tab) => {
+    let [targetTab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
     chrome.windows.create({url: 'mirrored.html'});
+
+    chrome.scripting.executeScript({
+	target: {tabId: targetTab.id},
+	func: readTimstamp
+    }).then((results) => console.log(results[0].result));
 });
