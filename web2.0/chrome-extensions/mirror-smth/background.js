@@ -11,8 +11,15 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // This function temporary returns dummy timestamp. It should reads from actual page.
-readTimstamp = () => {
-    return "0:0:0"
+readTimstamp = async () => {
+    let wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+    for (let i = 0; i < 10; i++) {
+	let [timeSpan] = document.getElementById("ytd-player").getElementsByClassName("ytp-time-current");
+	chrome.runtime.sendMessage({name: "updateTimestamp", value: timeSpan.textContent});
+	await wait(1000)
+    }
+    chrome.runtime.sendMessage({name: "updateTimestamp", value: "End"});
 };
 
 chrome.action.onClicked.addListener(async (playerTab) => {
@@ -23,9 +30,7 @@ chrome.action.onClicked.addListener(async (playerTab) => {
 	    chrome.scripting.executeScript({
 		target: {tabId: playerTab.id},
 		func: readTimstamp
-	    }).then((results) =>
-		chrome.tabs.sendMessage(newTab, {name: "updateTimestamp", value: results[0].result})
-	    );
+	    });
 	}
     });
 });
