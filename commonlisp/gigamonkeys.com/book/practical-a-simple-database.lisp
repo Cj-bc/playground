@@ -16,6 +16,7 @@
   (dolist (cd *db*)
     (format t "~{~a:~10t~a~%~}~%" cd)))
 
+
 (defun prompt-read (prompt)
   (format *query-io* "~a: " prompt)
   (read-line *query-io*))
@@ -33,3 +34,32 @@
 (defun save-db (filename)
   (with-open-file (out filename :direction :output :if-exists :supersede)
     (with-standard-io-syntax (print *db* out))))
+
+(defun load-db (filename)
+  (with-open-file (in filename)
+    (setf *db* (read in))))
+
+(defun select (selector-fn)
+  (remove-if-not selector-fn *db*))
+
+(defun make-comparison-expr (field value)
+  `(equal (getf cd ,field) ,value))
+
+(defun make-comparisons-list (fields)
+  (loop while fields
+	collecting (make-comparison-expr (pop fields) (pop fields))))
+
+(defmacro where (&rest fields)
+  `#'(lambda (cd) (and ,@(make-comparisons-list fields))))
+
+(defun update (selector-fn &key title artist rating (ripped nil ripped-p))
+  (setf *db* (mapcar #'(lambda (cd)
+	      (when (funcall selector-fn cd)
+		(if title (setf (getf cd :title) title))
+		(if artist (setf (getf cd :artist) artist))
+		(if rating (setf (getf cd :rating) rating))
+		(if ripped-p (setf (getf cd :riped) ripped)))
+	      cd) *db*)))
+
+(defun delete-rows (selector-fn)
+  (setf *db* (remove-if selector-fn *db*)))
