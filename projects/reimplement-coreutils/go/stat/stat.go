@@ -48,7 +48,7 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 }
 
 func permissionNumber(st unix.Stat_t) string {
-	return fmt.Sprint("0", (st.Mode & unix.S_IRWXU)>>6, (st.Mode & unix.S_IRWXG)>>3, st.Mode & unix.S_IRWXO)
+	return fmt.Sprintf("0%d%d%d", (st.Mode & unix.S_IRWXU)>>6, (st.Mode & unix.S_IRWXG)>>3, st.Mode & unix.S_IRWXO)
 }
 
 func permissionLetter(st unix.Stat_t) string {
