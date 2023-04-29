@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"golang.org/x/sys/unix"
 	"flag"
+	"os/user"
 )
 
 func main() {
@@ -40,11 +41,18 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 	case unix.S_IFIFO:  fileType = "fifo"
 	}
 
-	return fmt.Sprintf("File: %s\nSize: %d\tBlocks: %d\t%s\nDevice: %d,%d\tInode: %d\tLinks: %d\nAccess: (%s/%s)",
+	var userName string
+	if user, err := user.LookupId(fmt.Sprint(st.Uid)); err == nil {
+		userName = user.Username
+	} else {
+		userName = "FAILED_TO_RETRIVE"
+	}
+
+	return fmt.Sprintf("File: %s\nSize: %d\tBlocks: %d\t%s\nDevice: %d,%d\tInode: %d\tLinks: %d\nAccess: (%s/%s)\tUid: (%d/ %s)",
 		fn,
 		st.Size, st.Blksize, fileType,
 		unix.Major(st.Dev), unix.Minor(st.Dev), st.Ino, st.Nlink,
-		permissionNumber(st), permissionLetter(st))
+		permissionNumber(st), permissionLetter(st), st.Uid, userName)
 }
 
 func permissionNumber(st unix.Stat_t) string {
