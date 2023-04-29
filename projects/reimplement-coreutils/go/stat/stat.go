@@ -77,7 +77,7 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 	var timeFormat = "2006-01-02 15:04:05.000000000 -0700"
 
 	return fmt.Sprintf("File: %s\n"+
-		"Size: %d\tBlocks: %d\t%s\n"+
+		"Size: %d\tBlocks: %d\tIO Block: %d\t%s\n"+
 		"Device: %d,%d\tInode: %d\tLinks: %d\n"+
 		"Access: (%s/%s)\tUid: (%d/ %s)\tGid: (%d/ %s)\n"+
 		"Access: %s\n"+
@@ -85,7 +85,7 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 		"Change: %s",
 		// "Birth: %s", // TODO: How can I retrive 'birth'?
 		fn,
-		st.Size, st.Blksize, fileType,
+		st.Size, st.Blocks, st.Blksize, fileType,
 		unix.Major(st.Dev), unix.Minor(st.Dev), st.Ino, st.Nlink,
 		permissionNumber(st), permissionLetter(st), st.Uid, userName, st.Gid, groupName,
 		atim.Format(timeFormat),
