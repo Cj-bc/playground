@@ -99,7 +99,16 @@ func permissionNumber(st unix.Stat_t) string {
 }
 
 func permissionLetter(st unix.Stat_t) string {
-	result := "-" // TODO: What should I do with this? I don't know what it means
+	result := "" // TODO: What should I do with this? I don't know what it means
+	switch st.Mode & unix.S_IFMT {
+	case unix.S_IFSOCK: result += "s"
+	case unix.S_IFLNK:  result += "l"
+	case unix.S_IFREG:  result += "-"
+	case unix.S_IFBLK:  result += "b"
+	case unix.S_IFDIR:  result += "d"
+	case unix.S_IFCHR:  result += "c"
+	case unix.S_IFIFO:  result += "p"
+	}
 	if (st.Mode & unix.S_IRUSR != 0) { result += "r"; } else { result += "-"; }
 	if (st.Mode & unix.S_IWUSR != 0) { result += "w"; } else { result += "-"; }
 	if (st.Mode & unix.S_IXUSR != 0) { result += "x"; } else { result += "-"; }
