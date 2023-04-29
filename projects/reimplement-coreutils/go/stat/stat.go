@@ -94,11 +94,12 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 }
 
 func permissionNumber(st unix.Stat_t) string {
+	// TODO: what should I do with start "0"?
 	return fmt.Sprintf("0%d%d%d", (st.Mode & unix.S_IRWXU)>>6, (st.Mode & unix.S_IRWXG)>>3, st.Mode & unix.S_IRWXO)
 }
 
 func permissionLetter(st unix.Stat_t) string {
-	result := "-"
+	result := "-" // TODO: What should I do with this? I don't know what it means
 	if (st.Mode & unix.S_IRUSR != 0) { result += "r"; } else { result += "-"; }
 	if (st.Mode & unix.S_IWUSR != 0) { result += "w"; } else { result += "-"; }
 	if (st.Mode & unix.S_IXUSR != 0) { result += "x"; } else { result += "-"; }
