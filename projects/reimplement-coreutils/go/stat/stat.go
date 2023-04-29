@@ -6,6 +6,7 @@ import (
 	"golang.org/x/sys/unix"
 	"flag"
 	"os/user"
+	"time"
 )
 
 func main() {
@@ -55,14 +56,41 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 		groupName = "FAILED_TO_RETRIVE"
 	}
 
+	var atim time.Time
+	{
+		sec, nsec := st.Atim.Unix()
+		atim = time.Unix(sec, nsec)
+	}
+
+	var mtim time.Time
+	{
+		sec, nsec := st.Mtim.Unix()
+		mtim = time.Unix(sec, nsec)
+	}
+
+	var ctim time.Time
+	{
+		sec, nsec := st.Ctim.Unix()
+		ctim = time.Unix(sec, nsec)
+	}
+
+	var timeFormat = "2006-01-02 15:04:05.000000000 -0700"
+
 	return fmt.Sprintf("File: %s\n"+
 		"Size: %d\tBlocks: %d\t%s\n"+
 		"Device: %d,%d\tInode: %d\tLinks: %d\n"+
-		"Access: (%s/%s)\tUid: (%d/ %s)\tGid: (%d/ %s)",
+		"Access: (%s/%s)\tUid: (%d/ %s)\tGid: (%d/ %s)\n"+
+		"Access: %s\n"+
+		"Modify: %s\n"+
+		"Change: %s",
+		// "Birth: %s", // TODO: How can I retrive 'birth'?
 		fn,
 		st.Size, st.Blksize, fileType,
 		unix.Major(st.Dev), unix.Minor(st.Dev), st.Ino, st.Nlink,
-		permissionNumber(st), permissionLetter(st), st.Uid, userName, st.Gid, groupName)
+		permissionNumber(st), permissionLetter(st), st.Uid, userName, st.Gid, groupName,
+		atim.Format(timeFormat),
+		mtim.Format(timeFormat),
+		ctim.Format(timeFormat))
 }
 
 func permissionNumber(st unix.Stat_t) string {
