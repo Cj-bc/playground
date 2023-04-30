@@ -76,8 +76,8 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 
 	var timeFormat = "2006-01-02 15:04:05.000000000 -0700"
 
-	return fmt.Sprintf("File: %s\n"+
-		"Size: %d\tBlocks: %d\tIO Block: %d\t%s\n"+
+	return fmt.Sprintf("  File: %s\n"+
+		"  Size: %d\tBlocks: %d\tIO Block: %d\t%s\n"+
 		"Device: %d,%d\tInode: %d\tLinks: %d\n"+
 		"Access: (%s/%s)\tUid: (%d/ %s)\tGid: (%d/ %s)\n"+
 		"Access: %s\n"+
