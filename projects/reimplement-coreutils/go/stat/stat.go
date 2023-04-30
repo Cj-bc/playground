@@ -18,7 +18,7 @@ func main() {
 	}
 
 	var st unix.Stat_t
-	if err := unix.Stat(fileName, &st); err != nil {
+	if err := unix.Lstat(fileName, &st); err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
