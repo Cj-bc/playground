@@ -34,6 +34,17 @@ func showHelp() {
 }
 
 func pp_Stat_t(fn string, st unix.Stat_t) string {
+	fileName := fn
+	if ((st.Mode & unix.S_IFMT) == unix.S_IFLNK) {
+		fileName += " -> "
+		linkName := make([]byte, 1000)
+		if n, err := unix.Readlink(fileName, linkName); err != nil {
+			fileName += "FAILED_TO_RETRIVE_NAME(" + fmt.Sprint(n) + ", " + err.Error() + ")"
+		} else {
+			fileName += fmt.Sprint(linkName)
+		}
+	}
+
 	var fileType string
 	switch st.Mode & unix.S_IFMT {
 	case unix.S_IFSOCK: fileType = "socket"
@@ -87,7 +98,7 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 		"Modify: %s\n"+
 		"Change: %s",
 		// "Birth: %s", // TODO: How can I retrive 'birth'?
-		fn,
+		fileName,
 		st.Size, st.Blocks, st.Blksize, fileType,
 		unix.Major(st.Dev), unix.Minor(st.Dev), st.Ino, st.Nlink,
 		permissionNumber(st), permissionLetter(st), st.Uid, userName, st.Gid, groupName,
