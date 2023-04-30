@@ -41,7 +41,7 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 		if n, err := unix.Readlink(fn, linkName); err != nil {
 			fileName += "FAILED_TO_RETRIVE_NAME(" + fmt.Sprint(n) + ", " + err.Error() + ")"
 		} else {
-			fileName += fmt.Sprint(linkName)
+			fileName += string(linkName[:n])
 		}
 	}
 
