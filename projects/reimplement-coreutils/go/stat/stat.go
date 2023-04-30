@@ -18,7 +18,10 @@ func main() {
 	}
 
 	var st unix.Stat_t
-	unix.Stat(fileName, &st)
+	if err := unix.Stat(fileName, &st); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	fmt.Println(pp_Stat_t(fileName, st))
 }
