@@ -38,7 +38,7 @@ func pp_Stat_t(fn string, st unix.Stat_t) string {
 	if ((st.Mode & unix.S_IFMT) == unix.S_IFLNK) {
 		fileName += " -> "
 		linkName := make([]byte, 1000)
-		if n, err := unix.Readlink(fileName, linkName); err != nil {
+		if n, err := unix.Readlink(fn, linkName); err != nil {
 			fileName += "FAILED_TO_RETRIVE_NAME(" + fmt.Sprint(n) + ", " + err.Error() + ")"
 		} else {
 			fileName += fmt.Sprint(linkName)
