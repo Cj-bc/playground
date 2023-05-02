@@ -21,6 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Try to receiving frames
 	listening := make(chan int, 1)
 	go func() {
 		received := make([]byte, 10000)
@@ -71,6 +72,8 @@ func makeTap(dev string) (int, error) {
 // Equivalent to `ip link set <dev> up'
 // According to do_chflags in iplink.c
 // https://git.kernel.org/pub/scm/network/iproute2/iproute2.git/tree/ip/iplink.c#n1203
+//
+// Make sure device `dev' is available before call this
 func linkUp(dev string) error {
 
 	// We have to create socket, then do `ioctl' against it
