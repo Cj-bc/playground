@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+const DEVICENAME = "tap1"
+
 func main() {
 	// https://mirrors.edge.kernel.org/pub/linux/kernel/people/marcelo/linux-2.4/Documentation/networking/tuntap.txt
 	fd, err := unix.Open("/dev/net/tun", unix.O_RDWR, 0)
@@ -15,7 +17,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ifr, err := unix.NewIfreq("tap0")
+	ifr, err := unix.NewIfreq(DEVICENAME)
 	if err != nil {
 		fmt.Println("unix.NewIfreq: ", err.Error())
 		os.Exit(1)
