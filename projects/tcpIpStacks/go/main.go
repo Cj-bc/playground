@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 	"github.com/Cj-bc/plg/tcpIpStacks/tap"
+	"github.com/Cj-bc/plg/tcpIpStacks/ether"
 )
 
 const DEVICENAME = "tap1"
@@ -32,8 +33,13 @@ func main() {
 		} else {
 			received = received[:n]
 		}
-		fmt.Println(received)
 
+		if header, err := ether.GetHeader(received); err != nil {
+			fmt.Println("parseEther: ", err.Error())
+			os.Exit(1)
+		} else {
+			fmt.Printf("from: %x to: %x type: %x\n", header.AddrFrom, header.AddrTo, header.InnerType)
+		}
 		listening <- 0
 	}()
 
