@@ -15,7 +15,7 @@ type EtherHeader struct {
 func GetHeader(bs []byte) (EtherHeader, error) {
 	header := EtherHeader{}
 	// Truncate first 4 bytes because they're TUNTAP header. I'll treat them in tap package later
-	buf := bytes.NewReader(bs[4:])
+	buf := bytes.NewReader(bs)
 	if err := binary.Read(buf, binary.BigEndian, &header); err != nil {
 		return header, fmt.Errorf("Failed to parse ethernet header")
 	}

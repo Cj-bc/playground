@@ -65,3 +65,14 @@ func (tap *Tap) Up() error {
 func (tap *Tap) Close() {
 	unix.Close(tap.Fd)
 }
+
+// Read from Tap device, and return contained Ethernet frame.
+// It'll truncate TUNTAP header
+func (tap Tap) Read(p []byte) (n int, err error) {
+	// TODO: Can't I remove 'buf' variable?
+	// I couldn't write something like 'p = p[4:]' but it didn't work.
+	buf := make([]byte, len(p), cap(p))
+	n, err = unix.Read(tap.Fd, buf)
+	copy(p, buf[4:])
+	return
+}

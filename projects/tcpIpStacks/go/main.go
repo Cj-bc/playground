@@ -1,6 +1,5 @@
 package main
 import (
-	"golang.org/x/sys/unix"
 	"fmt"
 	"os"
 	"time"
@@ -27,7 +26,7 @@ func main() {
 	listening := make(chan int, 1)
 	go func() {
 		received := make([]byte, 10000)
-		if n, err := unix.Read(tap.Fd, received); err != nil {
+		if n, err := tap.Read(received); err != nil {
 			fmt.Println("unix.Read: ", err.Error())
 			listening <- 1
 		} else {
