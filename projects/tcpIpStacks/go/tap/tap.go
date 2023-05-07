@@ -60,3 +60,8 @@ func (tap *Tap) Up() error {
 
 	return nil
 }
+
+// Close tap device
+func (tap *Tap) Close() {
+	unix.Close(tap.Fd)
+}

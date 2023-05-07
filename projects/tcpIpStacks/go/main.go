@@ -11,7 +11,7 @@ const DEVICENAME = "tap1"
 
 func main() {
 	tap, err := tap.New(DEVICENAME)
-	defer unix.Close(tap.Fd)
+	defer tap.Close()
 	if err != nil {
 		fmt.Println("makeTap: ", err.Error())
 		os.Exit(1)
