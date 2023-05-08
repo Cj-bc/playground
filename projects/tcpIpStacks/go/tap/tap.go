@@ -21,7 +21,7 @@ func New(name string) (Tap, error) {
 	if err != nil {
 		return Tap{}, fmt.Errorf("Failed to initialize ifreq for TUNSETIFF: %w", err)
 	}
-	ifr.SetUint16(unix.IFF_TAP)
+	ifr.SetUint16(unix.IFF_TAP | unix.IFF_NO_PI)
 	if err := unix.IoctlIfreq(fd, unix.TUNSETIFF, ifr); err != nil {
 		return Tap{}, fmt.Errorf("Failed to call ioctl for TUNSETIFF with IFF_TAP: %w", err)
 	}
@@ -71,8 +71,6 @@ func (tap *Tap) Close() {
 func (tap Tap) Read(p []byte) (n int, err error) {
 	// TODO: Can't I remove 'buf' variable?
 	// I couldn't write something like 'p = p[4:]' but it didn't work.
-	buf := make([]byte, len(p), cap(p))
-	n, err = unix.Read(tap.Fd, buf)
-	copy(p, buf[4:])
+	n, err = unix.Read(tap.Fd, p)
 	return
 }
