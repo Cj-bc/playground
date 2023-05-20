@@ -8,6 +8,14 @@ All codes here are not planned to be maintained. Even I acknoledge
 that [[https://github.com/Cj-bc/playground/security/dependabot][dependabot]] have alerted me a lot of problems, I'm not going to
 fix them because those codes here aren't used anymore.
 
+* Directory structure
+Basically, codes are stored in individual directories based on used language/framework.
+So [[haskell]] contains haskell programs, [[go]] contains golang one, and so on.
+However, if the program satisfies one of requirements listed below are stored in [[project]] directory:
+
++ program is composed from several languages (e.g. contains both server-side and client-side)
++ I want to/or plan to write the same program with several other languages(e.g. trying to implement RFC in several languages)
+
 * Some playable programs 
 
 - [[haskell/blackjack/README.md][haskell/blackjack]] :: CUI Black jack program in Haskell
