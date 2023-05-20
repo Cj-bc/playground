@@ -3,6 +3,19 @@
 This is _my_ playground.
 There're some practical codes/tools.
 
+
+** What're here?
+
+I commit:
+
++ Some tiny codes came to my mind
++ Implementation of some sort of standards(e.g. RFC, IEEE)
++ Some ideas that isn't grown enough to make new repository for it
++ Tiny programs written to get familiar to framework, library, or programming language itself
+
+As I commit "some ideas that isn't grown enough yet", I sometimes pick them up
+and create dedicated repository for them.
+
 ** Code quality isn't guaranteed; Do not expect "Good code" here
 All codes here are not planned to be maintained. Even I acknoledge
 that [[https://github.com/Cj-bc/playground/security/dependabot][dependabot]] have alerted me a lot of problems, I'm not going to
