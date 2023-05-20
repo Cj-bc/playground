@@ -18,6 +18,8 @@ However, if the program satisfies one of requirements listed below are stored in
 
 * Some playable programs 
 
+*note: this list is outdated.*
+
 - [[haskell/blackjack/README.md][haskell/blackjack]] :: CUI Black jack program in Haskell
 - [[haskell/faceWithShgif/README.md][haskell/faceWithShgif]] :: Control AA face model with keyboard
 - [[haskell/oniOrHuman/README.md][haskell/oniOrHuman]] :: Simple CUI timing game
