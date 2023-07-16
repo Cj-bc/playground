@@ -80,6 +80,17 @@ func fill(buf []RgbPixel, col RgbPixel, width, top, bottom, left, right uint) {
 	}
 }
 
+/// Equivalent to HLSL's smoothstep
+///
+/// https://learn.microsoft.com/en-us/windows/win32/direct3dhlsl/dx-graphics-hlsl-smoothstep
+func smoothstep(min, max, x float64) float64 {
+	switch {
+	case x < min: return 0.0
+	case max < x: return 1.0
+	default: return (x - min) / (max - min)
+	}
+}
+
 /// Create chroma key mask for given 'pix'
 // func chromakey(pix, key RgbPixel, float range, float fuzziness) {
 // }
