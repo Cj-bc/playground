@@ -3,7 +3,6 @@ package main
 import "os"
 import "io"
 import "fmt"
-import "math"
 
 type RgbPixel struct {
 	R uint8
@@ -15,26 +14,10 @@ func (p RgbPixel) To01() (float64, float64, float64) {
 	return float64(p.R) / 255.0, float64(p.G) / 255.0, float64(p.B) / 255.0
 }
 
-func from01ToRgb(r, g, b float64) (RgbPixel, error) {
-	if (r < 0 || 1 < r || g < 0 || 1 < g || b < 0 || 1 < b) {
-		return nil, fmt.Errorf("r, g, b should be between 0 and 1, but got (%d, %d, %d)", r, g, b)
-	}
-
-	return RgbPixel{uint8(r * 255), uint8(g * 255), uint8(b * 255)}
-}
-
 type YcgcoPixel struct {
 	Y uint8
 	Cg uint8
 	Co uint8
-}
-
-func from01ToYcgco(r, g, b float64) (YcgcoPixel, error) {
-	if (r < 0 || 1 < r || g < 0 || 1 < g || b < 0 || 1 < b) {
-		return nil, fmt.Errorf("r, g, b should be between 0 and 1, but got (%d, %d, %d)", r, g, b)
-	}
-
-	return YcgcoPixel{uint8(r * 255), uint8(g * 255), uint8(b * 255)}
 }
 
 func (p YcgcoPixel) To01() (float64, float64, float64) {
