@@ -57,7 +57,7 @@ func writePPM(file io.Writer, img []RgbPixel, width uint) error {
 	for h := uint(0); h < height; h++ {
 		for w := uint(0); w < width; w++ {
 			p :=  img[h*width + w]
-			_, err = fmt.Fprintf(file, "%d %d %d\t", p.R, p.B, p.G)
+			_, err = fmt.Fprintf(file, "%d %d %d\t", p.R, p.G, p.B)
 			if err != nil {
 				return fmt.Errorf("Failed to write to file: %w", err)
 			}
