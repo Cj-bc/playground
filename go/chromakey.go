@@ -91,9 +91,27 @@ func smoothstep(min, max, x float64) float64 {
 	}
 }
 
-/// Create chroma key mask for given 'pix'
-// func chromakey(pix, key RgbPixel, float range, float fuzziness) {
-// }
+/// Create chroma key mask for given 'RgbPixel'
+func YcgcoMask(pix, key YcgcoPixel, _range, fuzziness float64) float64 {
+	_, pixCg, pixCo := pix.To01()
+	_, keyCg, keyCo := key.To01()
+	pixelChromaDistance := math.Sqrt(math.Pow(pixCg - keyCg, 2) + math.Pow(pixCo - keyCo, 2)) * 10
+	return smoothstep(_range, _range + fuzziness, pixelChromaDistance)
+}
+
+func SampleChromaKey(tex []RgbPixel, key RgbPixel, _range, fuzziness float64) []RgbPixel {
+	res := make([]RgbPixel, len(tex))
+	for i := 0; i < len(tex); i++  {
+		p := tex[i]
+		maskVal := YcgcoMask(p.ToYCgCo(), key.ToYCgCo(), _range, fuzziness)
+		res[i] = RgbPixel{
+			uint8(float64(p.R) * (1 - maskVal)),
+			uint8(float64(p.G) * (1 - maskVal)),
+			uint8(float64(p.B) * (1 - maskVal)),
+		}
+	}
+	return res
+}
 
 
 func main() {
