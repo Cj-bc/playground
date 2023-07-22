@@ -105,9 +105,9 @@ func SampleChromaKey(tex []RgbPixel, key RgbPixel, _range, fuzziness float64) []
 		p := tex[i]
 		maskVal := YcgcoMask(p.ToYCgCo(), key.ToYCgCo(), _range, fuzziness)
 		res[i] = RgbPixel{
-			uint8(float64(p.R) * (1 - maskVal)),
-			uint8(float64(p.G) * (1 - maskVal)),
-			uint8(float64(p.B) * (1 - maskVal)),
+			uint8(float64(p.R) * maskVal),
+			uint8(float64(p.G) * maskVal),
+			uint8(float64(p.B) * maskVal),
 		}
 	}
 	return res
