@@ -119,9 +119,10 @@ func main() {
 	pixs := [250 * 250]RgbPixel{}
 	fill(pixs[:], RgbPixel{0, 0, 255}, 250, 0, 100, 0, 100)
 	fill(pixs[:], RgbPixel{0, 255, 0}, 250, 100, 200, 0, 100)
+	fill(pixs[:], RgbPixel{255, 0, 0}, 250, 200, 250, 0, 100)
+	fill(pixs[:], RgbPixel{10, 255, 10}, 250, 100, 200, 100, 200)
 
-	writePPM(file, pixs[:3], 250)
-	fmt.Print(RgbPixel{0, 128, 0}.ToYCgCo())
-	fmt.Print(RgbPixel{0, 19, 0}.ToYCgCo().ToRgb())
+	keyed := SampleChromaKey(pixs[:], RgbPixel{0, 120, 0}, 0.2, 1)
+	writePPM(file, keyed[:], 250)
 
 }
