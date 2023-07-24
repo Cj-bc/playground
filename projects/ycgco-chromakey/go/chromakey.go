@@ -21,12 +21,13 @@ type YcgcoPixel struct {
 	Co uint8
 }
 
-// YCgCo represents a fully opaque 24-bit YCgCo color.
+// YCgCo represents premultiplied-alpha 32-bit YCgCo color.
 // bit length is determined because of YCbCr definition.
 type YCgCo struct {
 	Y uint8
 	Cg uint8
 	Co uint8
+	A uint8
 }
 
 func (p YCgCo) RGBA() (r, g, b, a uint32) {
@@ -66,7 +67,7 @@ func (p YCgCo) RGBA() (r, g, b, a uint32) {
 	r = uint32(((p.Y + p.Cg - p.Co)<<8) - p.Y - p.Cg + p.Co)
 	g = uint32(((p.Y        + p.Co)<<8) - p.Y - p.Co)
 	b = uint32(((p.Y - p.Cg - p.Co)<<8) - p.Y + p.Cg + p.Co)
-	a = 1<<16
+	a = p.A
 
 	return
 }
