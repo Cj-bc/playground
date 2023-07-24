@@ -21,6 +21,56 @@ type YcgcoPixel struct {
 	Co uint8
 }
 
+// YCgCo represents a fully opaque 24-bit YCgCo color.
+// bit length is determined because of YCbCr definition.
+type YCgCo struct {
+	Y uint8
+	Cg uint8
+	Co uint8
+}
+
+func (p YCgCo) RGBA() (r, g, b, a uint32) {
+	/*
+	   RGBA() は以下の性質を持つ
+
+	   # 1. Premultiplied-Alphaを返す
+
+	   Premultiplied-Alphaとは、アルファ値を事前にRGBに乗算した値である。
+	   これは、ブレンド処理の高速化において有意に働く。例えば、xとyをブレンドする時、
+	   通常であれば以下のように行う。
+
+	   x.rgb * x.a + y.rgb * (1 - x.a)
+
+	   しかし、乗算はコストのかかる処理であり、そのうち ~x.rgb * x.a~ に関しては「xの値だけで計算出来るのだから、
+	   元から計算した値を持っておけばよくない？」という発想が出てきた。それがPremultiplied alpha。
+
+	   premultiplied-alphaなRGBA値を使うと、xとyのブレンドは:
+
+	   x + y.rgb * (1 - x.a)
+
+	   として行われるみたい？
+
+	   ref: http://www.nekomataya.info/nekojyarashi/wiki.cgi?AlphaMode, accessed: [2023-07-24 Mon]
+	   ref: https://assistc.hatenablog.jp/entry/premultiplied-alpha, accessed: [2023-07-24 Mon]
+
+	 */
+
+	// y, cg, co := p.To01()
+	// r = (y + cg - co) * 65535
+	//   = ((p.Y/255) + (p.Cg/255) - (p.Co/255)) * 65535
+	//   = ((p.Y + p.Cg - p.Co) / 255) * 65535
+	//   = (p.Y + p.Cg - p.Co) * 257
+	//   = (p.Y + p.Cg - p.Co) * ((1<<8)-1)
+	//   = ((p.Y + p.Cg - p.Co)<<8) - (p.Y + p.Cg - p.Co)
+	//   = ((p.Y + p.Cg - p.Co)<<8) - p.Y - p.Cg + p.Co
+	r = uint32(((p.Y + p.Cg - p.Co)<<8) - p.Y - p.Cg + p.Co)
+	g = uint32(((p.Y        + p.Co)<<8) - p.Y - p.Co)
+	b = uint32(((p.Y - p.Cg - p.Co)<<8) - p.Y + p.Cg + p.Co)
+	a = 1<<16
+
+	return
+}
+
 func (p YcgcoPixel) To01() (float64, float64, float64) {
 	return float64(p.Y) / 255.0, float64(p.Cg) / 255.0, float64(p.Co) / 255.0
 }
