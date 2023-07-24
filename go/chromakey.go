@@ -3,6 +3,7 @@ package main
 import "os"
 import "io"
 import "fmt"
+import "math"
 
 type RgbPixel struct {
 	R uint8
