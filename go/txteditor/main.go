@@ -23,7 +23,7 @@ func main() {
 	logger := log.Default()
 	currentTerm := termenv.DefaultOutput()
 	
-	pt, err := FromFile("/etc/profile")
+	pt, err := PieceTableFromFile("/etc/profile")
 	if err != nil {
 		logger.Fatal(err)
 	}

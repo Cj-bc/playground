@@ -24,7 +24,7 @@ type PieceTable struct {
 }
 
 /// Create PieceTable for given file.
-func FromFile(fn string) (PieceTable, error) {
+func PieceTableFromFile(fn string) (PieceTable, error) {
 	data, err := os.ReadFile(fn)
 	if err != nil {
 		return PieceTable{}, err
