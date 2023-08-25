@@ -6,10 +6,6 @@ import (
 	"unicode/utf8"
 )
 
-type EditorState struct {
-	exit bool
-}
-
 type Command struct {
 	Exec func(st EditorState) EditorState
 }
