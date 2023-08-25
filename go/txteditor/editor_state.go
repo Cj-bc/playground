@@ -4,17 +4,19 @@ import (
 	"fmt"
 )
 
+var defaultKeymap = map[rune]Command {'q': Quit}
 type EditorState struct {
 	exit bool
 	buffers []Buffer
 	currentBufferIdx int
-
+	keymap map[rune]Command
 }
 
 func EditorStateWithBuffer(buf Buffer) EditorState {
 	return EditorState { exit: false,
 		buffers: []Buffer{buf},
 		currentBufferIdx: 0,
+		keymap: defaultKeymap,
 	}
 }
 

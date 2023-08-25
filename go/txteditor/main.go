@@ -12,8 +12,6 @@ type Command struct {
 
 var Quit = Command { Exec: func(st EditorState) EditorState { st.exit = true; return st }}
 
-var keymap = map[rune]Command{'q': Quit}
-
 func main() {
 	// Initiate some environment
 	logger := log.Default()
@@ -45,7 +43,7 @@ func main() {
 	for !editorState.exit {
 		currentTerm.TTY().Read(keyInput[:])
 		rune, _ := utf8.DecodeRune(keyInput[:])
-		if command, ok := keymap[rune]; ok == true {
+		if command, ok := editorState.keymap[rune]; ok == true {
 			editorState = command.Exec(editorState)
 		}
 	}
