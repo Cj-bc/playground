@@ -4,7 +4,6 @@ import (
 	"os"
 	"github.com/muesli/termenv"
 	"golang.org/x/term"
-	"fmt"
 	"unicode/utf8"
 )
 
