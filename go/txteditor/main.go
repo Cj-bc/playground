@@ -19,6 +19,9 @@ type PieceTable struct {
 	records []Record
 }
 
+type EditorState struct {
+	exit bool
+}
 func main() {
 	// Initiate some environment
 	logger := log.Default()
@@ -28,6 +31,8 @@ func main() {
 	if err != nil {
 		logger.Fatal(err)
 	}
+
+	editorState := EditorState{exit: false}
 
 	// Enables Alt screen
 	currentTerm.AltScreen()
@@ -44,11 +49,12 @@ func main() {
 
 	// Key event loop
 	var keyInput [64]byte
-	for i := 0; i < 10; i++ {
+	for !editorState.exit {
 		currentTerm.TTY().Read(keyInput[:])
 		rune, _ := utf8.DecodeRune(keyInput[:])
 		if rune == 'q' {
-			break
+			editorState.exit = true
+		}
 		}
 	}
 }
