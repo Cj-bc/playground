@@ -42,9 +42,9 @@ func (pt PieceTable) Contents() string {
 		record := pt.records[i]
 		switch record.bufType {
 		case BufTypeOrigin:
-			ret += pt.origin[record.startIdx:record.length]
+			ret += pt.origin[record.startIdx:record.startIdx+record.length]
 		case BufTypeAddition:
-			ret += pt.addition[record.startIdx:record.length]
+			ret += pt.addition[record.startIdx:record.startIdx+record.length]
 		}
 	}
 	return ret
