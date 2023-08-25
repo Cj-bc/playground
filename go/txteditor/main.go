@@ -13,8 +13,8 @@ type Record struct {
 }
 
 type PieceTable struct {
-	origin []string
-	addition []string
+	origin string
+	addition string
 	records []Record
 }
 
