@@ -60,7 +60,7 @@ func main() {
 	logger := log.Default()
 	currentTerm := termenv.DefaultOutput()
 	
-	data, err := os.ReadFile("/etc/profile")
+	pt, err := FromFile("/etc/profile")
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -70,8 +70,7 @@ func main() {
 	// Enables Alt screen
 	currentTerm.AltScreen()
 	defer currentTerm.ExitAltScreen()
-	currentTerm.Write(data)
-
+	currentTerm.Write([]byte(pt.Contents()))
 	// Make TTY Raw mode so that we can read code-point per code-point
 	connectedFd := int(currentTerm.TTY().Fd())
 	initialEnv, err := term.MakeRaw(connectedFd)
