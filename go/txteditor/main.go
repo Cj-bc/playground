@@ -39,11 +39,10 @@ func main() {
 	}
 	defer term.Restore(connectedFd, initialEnv)
 
-	var tmp [64]byte
+	var keyInput [64]byte
 	for i := 0; i < 10; i++ {
-		
-		currentTerm.TTY().Read(tmp[:])
-		rune, _ := utf8.DecodeRune(tmp[:])
+		currentTerm.TTY().Read(keyInput[:])
+		rune, _ := utf8.DecodeRune(keyInput[:])
 		if rune == 'q' {
 			break
 		}
