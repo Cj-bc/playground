@@ -20,6 +20,7 @@ type PieceTable struct {
 }
 
 func main() {
+	// Initiate some environment
 	logger := log.Default()
 	currentTerm := termenv.DefaultOutput()
 	
@@ -28,10 +29,12 @@ func main() {
 		logger.Fatal(err)
 	}
 
+	// Enables Alt screen
 	currentTerm.AltScreen()
 	defer currentTerm.ExitAltScreen()
 	currentTerm.Write(data)
 
+	// Make TTY Raw mode so that we can read code-point per code-point
 	connectedFd := int(currentTerm.TTY().Fd())
 	initialEnv, err := term.MakeRaw(connectedFd)
 	if err != nil {
@@ -39,6 +42,7 @@ func main() {
 	}
 	defer term.Restore(connectedFd, initialEnv)
 
+	// Key event loop
 	var keyInput [64]byte
 	for i := 0; i < 10; i++ {
 		currentTerm.TTY().Read(keyInput[:])
