@@ -12,6 +12,8 @@ const (
 	BufTypeAddition
 )
 
+/// Record represents one piece in PieceTable.
+/// It denote which table to use, first index in table, and length of text
 type Record struct {
 	bufType int
 	startIdx int
@@ -24,6 +26,7 @@ type PieceTable struct {
 	records []Record
 }
 
+/// Create PieceTable for given file.
 func FromFile(fn string) (PieceTable, error) {
 	data, err := os.ReadFile(fn)
 	if err != nil {
@@ -36,6 +39,7 @@ func FromFile(fn string) (PieceTable, error) {
 	}, nil
 }
 
+/// Returns contents of given PieceTable.
 func (pt PieceTable) Contents() string {
 	var ret string
 	for i := 0; i < len(pt.records); i++ {
@@ -53,6 +57,7 @@ func (pt PieceTable) Contents() string {
 type EditorState struct {
 	exit bool
 }
+
 type Command struct {
 	Exec func(st EditorState) EditorState
 }
@@ -77,6 +82,7 @@ func main() {
 	currentTerm.AltScreen()
 	defer currentTerm.ExitAltScreen()
 	currentTerm.Write([]byte(pt.Contents()))
+
 	// Make TTY Raw mode so that we can read code-point per code-point
 	connectedFd := int(currentTerm.TTY().Fd())
 	initialEnv, err := term.MakeRaw(connectedFd)
