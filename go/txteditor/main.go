@@ -7,7 +7,13 @@ import (
 	"unicode/utf8"
 )
 
+const (
+	BufTypeOrigin = iota
+	BufTypeAddition
+)
+
 type Record struct {
+	bufType int
 	startIdx int
 	length int
 }
