@@ -19,17 +19,18 @@ func main() {
 	logger := log.Default()
 	currentTerm := termenv.DefaultOutput()
 	
-	pt, err := PieceTableFromFile("/etc/profile")
+	buf, err := NewFileBuffer("/tmp/bashrc")
 	if err != nil {
 		logger.Fatal(err)
 	}
-
-	editorState := EditorState{exit: false}
+	defer buf.Close()
+	editorState := EditorStateWithBuffer(buf)
 
 	// Enables Alt screen
 	currentTerm.AltScreen()
 	defer currentTerm.ExitAltScreen()
-	currentTerm.Write([]byte(pt.Contents()))
+	
+	currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
 
 	// Make TTY Raw mode so that we can read code-point per code-point
 	connectedFd := int(currentTerm.TTY().Fd())
