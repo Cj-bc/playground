@@ -6,11 +6,6 @@ import (
 	"unicode/utf8"
 )
 
-type Command struct {
-	Exec func(st EditorState) EditorState
-}
-
-var Quit = Command { Exec: func(st EditorState) EditorState { st.exit = true; return st }}
 
 func main() {
 	// Initiate some environment
