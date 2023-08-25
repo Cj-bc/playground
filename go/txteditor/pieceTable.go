@@ -50,3 +50,7 @@ func (pt PieceTable) Contents() string {
 	}
 	return ret
 }
+
+func EmptyPieceTable() PieceTable {
+	return PieceTable {}
+}
