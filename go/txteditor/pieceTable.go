@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os"
 )
 
 const (
@@ -24,16 +23,11 @@ type PieceTable struct {
 }
 
 /// Create PieceTable for given file.
-func PieceTableFromFile(fn string) (PieceTable, error) {
-	data, err := os.ReadFile(fn)
-	if err != nil {
-		return PieceTable{}, err
-	}
-
-	return PieceTable {origin:string(data),
+func PieceTableFromString(content string) PieceTable {
+	return PieceTable {origin:content,
 		addition: "",
-		records: []Record{Record{bufType: BufTypeOrigin, startIdx: 0, length: len(data)}},
-	}, nil
+		records: []Record{Record{bufType: BufTypeOrigin, startIdx: 0, length: len(content)}},
+	}
 }
 
 /// Returns contents of given PieceTable.
