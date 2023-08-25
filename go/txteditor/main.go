@@ -21,6 +21,14 @@ type PieceTable struct {
 type EditorState struct {
 	exit bool
 }
+type Command struct {
+	Exec func(st EditorState) EditorState
+}
+
+var Quit = Command { Exec: func(st EditorState) EditorState { st.exit = true; return st }}
+
+var keymap = map[rune]Command{'q': Quit}
+
 func main() {
 	// Initiate some environment
 	logger := log.Default()
@@ -51,9 +59,8 @@ func main() {
 	for !editorState.exit {
 		currentTerm.TTY().Read(keyInput[:])
 		rune, _ := utf8.DecodeRune(keyInput[:])
-		if rune == 'q' {
-			editorState.exit = true
-		}
+		if command, ok := keymap[rune]; ok == true {
+			editorState = command.Exec(editorState)
 		}
 	}
 }
