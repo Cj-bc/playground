@@ -2,7 +2,7 @@ package main
 import (
 	"log"
 	"github.com/muesli/termenv"
-	"golang.org/x/term"
+	"golang.org/x/sys/unix"
 	"unicode/utf8"
 )
 
@@ -27,11 +27,11 @@ func main() {
 
 	// Make TTY Raw mode so that we can read code-point per code-point
 	connectedFd := int(currentTerm.TTY().Fd())
-	initialEnv, err := term.MakeRaw(connectedFd)
+	err = setupTerminal(connectedFd)
 	if err != nil {
 		logger.Fatal(err)
 	}
-	defer term.Restore(connectedFd, initialEnv)
+	defer shutdownTerminal(connectedFd)
 
 	// Key event loop
 	var keyInput [64]byte
@@ -41,5 +41,33 @@ func main() {
 		if command, ok := editorState.keymap[rune]; ok == true {
 			editorState = command.Exec(editorState)
 		}
+
+func setupTerminal(fd int) error {
+	termios, err := unix.IoctlGetTermios(fd, unix.TCGETS)
+	if err != nil {
+		return err
 	}
+
+	termios.Lflag &^= (unix.ICANON | unix.ECHO)
+	err = unix.IoctlSetTermios(fd, unix.TCSETS, termios)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func shutdownTerminal(fd int) error {
+	termios, err := unix.IoctlGetTermios(fd, unix.TCGETS)
+	if err != nil {
+		return err
+	}
+
+	termios.Lflag |= (unix.ICANON | unix.ECHO)
+	err = unix.IoctlSetTermios(fd, unix.TCSETS, termios)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
