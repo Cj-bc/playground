@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 )
 
 const (
@@ -34,17 +35,23 @@ func PieceTableFromString(content string) PieceTable {
 func (pt PieceTable) Contents() string {
 	var ret string
 	for i := 0; i < len(pt.records); i++ {
-		record := pt.records[i]
-		switch record.bufType {
-		case BufTypeOrigin:
-			ret += pt.origin[record.startIdx:record.startIdx+record.length]
-		case BufTypeAddition:
-			ret += pt.addition[record.startIdx:record.startIdx+record.length]
-		}
+		ret += pt.RecordString(pt.records[i])
 	}
 	return ret
 }
 
 func EmptyPieceTable() PieceTable {
 	return PieceTable {}
+}
+
+func (table PieceTable) RecordString(record Record) string {
+	switch record.bufType {
+	case BufTypeOrigin:
+		return table.origin[record.startIdx:record.startIdx+record.length]
+	case BufTypeAddition:
+		return table.addition[record.startIdx:record.startIdx+record.length]
+	default:
+		// This should not happen, so I use panic here.
+		panic(fmt.Sprintf("PieceTable.RecordString: Invalid BufType %d", record.bufType))
+	}
 }
