@@ -48,3 +48,21 @@ func (buf Buffer) Contents() string {
 func (buf Buffer) Close() {
 	buf.file.Close()
 }
+
+// Returns point's coordinate in terminal
+func (buf Buffer) PointCoord() (int, int) {
+	x, y, _ := buf.pieceTable.GetPointOfIndex(buf.point)
+	return x, y
+}
+
+func (buf *Buffer) Forward(n int) error {
+	// Testing if it won't be out-of-range
+	// TODO: it might be better to measure length.
+	if _, _, err := buf.pieceTable.GetPointOfIndex(buf.point+n); err != nil {
+		return fmt.Errorf("Reached end of buffer")
+	}
+
+	buf.point += n
+	return nil
+}
+
