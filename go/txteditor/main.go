@@ -23,8 +23,6 @@ func main() {
 	currentTerm.AltScreen()
 	defer currentTerm.ExitAltScreen()
 	
-	currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
-
 	// Make TTY Raw mode so that we can read code-point per code-point
 	connectedFd := int(currentTerm.TTY().Fd())
 	err = setupTerminal(connectedFd)
@@ -32,6 +30,10 @@ func main() {
 		logger.Fatal(err)
 	}
 	defer shutdownTerminal(connectedFd)
+
+	// Paint once before waiting key input
+	currentTerm.MoveCursor(0, 0)
+	currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
 
 	// Key event loop
 	var keyInput [64]byte
@@ -42,6 +44,8 @@ func main() {
 			editorState = command.Exec(editorState)
 		}
 
+		currentTerm.MoveCursor(0, 0)
+		currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
 func setupTerminal(fd int) error {
 	termios, err := unix.IoctlGetTermios(fd, unix.TCGETS)
 	if err != nil {
