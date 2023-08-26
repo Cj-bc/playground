@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -54,4 +55,34 @@ func (table PieceTable) RecordString(record Record) string {
 		// This should not happen, so I use panic here.
 		panic(fmt.Sprintf("PieceTable.RecordString: Invalid BufType %d", record.bufType))
 	}
+}
+
+// Returns X-Y coordinate of given index.
+// Coordinate origin is at left-top.
+func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
+	var x int
+	var y int
+	var currentLength int = 0
+	for i := 0; i < len(table.records); i++ {
+		// When 'index' is located in currently visiting record
+		if index < (currentLength + table.records[i].length) {
+			// Calculate both Y/X coordinate and return
+			restLength := index - currentLength
+			restString := table.RecordString(table.records[i])[:restLength]
+			y += strings.Count(restString, "\n")
+
+			if lastIdx := strings.LastIndex(restString, "\n"); lastIdx == -1 {
+				// If restString does not contains newlines
+				x = len(restString)
+			} else {
+				x = len(restString[lastIdx:])
+			}
+			return x, y, nil
+		} else {
+			currentLength += table.records[i].length
+			y += strings.Count(table.RecordString(table.records[i]), "\n")
+		}
+	}
+
+	return 0, 0, fmt.Errorf("Point out of index. max point is %d", currentLength)
 }
