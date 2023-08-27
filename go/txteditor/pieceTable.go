@@ -71,11 +71,11 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 			restString := table.RecordString(table.records[i])[:restLength]
 			y += strings.Count(restString, "\n")
 
-			if lastIdx := strings.LastIndex(restString, "\n"); lastIdx == -1 {
+			if lastBoL := strings.LastIndex(restString, "\n"); lastBoL == -1 {
 				// If restString does not contains newlines
 				x = len(restString)
 			} else {
-				x = len(restString[lastIdx:])
+				x = len(restString[lastBoL:])
 			}
 			return x, y, nil
 		} else {
