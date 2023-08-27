@@ -44,10 +44,15 @@ func main() {
 			editorState = command.Exec(editorState)
 		}
 
-		currentTerm.MoveCursor(0, 0)
-		currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
+		Draw(currentTerm, editorState)
 	}
 }
+
+func Draw(term *termenv.Output, state EditorState) {
+	term.MoveCursor(0, 0)
+	term.Write([]byte(state.CurrentBuffer().Contents()))
+}
+
 func setupTerminal(fd int) error {
 	termios, err := unix.IoctlGetTermios(fd, unix.TCGETS)
 	if err != nil {
