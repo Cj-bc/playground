@@ -9,12 +9,12 @@ var Quit = Command { Exec: func(st EditorState) EditorState { st.exit = true; re
 
 var Forward = Command { Exec: func(st EditorState) EditorState {
 	buf := st.CurrentBuffer()
-	buf.point += 1
+	buf.Forward(1)
 	return st
 }}
 
 var Backward = Command { Exec: func(st EditorState) EditorState {
 	buf := st.CurrentBuffer()
-	buf.point -= 1
+	buf.Forward(-1)
 	return st
 }}
