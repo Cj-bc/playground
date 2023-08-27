@@ -69,7 +69,8 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 			// Calculate both Y/X coordinate and return
 			restLength := index - currentLength
 			restString := table.RecordString(table.records[i])[:restLength]
-			y += strings.Count(restString, "\n")
+			// "foo\nbar" have two lines, so I need to add 1 to count of "\n"
+			y += 1 + strings.Count(restString, "\n")
 
 			if lastBoL := strings.LastIndex(restString, "\n"); lastBoL == -1 {
 				// If restString does not contains newlines
@@ -80,7 +81,8 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 			return x, y, nil
 		} else {
 			currentLength += table.records[i].length
-			y += strings.Count(table.RecordString(table.records[i]), "\n")
+			// "foo\nbar" have two lines, so I need to add 1 to count of "\n"
+			y += 1 + strings.Count(table.RecordString(table.records[i]), "\n")
 		}
 	}
 
