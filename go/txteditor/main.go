@@ -51,6 +51,8 @@ func main() {
 func Draw(term *termenv.Output, state EditorState) {
 	term.MoveCursor(0, 0)
 	term.Write([]byte(state.CurrentBuffer().Contents()))
+	x, y := state.CurrentBuffer().PointCoord()
+	term.MoveCursor(y, x)
 }
 
 func setupTerminal(fd int) error {
