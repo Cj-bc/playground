@@ -60,8 +60,12 @@ func (table PieceTable) RecordString(record Record) string {
 // Returns X-Y coordinate of given index.
 // Coordinate origin is at left-top.
 func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
-	var x int
-	var y int
+	if index < 0 {
+		return 0, 0, fmt.Errorf("Out of range index %d", index)
+	}
+
+	var x int = 0
+	var y int = 0
 	var currentLength int = 0
 	for i := 0; i < len(table.records); i++ {
 		// When 'index' is located in currently visiting record
