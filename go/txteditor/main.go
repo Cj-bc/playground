@@ -46,6 +46,8 @@ func main() {
 
 		currentTerm.MoveCursor(0, 0)
 		currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
+	}
+}
 func setupTerminal(fd int) error {
 	termios, err := unix.IoctlGetTermios(fd, unix.TCGETS)
 	if err != nil {
