@@ -4,6 +4,7 @@ import (
 	"github.com/muesli/termenv"
 	"golang.org/x/sys/unix"
 	"unicode/utf8"
+	"flag"
 )
 
 
@@ -11,8 +12,14 @@ func main() {
 	// Initiate some environment
 	logger := log.Default()
 	currentTerm := termenv.DefaultOutput()
+
+	flag.Parse()
+	fn := flag.Arg(0)
+	if fn == "" {
+		return
+	}
 	
-	buf, err := NewFileBuffer("/tmp/bashrc")
+	buf, err := NewFileBuffer(fn)
 	if err != nil {
 		logger.Fatal(err)
 	}
