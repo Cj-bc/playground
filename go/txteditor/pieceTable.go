@@ -57,6 +57,49 @@ func (table PieceTable) RecordString(record Record) string {
 	}
 }
 
+// Find end of line.
+// Returns error if point is nagative value, or no more lines are exist
+func (table PieceTable) EndOfLine(point int) (int, error) {
+	if (point < -1) {
+		return 0, fmt.Errorf("Out of range point %d", point)
+	}
+
+	// Find record that contains 'point'
+	// Also, get substring of that record after 'point'
+	var recordIdx int = -1
+	var restStr string
+	var offset int
+	currentLen := 0
+	for i := 0; i < len(table.records); i++ {
+		if point <= currentLen + table.records[i].length {
+			offset = point - currentLen;
+			restStr = table.RecordString(table.records[i])[offset:]
+			recordIdx = i
+		}
+		currentLen += table.records[i].length
+	}
+
+	// Could not find record that contains given point
+	if recordIdx == -1 {
+		return 0, fmt.Errorf("Out of range point %d", point)
+	}
+
+	if newlineIdx := strings.Index(restStr, "\n"); newlineIdx != -1 {
+		// TODO: Is this correct offset? Don't we need +-1?
+		return point + newlineIdx, nil
+	}
+
+	// Iterate over successors to find first newline
+	for i := recordIdx; i < len(table.records); i++ {
+		if newlineIdx := strings.Index(table.RecordString(table.records[i]), "\n"); newlineIdx != -1 {
+			offset += newlineIdx
+			break
+		}
+		offset += table.records[i].length
+	}
+	return point + offset, nil
+}
+
 // Returns X-Y coordinate of given index.
 // Coordinate origin is at left-top.
 func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
