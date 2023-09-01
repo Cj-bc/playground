@@ -10,6 +10,8 @@ const (
 	BufTypeAddition
 )
 
+const TABSTOP = 8
+
 /// Record represents one piece in PieceTable.
 /// It denote which table to use, first index in table, and length of text
 type Record struct {
@@ -121,9 +123,11 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 
 			if lastBoL := strings.LastIndex(restString, "\n"); lastBoL == -1 {
 				// If restString does not contains newlines
-				x = len(restString)
+				tabs := strings.Count(restString, "\t")
+				x = len(restString) + tabs * (TABSTOP - 1)
 			} else {
-				x = len(restString[lastBoL:])
+				tabs := strings.Count(restString[lastBoL:], "\t")
+				x = len(restString[lastBoL:]) + tabs * (TABSTOP - 1)
 			}
 			return x, y, nil
 		} else {
