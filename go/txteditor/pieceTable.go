@@ -112,7 +112,7 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 	var currentLength int = 0
 	for i := 0; i < len(table.records); i++ {
 		// When 'index' is located in currently visiting record
-		if index < (currentLength + table.records[i].length) {
+		if index <= (currentLength + table.records[i].length) {
 			// Calculate both Y/X coordinate and return
 			restLength := index - currentLength
 			restString := table.RecordString(table.records[i])[:restLength]
