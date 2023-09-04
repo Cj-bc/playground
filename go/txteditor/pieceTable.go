@@ -102,6 +102,52 @@ func (table PieceTable) EndOfLine(point int) (int, error) {
 	return point + offset, nil
 }
 
+// Find beginning of line.
+// Returns error if point is nagative value, or no more lines are exist
+func (table PieceTable) BeginningOfLine(point int) (int, error) {
+	if (point < -1) {
+		return 0, fmt.Errorf("Out of range point %d", point)
+	}
+
+	// Find record that contains 'point' position
+	currentLen := 0
+	recordIndex := -1
+	var offset int // (point - RECORD_BEGGINING_POINT)
+	for i := 0; i < len(table.records); i++ {
+		if point <= currentLen + table.records[i].length {
+			offset = point - currentLen
+			recordIndex = i
+			break
+		}
+		currentLen += table.records[i].length
+	}
+
+	// Could not find record that contains 'point'
+	if recordIndex == -1 {
+		return 0, fmt.Errorf("Out of range point %d", point)
+	}
+
+	// if current record have newline before point, return it
+	{
+		str := table.RecordString(table.records[recordIndex])
+		if idx := strings.LastIndex(str[:offset], "\n"); idx != -1 {
+			return currentLen + idx, nil
+		}
+	}
+
+	// Lookup newline in predecessors
+	offsetFromPoint := 0 // current head position relateive to 'point'
+	for i := recordIndex; 0 <= i; i-- {
+		offsetFromPoint -= table.records[i].length
+		if idx := strings.LastIndex(table.RecordString(table.records[i]), "\n"); idx != -1 {
+			return point + offsetFromPoint + idx, nil
+		}
+	}
+
+	// If it cannot find newline, it shuold be the beginning of the file
+	return 0, nil
+}
+
 // Returns X-Y coordinate of given index.
 // Coordinate origin is at left-top.
 func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
