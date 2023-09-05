@@ -131,7 +131,8 @@ func (table PieceTable) BeginningOfLine(point int) (int, error) {
 	{
 		str := table.RecordString(table.records[recordIndex])
 		if idx := strings.LastIndex(str[:offset], "\n"); idx != -1 {
-			return currentLen + idx, nil
+			// '+1' because bol is after "\n"
+			return currentLen + idx + 1, nil
 		}
 	}
 
@@ -140,7 +141,8 @@ func (table PieceTable) BeginningOfLine(point int) (int, error) {
 	for i := recordIndex; 0 <= i; i-- {
 		offsetFromPoint -= table.records[i].length
 		if idx := strings.LastIndex(table.RecordString(table.records[i]), "\n"); idx != -1 {
-			return point + offsetFromPoint + idx, nil
+			// '+1' because bol is after "\n"
+			return point + offsetFromPoint + idx + 1, nil
 		}
 	}
 
