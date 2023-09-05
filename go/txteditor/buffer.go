@@ -68,3 +68,37 @@ func (buf *Buffer) Forward(n int) error {
 	return nil
 }
 
+func (buf *Buffer) EndOfLine() error {
+	eolPoint, err := buf.pieceTable.EndOfLine(buf.point)
+	if err != nil {
+		return err
+	}
+
+	buf.point = eolPoint
+	return nil
+}
+
+func (buf *Buffer) BeginningOfLine() error {
+	bolPoint, err := buf.pieceTable.BeginningOfLine(buf.point)
+	if err != nil {
+		return err
+	}
+
+	buf.point = bolPoint
+	return nil
+}
+
+func (buf *Buffer) NextLine() error {
+	c, err := buf.pieceTable.GetPointOfIndex(buf.point)
+	if err != nil {
+		return err
+	}
+
+	eolpoint, err := buf.pieceTable.EndOfLine(buf.point)
+	if err != nil {
+		return err
+	}
+
+	buf.point = eolpoint + 1 + c.x
+	return nil
+}
