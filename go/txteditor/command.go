@@ -24,3 +24,31 @@ var Backward = Command { Exec: func(st EditorState) EditorState {
 	}
 	return st
 }}
+
+var EndOfLine = Command { Exec: func(st EditorState) EditorState {
+	buf := st.CurrentBuffer()
+	err := buf.EndOfLine()
+	if err != nil {
+		st.errors = append(st.errors, err)
+	}
+	return st
+}}
+
+var BeginningOfLine = Command { Exec: func(st EditorState) EditorState {
+	buf := st.CurrentBuffer()
+	err := buf.BeginningOfLine()
+	if err != nil {
+		st.errors = append(st.errors, err)
+	}
+	return st
+}}
+
+var NextLine = Command { Exec: func(st EditorState) EditorState {
+	buf := st.CurrentBuffer()
+	err := buf.NextLine()
+	if err != nil {
+		st.errors = append(st.errors, err)
+	}
+
+	return st
+}}
