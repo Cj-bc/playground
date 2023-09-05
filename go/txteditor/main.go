@@ -39,8 +39,7 @@ func main() {
 	defer shutdownTerminal(connectedFd)
 
 	// Paint once before waiting key input
-	currentTerm.MoveCursor(0, 0)
-	currentTerm.Write([]byte(editorState.CurrentBuffer().Contents()))
+	Draw(currentTerm, editorState)
 
 	// Key event loop
 	var keyInput [64]byte
