@@ -50,15 +50,17 @@ func (buf Buffer) Close() {
 }
 
 // Returns point's coordinate in terminal
+// FIXME: THIS IS BROKEN
 func (buf Buffer) PointCoord() (int, int) {
-	x, y, _ := buf.pieceTable.GetPointOfIndex(buf.point)
-	return x, y
+	c, _ := buf.pieceTable.GetPointOfIndex(buf.point)
+	// FromBufCoord(c, interface { func SubstringByCoord()})
+	return c.x, c.y
 }
 
 func (buf *Buffer) Forward(n int) error {
 	// Testing if it won't be out-of-range
 	// TODO: it might be better to measure length.
-	if _, _, err := buf.pieceTable.GetPointOfIndex(buf.point+n); err != nil {
+	if _, err := buf.pieceTable.GetPointOfIndex(buf.point+n); err != nil {
 		return fmt.Errorf("Reached end of buffer")
 	}
 

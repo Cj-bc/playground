@@ -20,6 +20,16 @@ type Record struct {
 	length int
 }
 
+/// Coordinate in buffer space.
+///
+/// It is not ready for display as it counts each charcter whereas
+/// tabs(\t) have TABSTOP width.  convert to ScreenCoord before use
+/// them.
+type BufCoord struct {
+	x int
+	y int
+}
+
 type PieceTable struct {
 	origin string
 	addition string
@@ -152,9 +162,9 @@ func (table PieceTable) BeginningOfLine(point int) (int, error) {
 
 // Returns X-Y coordinate of given index.
 // Coordinate origin is at left-top.
-func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
+func (table PieceTable) GetPointOfIndex(index int) (BufCoord, error) {
 	if index < 0 {
-		return 0, 0, fmt.Errorf("Out of range index %d", index)
+		return BufCoord{}, fmt.Errorf("Out of range index %d", index)
 	}
 
 	var x int = 0
@@ -177,7 +187,7 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 				tabs := strings.Count(restString[lastBoL:], "\t")
 				x = len(restString[lastBoL:]) + tabs * (TABSTOP - 1)
 			}
-			return x, y, nil
+			return BufCoord{x: x, y: y}, nil
 		} else {
 			currentLength += table.records[i].length
 			// "foo\nbar" have two lines, so I need to add 1 to count of "\n"
@@ -185,5 +195,5 @@ func (table PieceTable) GetPointOfIndex(index int) (int, int, error) {
 		}
 	}
 
-	return 0, 0, fmt.Errorf("Point out of index. max point is %d", currentLength)
+	return BufCoord{}, fmt.Errorf("Point out of index. max point is %d", currentLength)
 }
