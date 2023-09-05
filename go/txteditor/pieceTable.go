@@ -138,7 +138,7 @@ func (table PieceTable) BeginningOfLine(point int) (int, error) {
 
 	// Lookup newline in predecessors
 	offsetFromPoint := 0 // current head position relateive to 'point'
-	for i := recordIndex; 0 <= i; i-- {
+	for i := recordIndex - 1; 0 <= i; i-- {
 		offsetFromPoint -= table.records[i].length
 		if idx := strings.LastIndex(table.RecordString(table.records[i]), "\n"); idx != -1 {
 			// '+1' because bol is after "\n"
