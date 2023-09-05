@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-var defaultKeymap = map[rune]Command {'q': Quit}
+var defaultKeymap = map[rune]Command {'q': Quit, 'h': Backward, 'l': Forward, 'j': NextLine, '$': EndOfLine, '0': BeginningOfLine}
 type EditorState struct {
 	exit bool
 	buffers []Buffer
