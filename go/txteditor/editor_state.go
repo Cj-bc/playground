@@ -10,6 +10,7 @@ type EditorState struct {
 	buffers []Buffer
 	currentBufferIdx int
 	keymap map[rune]Command
+	errors []error
 }
 
 func EditorStateWithBuffer(buf Buffer) EditorState {
@@ -17,6 +18,7 @@ func EditorStateWithBuffer(buf Buffer) EditorState {
 		buffers: []Buffer{buf},
 		currentBufferIdx: 0,
 		keymap: defaultKeymap,
+		errors: []error{},
 	}
 }
 
