@@ -16,6 +16,7 @@ func main() {
 	flag.Parse()
 	fn := flag.Arg(0)
 	if fn == "" {
+		logger.Fatal("Please specify path")
 		return
 	}
 	
