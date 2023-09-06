@@ -4,4 +4,9 @@
           i32.const 42
           call $i
           )
+          (func (export "add1") (param $p1 i32) (result i32)
+          local.get $p1
+          i32.const 1
+          i32.add
+          )
 )
