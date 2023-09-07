@@ -76,7 +76,7 @@ func main() {
 		})
 	}
 	
-	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, "<html> <body>")
 		defer fmt.Fprint(w, "</body></html>")
 
