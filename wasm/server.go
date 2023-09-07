@@ -45,8 +45,8 @@ func GetFileContent(path string) ([]byte, error) {
 }
 
 func main() {
-	// var binaries binaryFiles
-	// flag.Var(binaries, "binary", "files that shuold be sent as binary")
+	var binaries binaryFiles
+	flag.Var(&binaries, "binary", "files that shuold be sent as binary")
 	flag.Parse()
 	files := flag.Args()
 	if len(files) == 0 {
@@ -64,6 +64,17 @@ func main() {
 		})
 	}
 
+	for _, fn := range binaries.path {
+		content, err := GetFileContent(fn)
+		if err != nil {
+			log.Fatalf("Failed to read file \"%b\" (error: %v)", fn, err)
+		}
+
+		http.HandleFunc(fmt.Sprintf("/%s", fn), func(w http.ResponseWriter, r*http.Request) {
+			w.Write(content)
+		})
+	}
+	
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
     	fmt.Fprintf(w, "%v", files)
 	})
