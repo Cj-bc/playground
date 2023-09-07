@@ -17,6 +17,9 @@ func (bf binaryFiles) String() string {
 }
 
 func (bf *binaryFiles) Set(s string) error {
+	if bf == nil {
+		bf.path = []string{}
+	}
 	bf.path = append(bf.path, s)
 	return nil
 }
