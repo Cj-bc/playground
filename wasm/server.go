@@ -8,15 +8,17 @@ import (
     "flag"
 )
 
-type binaryFiles []string
+type binaryFiles struct {
+	path []string
+}
 
 func (bf binaryFiles) String() string {
-    return fmt.Sprint(bf)
+	return fmt.Sprint(bf.path)
 }
 
 func (bf *binaryFiles) Set(s string) error {
-    *bf = append(*bf, s)
-    return nil
+	bf.path = append(bf.path, s)
+	return nil
 }
 
 func GetFileContent(path string) ([]byte, error) {
