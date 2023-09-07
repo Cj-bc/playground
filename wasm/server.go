@@ -71,6 +71,7 @@ func main() {
 		}
 
 		http.HandleFunc(fmt.Sprintf("/%s", fn), func(w http.ResponseWriter, r*http.Request) {
+			w.Header().Set("Content-Type", "application/octed-stream")
 			w.Write(content)
 		})
 	}
