@@ -76,7 +76,18 @@ func main() {
 	}
 	
 	http.HandleFunc("/list", func(w http.ResponseWriter, r *http.Request) {
-    	fmt.Fprintf(w, "%v", files)
+		fmt.Fprint(w, "<html> <body>")
+		defer fmt.Fprint(w, "</body></html>")
+
+		fmt.Fprint(w, "<h1>Regular files</h1><ul>")
+		for _, f := range files {
+			fmt.Fprintf(w, "<li><a href=\"%s\">%s</a></li>", f, f)
+		}
+		fmt.Fprint(w, "</ul> <h1>Binary Files</h1><ul>")
+		for _, f := range binaries.path {
+			fmt.Fprintf(w, "<li><a href=\"%s\">%s</a></li>", f, f)
+		}
+		fmt.Fprint(w, "</ul>")
 	})
 	http.ListenAndServe(":8080", nil)
 }
