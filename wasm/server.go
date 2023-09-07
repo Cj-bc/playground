@@ -49,7 +49,7 @@ func main() {
 	flag.Var(&binaries, "binary", "files that shuold be sent as binary")
 	flag.Parse()
 	files := flag.Args()
-	if len(files) == 0 {
+	if flag.NArg() == 0 {
 		log.Fatal("At least one file should be specified to serve.")
 	}
 	
