@@ -19,24 +19,24 @@ func (bf *binaryFiles) Set(s string) error {
     return nil
 }
 
-func GetFileContent(path string) (string, error) {
-    f, err := os.Open(path)
-    defer f.Close()
-    if err != nil {
-        return "", err
-    }
-
-    stat, err := f.Stat()
-    if err != nil {
-        return "", err
-    }
+func GetFileContent(path string) ([]byte, error) {
+	f, err := os.Open(path)
+	defer f.Close()
+	if err != nil {
+		return []byte{}, err
+	}
+	
+	stat, err := f.Stat()
+	if err != nil {
+		return []byte{}, err
+	}
 
 	buf := make([]byte, stat.Size())
-    if _, err = f.Read(buf); err != nil {
-        return "", err
-    }
+	if _, err = f.Read(buf); err != nil {
+		return []byte{}, err
+	}
 
-    return string(buf), nil
+    return buf, nil
 }
 
 func main() {
@@ -55,7 +55,7 @@ func main() {
 		}
 
 		http.HandleFunc(fmt.Sprintf("/%s", fn), func(w http.ResponseWriter, r *http.Request) {
-    		fmt.Fprint(w, content)
+			fmt.Fprint(w, string(content))
 		})
 	}
 
