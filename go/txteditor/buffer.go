@@ -109,6 +109,6 @@ func (buf *Buffer) NextLine() error {
 		return err
 	}
 
-	buf.point = eolpoint + 1 + c.x
+	buf.point = eolpoint + c.x
 	return nil
 }
