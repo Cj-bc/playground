@@ -197,3 +197,14 @@ func TestPieceTableSubstringMultipleRecord(t *testing.T) {
 		t.Errorf("Expected \"%s\", but got \"%s\"", line1+line2, substr)
 	}
 }
+
+func TestAddRecord(t *testing.T) {
+	table := PieceTable{origin: "This is test text buffer",
+		addition: "with addition",
+		records: []Record{},
+	}
+
+	if err := table.AddRecord(BufTypeOrigin, 0, len("This is test text ")); err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	}
+}
