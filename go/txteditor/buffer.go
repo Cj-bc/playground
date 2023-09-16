@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"fmt"
+	"strings"
 )
 
 /// You should call 'Buffer.Close()'
@@ -50,7 +51,6 @@ func (buf Buffer) Close() {
 }
 
 // Returns point's coordinate in terminal
-// FIXME: THIS IS BROKEN
 func (buf Buffer) PointCoord() (int, int, error) {
 	c, _ := buf.pieceTable.GetPointOfIndex(buf.point)
 
@@ -63,8 +63,8 @@ func (buf Buffer) PointCoord() (int, int, error) {
 	if err != nil {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
-
-	return c.x, c.y, nil
+	
+	return c.x + (strings.Count("\t", subStr) * 7), c.y, nil
 }
 
 func (buf *Buffer) Forward(n int) error {
