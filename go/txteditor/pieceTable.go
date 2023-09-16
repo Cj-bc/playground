@@ -144,7 +144,7 @@ func (table PieceTable) Substring(a, b int) (string, error) {
 	str := table.RecordString(table.records[idx_a])
 	result := str[offset_a:]
 
-	for i := idx_a; i < idx_b; i++ {
+	for i := idx_a + 1; i < idx_b; i++ {
 		result += table.RecordString(table.records[i])
 	}
 
