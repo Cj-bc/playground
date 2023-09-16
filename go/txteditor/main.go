@@ -59,6 +59,23 @@ func Draw(term *termenv.Output, state EditorState) {
 	term.MoveCursor(0, 0)
 	term.Write([]byte(state.CurrentBuffer().Contents()))
 	x, y := state.CurrentBuffer().PointCoord()
+
+	_, h, _ := getWinSize(int(term.TTY().Fd()))
+
+	// Display errors at bottom
+	term.MoveCursor(h-len(state.errors), 0)
+	for i := 0; i < len(state.errors); i++ {
+		if state.errors[i] == nil {
+			continue
+		}
+		term.Write([]byte(fmt.Sprint(state.errors[i])))
+		term.MoveCursor(h-len(state.errors)+i, 0)
+		state.errors[i] = nil
+	}
+	clear(state.errors)
+	state.errors = state.errors[:0]
+	term.Write([]byte(fmt.Sprint(len(state.errors))))
+
 	term.MoveCursor(y, x)
 }
 
