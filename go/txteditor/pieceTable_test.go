@@ -120,3 +120,31 @@ func TestBeginningOfLine(t *testing.T) {
 		}
 	}
 }
+
+/// Test PieceTable.Substring() with single record
+func TestPieceTableSubstringOneRecord(t *testing.T) {
+	str := "This is test text"
+	table := PieceTableFromString(str)
+	if substr, err := table.Substring(0, len(str) - 1); err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	} else if (substr != str) {
+		t.Errorf("Expected \"%s\", but got \"%s\"", str, substr)
+	}
+}
+
+
+/// Test PieceTable.Substring() with multiple records
+func TestPieceTableSubstringMultipleRecord(t *testing.T) {
+	line1, line2 := "This is ", "test text"
+	table := PieceTable{origin: line1+line2, addition: "",
+		records: []Record {
+			Record{bufType: BufTypeOrigin, startIdx: 0, length: len(line1)},
+			Record{bufType: BufTypeOrigin, startIdx: len(line1)+1, length: len(line2)},
+		}}
+
+	if substr, err := table.Substring(0, len(line1+line2) - 1); err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	} else if (substr != line1+line2) {
+		t.Errorf("Expected \"%s\", but got \"%s\"", line1+line2, substr)
+	}
+}

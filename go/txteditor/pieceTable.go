@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"strings"
+	"math"
 )
 
 const (
@@ -110,6 +111,43 @@ func (table PieceTable) EndOfLine(point int) (int, error) {
 		offset += table.records[i].length
 	}
 	return point + offset, nil
+}
+
+/// Return substring of given indices
+func (table PieceTable) Substring(a, b int) (string, error) {
+	length := int(math.Abs(float64(a - b)))
+
+	idx, offset, err := table.FindRecordIndex(a)
+	if err != nil {
+		return "", err
+	}
+
+	restLength := length
+
+	/// If both 'a' and 'b' are in teh same record,
+	/// return without iterating over rest of records.
+	str := table.RecordString(table.records[idx])
+	if (len(str[offset+1:]) > restLength) {
+		return str[offset:length], nil
+	}
+	restLength -= len(str[offset+1:])
+
+	/// Iterate over rest of records
+	result := str[offset:]
+	for i := idx + 1; i < len(table.records); i++ {
+		str := table.RecordString(table.records[i])
+
+		// If currently inspecting record contains, return it
+		if (len(str) >= restLength) {
+			result += str[:restLength-1]
+			return result, nil
+		}
+
+		result += str
+		restLength -= len(str)
+	}
+
+	return "", fmt.Errorf("Out of length")
 }
 
 // Find beginning of line.
