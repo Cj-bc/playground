@@ -197,3 +197,19 @@ func (table PieceTable) GetPointOfIndex(index int) (BufCoord, error) {
 
 	return BufCoord{}, fmt.Errorf("Point out of index. max point is %d", currentLength)
 }
+
+// Find record that contains given 'point' and return its index
+func (table PieceTable) FindRecordIndex(point int) (index, offset int, err error) {
+	if point < 0 {
+		return 0, 0, fmt.Errorf("Out of range index %d", point)
+	}
+
+	var currentLength int = 0
+	for i := 0; i < len(table.records); i++ {
+		if point <= (currentLength + table.records[i].length) {
+			return i, point - currentLength, nil
+		}
+		currentLength += table.records[i].length
+	}
+	return 0, 0, fmt.Errorf("Out of range index %d", point)
+}
