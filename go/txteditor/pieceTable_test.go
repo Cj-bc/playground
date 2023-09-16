@@ -97,8 +97,9 @@ func TestBeginningOfLine(t *testing.T) {
 		}
 	}
 
-	// In pieceTable, "\n" is added after "line1". So I added 1
-	correctBol = len(line1) + 1
+	// In pieceTable, "\n" is added after "line1". So I added 2
+	// len(line1) + 2
+	correctBol = 21
 	for i := correctBol; i < len(line2); i++ {
 		if bol, err := table.BeginningOfLine(i); err != nil {
 			t.Errorf("Did not expected error at point '%d' but got: %v", i, err)
@@ -109,7 +110,8 @@ func TestBeginningOfLine(t *testing.T) {
 		}
 	}
 
-	correctBol = len(line1) + len(line2) + 2
+	// len(line1) + 2 + len(line2) + 2
+	correctBol = 49
 	for i := correctBol; i < len(line3); i++ {
 		if bol, err := table.BeginningOfLine(i); err != nil {
 			t.Errorf("Did not expected error at point '%d' but got: %v", i, err)
