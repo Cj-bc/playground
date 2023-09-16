@@ -138,7 +138,7 @@ func (table PieceTable) Substring(a, b int) (string, error) {
 
 	if idx_a == idx_b {
 		str := table.RecordString(table.records[idx_a])
-		return str[offset_a:offset_b], nil
+		return str[offset_a:offset_b+1], nil
 	}
 
 	str := table.RecordString(table.records[idx_a])
@@ -149,7 +149,7 @@ func (table PieceTable) Substring(a, b int) (string, error) {
 	}
 
 	str = table.RecordString(table.records[idx_b])
-	result += str[:offset_b]
+	result += str[:offset_b+1]
 
 	return result, nil
 }
