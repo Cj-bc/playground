@@ -51,10 +51,20 @@ func (buf Buffer) Close() {
 
 // Returns point's coordinate in terminal
 // FIXME: THIS IS BROKEN
-func (buf Buffer) PointCoord() (int, int) {
+func (buf Buffer) PointCoord() (int, int, error) {
 	c, _ := buf.pieceTable.GetPointOfIndex(buf.point)
-	// FromBufCoord(c, interface { func SubstringByCoord()})
-	return c.x, c.y
+
+	bol, err := buf.pieceTable.BeginningOfLine(buf.point)
+	if err != nil {
+		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
+	}
+
+	subStr, err := buf.pieceTable.Substring(bol, buf.point)
+	if err != nil {
+		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
+	}
+
+	return c.x, c.y, nil
 }
 
 func (buf *Buffer) Forward(n int) error {
