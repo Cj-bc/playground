@@ -188,7 +188,7 @@ func TestPieceTableSubstringMultipleRecord(t *testing.T) {
 	table := PieceTable{origin: line1+line2, addition: "",
 		records: []Record {
 			Record{bufType: BufTypeOrigin, startIdx: 0, length: len(line1)},
-			Record{bufType: BufTypeOrigin, startIdx: len(line1)+1, length: len(line2)},
+			Record{bufType: BufTypeOrigin, startIdx: len(line1), length: len(line2)},
 		}}
 
 	if substr, err := table.Substring(0, len(line1+line2) - 1); err != nil {
