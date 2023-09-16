@@ -121,6 +121,55 @@ func TestBeginningOfLine(t *testing.T) {
 	}
 }
 
+func TestPieceTableFindRecordIndexOutOfRange(t *testing.T) {
+	table := PieceTable{origin: "this is a test table",
+		addition: "wanone record, but anymore",
+		records: []Record{
+			Record{bufType: BufTypeOrigin, startIdx: 0, length: len("this ")},
+			Record{bufType: BufTypeAddition, startIdx: 0, length: len("wa")},
+			Record{bufType: BufTypeOrigin, startIdx: len("this i"), length: len("s a")},
+			Record{bufType: BufTypeAddition, startIdx: len("wa"), length: len("n")},
+			Record{bufType: BufTypeOrigin, startIdx: len("this is a"), length: len(" ")},
+			Record{bufType: BufTypeAddition, startIdx: len("wan"), length: len("one")},
+			Record{bufType: BufTypeOrigin, startIdx: len("this is a test"), length: len(" table")},
+			Record{bufType: BufTypeAddition, startIdx: len("wanone"), length: len(" record, but anymore")},
+		}}
+
+	if _, _, err := table.FindRecordIndex(-1); err == nil {
+		t.Errorf("'-1' should be out-of-range, but it did not return error")
+	}
+
+	if _, _, err := table.FindRecordIndex(10000); err == nil {
+		t.Errorf("'10000' should be out-of-range, but it did not return error")
+	}
+}
+
+func TestPieceTableFindRecordIndex(t *testing.T) {
+	table := PieceTable{origin: "this is a test table",
+		addition: "wanone record, but anymore",
+		records: []Record{
+			Record{bufType: BufTypeOrigin, startIdx: 0, length: len("this ")},
+			Record{bufType: BufTypeAddition, startIdx: 0, length: len("wa")},
+			Record{bufType: BufTypeOrigin, startIdx: len("this i"), length: len("s a")},
+			Record{bufType: BufTypeAddition, startIdx: len("wa"), length: len("n")},
+			Record{bufType: BufTypeOrigin, startIdx: len("this is a"), length: len(" ")},
+			Record{bufType: BufTypeAddition, startIdx: len("wan"), length: len("one")},
+			Record{bufType: BufTypeOrigin, startIdx: len("this is a test"), length: len(" table")},
+			Record{bufType: BufTypeAddition, startIdx: len("wanone"), length: len(" record, but anymore")},
+		}}
+
+	i := 0
+	for expectedIdx := 0; expectedIdx < len(table.records); expectedIdx++ {
+		length := table.records[expectedIdx].length
+		for ; i < length; i++ {
+			if idx, _, _ := table.FindRecordIndex(i); idx != expectedIdx {
+				t.Errorf("point %d should be in record idx %d, but got %d", i, expectedIdx, idx)
+			}
+		}
+		i += length
+	}
+}
+
 /// Test PieceTable.Substring() with single record
 func TestPieceTableSubstringOneRecord(t *testing.T) {
 	str := "This is test text"
