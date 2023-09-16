@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"strings"
-	"math"
 )
 
 const (
@@ -113,41 +112,46 @@ func (table PieceTable) EndOfLine(point int) (int, error) {
 	return point + offset, nil
 }
 
-/// Return substring of given indices
+/// Return substring of given coordinates
+// func (table PieceTable) SubstringByCoord(a, b BufCoord) string {
+// 	// make sure a is smaller than b
+// 	if a.y > b.y || (a.y == b.y && a.x > b.x) {
+// 		(a, b) = (b, a)
+// 	}
+// }
+
+/// Return substring of given indices.
 func (table PieceTable) Substring(a, b int) (string, error) {
-	length := int(math.Abs(float64(a - b)))
+	if (a > b) { a, b = b, a }
 
-	idx, offset, err := table.FindRecordIndex(a)
+	idx_a, offset_a, err := table.FindRecordIndex(a)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("Could not find record containing %d: %v", a, err)
 	}
 
-	restLength := length
-
-	/// If both 'a' and 'b' are in teh same record,
-	/// return without iterating over rest of records.
-	str := table.RecordString(table.records[idx])
-	if (len(str[offset+1:]) > restLength) {
-		return str[offset:length], nil
-	}
-	restLength -= len(str[offset+1:])
-
-	/// Iterate over rest of records
-	result := str[offset:]
-	for i := idx + 1; i < len(table.records); i++ {
-		str := table.RecordString(table.records[i])
-
-		// If currently inspecting record contains, return it
-		if (len(str) >= restLength) {
-			result += str[:restLength-1]
-			return result, nil
-		}
-
-		result += str
-		restLength -= len(str)
+	idx_b, offset_b, err := table.FindRecordIndex(b)
+	if err != nil {
+		return "", fmt.Errorf("Could not find record containing %d: %v", b, err)
 	}
 
-	return "", fmt.Errorf("Out of length")
+	// returning substring
+
+	if idx_a == idx_b {
+		str := table.RecordString(table.records[idx_a])
+		return str[offset_a:offset_b], nil
+	}
+
+	str := table.RecordString(table.records[idx_a])
+	result := str[offset_a:]
+
+	for i := idx_a; i < idx_b; i++ {
+		result += table.RecordString(table.records[i])
+	}
+
+	str = table.RecordString(table.records[idx_b])
+	result += str[:offset_b]
+
+	return result, nil
 }
 
 // Find beginning of line.
