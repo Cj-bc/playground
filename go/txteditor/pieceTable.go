@@ -255,3 +255,34 @@ func (table PieceTable) FindRecordIndex(point int) (index, offset int, err error
 	}
 	return 0, 0, fmt.Errorf("Out of range index %d", point)
 }
+
+/// User facing method to safely add new record.
+/// Do not hand-craft records as it cannot guarantee that record is valid.
+func (table *PieceTable) AddRecord(bufType, startIdx, length int) error {
+	if startIdx < 0 {
+		return fmt.Errorf("'startIdx' should be greater than 0, but got %d", startIdx)
+	}
+	if length < 0 {
+		return fmt.Errorf("'length' should be greater than 0, but got %d", length)
+	}
+
+	switch bufType {
+	case BufTypeOrigin:
+		if startIdx+length > len(table.origin) {
+			return fmt.Errorf("record range %d-%d is out of the buffer (0-%d).",
+				startIdx, startIdx+length, len(table.origin))
+		}
+	case BufTypeAddition:
+		if startIdx+length > len(table.addition) {
+			return fmt.Errorf("record range %d-%d is out of the buffer (0-%d).",
+				startIdx, startIdx+length, len(table.addition))
+		}
+	default:
+		return fmt.Errorf("Unknown bufType: %d", bufType)
+	}
+
+	table.records = append(table.records, Record{bufType: bufType,
+		startIdx: startIdx, length: length})
+
+	return nil
+}
