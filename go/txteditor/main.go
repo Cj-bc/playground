@@ -91,3 +91,13 @@ func shutdownTerminal(fd int) error {
 
 	return nil
 }
+
+func getWinSize(fd int) (int, int, error) {
+	ws := unix.Winsize{}
+	err := unix.IoctlSetWinsize(fd, unix.TIOCGWINSZ, &ws)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return int(ws.Col), int(ws.Row), nil
+}
