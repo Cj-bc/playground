@@ -223,11 +223,9 @@ func (table PieceTable) GetPointOfIndex(index int) (BufCoord, error) {
 
 			if lastBoL := strings.LastIndex(restString, "\n"); lastBoL == -1 {
 				// If restString does not contains newlines
-				tabs := strings.Count(restString, "\t")
-				x = len(restString) + tabs * (TABSTOP - 1)
+				x = len(restString)
 			} else {
-				tabs := strings.Count(restString[lastBoL:], "\t")
-				x = len(restString[lastBoL:]) + tabs * (TABSTOP - 1)
+				x = len(restString[lastBoL:])
 			}
 			return BufCoord{x: x, y: y}, nil
 		} else {
