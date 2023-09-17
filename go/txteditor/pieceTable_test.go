@@ -161,11 +161,16 @@ func TestPieceTableFindRecordIndex(t *testing.T) {
 		}}
 
 	i := 0
+	lengthOfPreceedRecords := []int{0, 5, 7, 10, 11, 12, 15, 21}
 	for expectedIdx := 0; expectedIdx < len(table.records); expectedIdx++ {
 		length := table.records[expectedIdx].length
 		for ; i < length; i++ {
-			if idx, _, _ := table.FindRecordIndex(i); idx != expectedIdx {
+			if idx, offset, err := table.FindRecordIndex(i); err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			} else if idx != expectedIdx {
 				t.Errorf("point %d should be in record idx %d, but got %d", i, expectedIdx, idx)
+			} else if lengthOfPreceedRecords[expectedIdx]+offset != i {
+				t.Errorf("point should be %d, but it returned %d", i, lengthOfPreceedRecords[expectedIdx]+offset)
 			}
 		}
 		i += length
