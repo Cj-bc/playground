@@ -64,7 +64,7 @@ func (buf Buffer) PointCoord() (int, int, error) {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
 	
-	return c.x + (strings.Count("\t", subStr) * 7), c.y, nil
+	return c.x + (strings.Count(subStr, "\t") * 7), c.y, nil
 }
 
 func (buf *Buffer) Forward(n int) error {
