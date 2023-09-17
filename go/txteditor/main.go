@@ -58,7 +58,12 @@ func main() {
 func Draw(term *termenv.Output, state EditorState) {
 	term.MoveCursor(0, 0)
 	term.Write([]byte(state.CurrentBuffer().Contents()))
-	x, y := state.CurrentBuffer().PointCoord()
+	x, y, err := state.CurrentBuffer().PointCoord()
+	if err != nil {
+		state.errors = append(state.errors, fmt.Errorf("Error occured; reset cursor to 0: %w", err))
+		state.CurrentBuffer().point = 0
+	}
+	defer term.MoveCursor(y, x)
 
 	_, h, _ := getWinSize(int(term.TTY().Fd()))
 
