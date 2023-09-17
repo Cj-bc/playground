@@ -150,14 +150,14 @@ func TestPieceTableFindRecordIndex(t *testing.T) {
 	table := PieceTable{origin: "this is a test table",
 		addition: "wanone record, but anymore",
 		records: []Record{
-			Record{bufType: BufTypeOrigin, startIdx: 0, length: len("this ")},
-			Record{bufType: BufTypeAddition, startIdx: 0, length: len("wa")},
-			Record{bufType: BufTypeOrigin, startIdx: len("this i"), length: len("s a")},
-			Record{bufType: BufTypeAddition, startIdx: len("wa"), length: len("n")},
-			Record{bufType: BufTypeOrigin, startIdx: len("this is a"), length: len(" ")},
-			Record{bufType: BufTypeAddition, startIdx: len("wan"), length: len("one")},
-			Record{bufType: BufTypeOrigin, startIdx: len("this is a test"), length: len(" table")},
-			Record{bufType: BufTypeAddition, startIdx: len("wanone"), length: len(" record, but anymore")},
+			Record{bufType: BufTypeOrigin, startIdx: 0, length: len("this ")}, // len 5
+			Record{bufType: BufTypeAddition, startIdx: 0, length: len("wa")},  // len 7
+			Record{bufType: BufTypeOrigin, startIdx: len("this i"), length: len("s a")}, // len 10
+			Record{bufType: BufTypeAddition, startIdx: len("wa"), length: len("n")}, // len 11
+			Record{bufType: BufTypeOrigin, startIdx: len("this is a"), length: len(" ")}, // len 12
+			Record{bufType: BufTypeAddition, startIdx: len("wan"), length: len("one")}, // len 15
+			Record{bufType: BufTypeOrigin, startIdx: len("this is a test"), length: len(" table")}, // len 21
+			Record{bufType: BufTypeAddition, startIdx: len("wanone"), length: len(" record, but anymore")}, // len 41
 		}}
 
 	i := 0
