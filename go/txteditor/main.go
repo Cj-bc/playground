@@ -79,7 +79,6 @@ func Draw(term *termenv.Output, state EditorState) {
 	}
 	clear(state.errors)
 	state.errors = state.errors[:0]
-	term.Write([]byte(fmt.Sprint(len(state.errors))))
 
 	term.MoveCursor(y, x)
 }
