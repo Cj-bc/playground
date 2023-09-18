@@ -50,7 +50,8 @@ func (buf Buffer) Close() {
 	buf.file.Close()
 }
 
-// Returns point's coordinate in terminal
+// Returns point's coordinate in terminal.
+// Coordinate start at (0,0) at top left corner,
 func (buf Buffer) PointCoord() (int, int, error) {
 	c, _ := buf.pieceTable.GetPointOfIndex(buf.point)
 
@@ -103,6 +104,7 @@ func (buf *Buffer) BeginningOfLine() error {
 	return nil
 }
 
+// Move to the same column of the next line 
 func (buf *Buffer) NextLine() error {
 	c, err := buf.pieceTable.GetPointOfIndex(buf.point)
 	if err != nil {
