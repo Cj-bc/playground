@@ -123,6 +123,36 @@ func TestBeginningOfLine(t *testing.T) {
 	}
 }
 
+func TestPieceTableGetPointOfIndexMinimum(t *testing.T) {
+	table := PieceTableFromString("This is test table")
+	if c, err := table.GetPointOfIndex(0); err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	} else if expected := (BufCoord{x: 0, y: 0}); c != expected {
+		t.Errorf("Minimum X should be %v, but got %v", expected, c)
+	}
+}
+
+// \n shuold be considered the same line as the previous character.
+func TestPieceTableGetPointOfIndexNewlineIsEol(t *testing.T) {
+	table := PieceTableFromString("This is test table.\n2nd line here.")
+	if c, err := table.GetPointOfIndex(19); err != nil {
+		t.Errorf("Unexpected error: %v", err)
+	} else if expected := (BufCoord{x: 19, y: 0}); c != expected {
+		t.Errorf("It should return %v, but got %v", expected, c)
+	}
+}
+
+func TestPieceTableGetPointOfIndexOutOfRange(t *testing.T) {
+	table := PieceTableFromString("Very short")
+	if c, err := table.GetPointOfIndex(-1); err == nil {
+		t.Errorf("Expected error for index -1, but returned %v instead", c)
+	}
+
+	if c, err := table.GetPointOfIndex(10); err == nil {
+		t.Errorf("Expected error for index 10, but returned %v instead", c)
+	}
+}
+
 func TestPieceTableFindRecordIndexOutOfRange(t *testing.T) {
 	table := PieceTable{origin: "this is a test table",
 		addition: "wanone record, but anymore",
