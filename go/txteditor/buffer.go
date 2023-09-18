@@ -59,7 +59,12 @@ func (buf Buffer) PointCoord() (int, int, error) {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
 
-	subStr, err := buf.pieceTable.Substring(bol, buf.point)
+	// Make sure bol < buf.point - 1 in following procedures
+	if bol == buf.point {
+		return 0, c.y, nil
+	}
+
+	subStr, err := buf.pieceTable.Substring(bol, buf.point - 1)
 	if err != nil {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
