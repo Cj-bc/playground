@@ -23,7 +23,7 @@ func EditorStateWithBuffer(buf Buffer) EditorState {
 }
 
 func EmptyEditorState() EditorState {
-	return EditorStateWithBuffer(Buffer{pieceTable: EmptyPieceTable(), point: 0})
+	return EditorStateWithBuffer(EmptyBuffer())
 }
 
 func (st EditorState) CurrentBuffer() *Buffer {
