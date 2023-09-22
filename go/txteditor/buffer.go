@@ -116,6 +116,15 @@ func (buf *Buffer) NextLine() error {
 		return err
 	}
 
+	// Make sure buf.point is on the next line without
+	nextLineEol, err := buf.pieceTable.EndOfLine(eolpoint+1)
+	if err != nil {
+		return err
+	}
 	buf.point = eolpoint + c.x
+	if (nextLineEol - eolpoint) < c.x {
+		buf.point = nextLineEol
+	}
+
 	return nil
 }
