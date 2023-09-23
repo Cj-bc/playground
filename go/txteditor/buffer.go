@@ -34,16 +34,16 @@ func NewFileBuffer(fn string) (Buffer, error) {
 	}
 	// TODO: Do something if it could not read all
 
-	return Buffer{pieceTable: PieceTableFromString(string(buf)),
+	return Buffer{container: PieceTableFromString(string(buf)),
 		point: 0, file: f}, nil
 }
 
 func EmptyBuffer() Buffer {
-	return Buffer{pieceTable: EmptyPieceTable(), point: 0}
+	return Buffer{container: EmptyPieceTable(), point: 0}
 }
 
 func (buf Buffer) Contents() string {
-	return buf.pieceTable.Contents()
+	return buf.container.Contents()
 }
 
 func (buf Buffer) Close() {
@@ -53,9 +53,9 @@ func (buf Buffer) Close() {
 // Returns point's coordinate in terminal.
 // Coordinate start at (0,0) at top left corner,
 func (buf Buffer) PointCoord() (int, int, error) {
-	c, _ := buf.pieceTable.GetPointOfIndex(buf.point)
+	c, _ := buf.container.GetPointOfIndex(buf.point)
 
-	bol, err := buf.pieceTable.BeginningOfLine(buf.point)
+	bol, err := buf.container.BeginningOfLine(buf.point)
 	if err != nil {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
@@ -65,7 +65,7 @@ func (buf Buffer) PointCoord() (int, int, error) {
 		return 0, c.y, nil
 	}
 
-	subStr, err := buf.pieceTable.Substring(bol, buf.point - 1)
+	subStr, err := buf.container.Substring(bol, buf.point - 1)
 	if err != nil {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
@@ -76,7 +76,7 @@ func (buf Buffer) PointCoord() (int, int, error) {
 func (buf *Buffer) Forward(n int) error {
 	// Testing if it won't be out-of-range
 	// TODO: it might be better to measure length.
-	if _, err := buf.pieceTable.GetPointOfIndex(buf.point+n); err != nil {
+	if _, err := buf.container.GetPointOfIndex(buf.point+n); err != nil {
 		return fmt.Errorf("Reached end of buffer")
 	}
 
@@ -85,7 +85,7 @@ func (buf *Buffer) Forward(n int) error {
 }
 
 func (buf *Buffer) EndOfLine() error {
-	eolPoint, err := buf.pieceTable.EndOfLine(buf.point)
+	eolPoint, err := buf.container.EndOfLine(buf.point)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func (buf *Buffer) EndOfLine() error {
 }
 
 func (buf *Buffer) BeginningOfLine() error {
-	bolPoint, err := buf.pieceTable.BeginningOfLine(buf.point)
+	bolPoint, err := buf.container.BeginningOfLine(buf.point)
 	if err != nil {
 		return err
 	}
@@ -106,18 +106,18 @@ func (buf *Buffer) BeginningOfLine() error {
 
 // Move to the same column of the next line 
 func (buf *Buffer) NextLine() error {
-	c, err := buf.pieceTable.GetPointOfIndex(buf.point)
+	c, err := buf.container.GetPointOfIndex(buf.point)
 	if err != nil {
 		return err
 	}
 
-	eolpoint, err := buf.pieceTable.EndOfLine(buf.point)
+	eolpoint, err := buf.container.EndOfLine(buf.point)
 	if err != nil {
 		return err
 	}
 
 	// Make sure buf.point is on the next line without
-	nextLineEol, err := buf.pieceTable.EndOfLine(eolpoint+1)
+	nextLineEol, err := buf.container.EndOfLine(eolpoint+1)
 	if err != nil {
 		return err
 	}
