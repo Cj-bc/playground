@@ -44,7 +44,6 @@ func PieceTableFromString(content string) PieceTable {
 	}
 }
 
-/// Returns contents of given PieceTable.
 func (pt PieceTable) Contents() string {
 	var ret string
 	for i := 0; i < len(pt.records); i++ {
@@ -69,8 +68,6 @@ func (table PieceTable) RecordString(record Record) string {
 	}
 }
 
-// Find end of line.
-// Returns error if point is nagative value, or no more lines are exist
 func (table PieceTable) EndOfLine(point int) (int, error) {
 	if (point < -1) {
 		return 0, fmt.Errorf("Out of range point %d", point)
@@ -120,13 +117,6 @@ func (table PieceTable) EndOfLine(point int) (int, error) {
 // 	}
 // }
 
-// Return substring of given indices.
-// index a, and b are included in the result.
-// As both a and b are index, it should be between 0 to (MAX_LEN - 1)
-//
-// e.g. In order to retrive all contents:
-//
-//     table.Substring(0, MAX_LEN - 1)
 func (table PieceTable) Substring(a, b int) (string, error) {
 	if (a > b) { a, b = b, a }
 
@@ -160,8 +150,6 @@ func (table PieceTable) Substring(a, b int) (string, error) {
 	return result, nil
 }
 
-// Find beginning of line.
-// Returns error if point is nagative value, or no more lines are exist
 func (table PieceTable) BeginningOfLine(point int) (int, error) {
 	if (point < -1) {
 		return 0, fmt.Errorf("Out of range point %d", point)
@@ -208,9 +196,6 @@ func (table PieceTable) BeginningOfLine(point int) (int, error) {
 	return 0, nil
 }
 
-// Returns X-Y buffer coordinate of given index.
-// Coordinate origin is at left-top.
-// This isn't ready to use as display coordinate.
 func (table PieceTable) GetPointOfIndex(index int) (BufCoord, error) {
 	if index < 0 {
 		return BufCoord{}, fmt.Errorf("Out of range index %d", index)
