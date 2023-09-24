@@ -8,7 +8,7 @@ import (
 
 /// You should call 'Buffer.Close()'
 type Buffer struct {
-	pieceTable PieceTable
+	container PieceTable
 	point int /// Cursor point
 	file *os.File
 }
