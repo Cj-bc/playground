@@ -20,16 +20,6 @@ type Record struct {
 	length int
 }
 
-/// Coordinate in buffer space.
-///
-/// It is not ready for display as it counts each charcter whereas
-/// tabs(\t) have TABSTOP width.  convert to ScreenCoord before use
-/// them.
-type BufCoord struct {
-	x int
-	y int
-}
-
 type PieceTable struct {
 	origin string
 	addition string
