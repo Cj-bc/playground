@@ -6,11 +6,15 @@ import (
 	"strings"
 )
 
+// Default value of tabstop
+const DEFUALT_TABSTOP = 8
+
 /// You should call 'Buffer.Close()'
 type Buffer struct {
 	container PieceTable
 	point int /// Cursor point
 	file *os.File
+	tabstop int
 }
 
 func NewFileBuffer(fn string) (Buffer, error) {
@@ -35,11 +39,11 @@ func NewFileBuffer(fn string) (Buffer, error) {
 	// TODO: Do something if it could not read all
 
 	return Buffer{container: PieceTableFromString(string(buf)),
-		point: 0, file: f}, nil
+		point: 0, file: f, tabstop: DEFUALT_TABSTOP}, nil
 }
 
 func EmptyBuffer() Buffer {
-	return Buffer{container: EmptyPieceTable(), point: 0}
+	return Buffer{container: EmptyPieceTable(), point: 0, tabstop: DEFUALT_TABSTOP}
 }
 
 func (buf Buffer) Contents() string {
