@@ -73,8 +73,19 @@ func (buf Buffer) PointCoord() (int, int, error) {
 	if err != nil {
 		return 0, 0, fmt.Errorf("Invalid buffer point '%d': %w", buf.point, err)
 	}
-	
-	return c.x + (strings.Count(subStr, "\t") * 7), c.y, nil
+
+	// Find tabs and calculate its length
+	screenX := 0
+	for i := 0; i < len(subStr); i++ {
+		if idx := strings.Index(subStr[i:], "\t"); idx != -1 {
+			screenX += screenX % buf.tabstop
+			i += idx
+		} else {
+			screenX++
+		}
+	}
+
+	return screenX, c.y, nil
 }
 
 func (buf *Buffer) Forward(n int) error {
