@@ -1,0 +1,3 @@
+* Quick start
+
+https://developers.google.com/youtube/v3/quickstart/go
