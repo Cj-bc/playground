@@ -81,52 +81,52 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 func saveToken(file string, token *oauth2.Token) {
-    fmt.Printf("Saving credential file to %s\n", file)
-    f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-    if err != nil {
-        log.Fatalf("Unable to cache oauth token: %v", err)
-    }
-    defer f.Close()
-    json.NewEncoder(f).Encode(token)
+	fmt.Printf("Saving credential file to %s\n", file)
+	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		log.Fatalf("Unable to cache oauth token: %v", err)
+	}
+	defer f.Close()
+	json.NewEncoder(f).Encode(token)
 }
 
 func handleError(err error, message string) {
-    if message == "" {
-        message = "Error making API call"
-    }
-    if err != nil {
-        log.Fatalf(message + ": %v", err.Error())
-    }
+	if message == "" {
+		message = "Error making API call"
+	}
+	if err != nil {
+		log.Fatalf(message + ": %v", err.Error())
+	}
 }
 
 func channelsListByUsername(service *youtube.Service, part string, forUsername string) {
 	call := service.Channels.List([]string{part})
-    call = call.ForUsername(forUsername)
-    response, err := call.Do()
-    handleError(err, "")
-    fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', " +
-        "and it has %d viewers.",
-        response.Items[0].Id,
-        response.Items[0].Snippet.Title,
-        response.Items[0].Statistics.ViewCount))
+	call = call.ForUsername(forUsername)
+	response, err := call.Do()
+	handleError(err, "")
+	fmt.Println(fmt.Sprintf("This channel's ID is %s. Its title is '%s', " +
+		"and it has %d viewers.",
+		response.Items[0].Id,
+		response.Items[0].Snippet.Title,
+		response.Items[0].Statistics.ViewCount))
 
 }
 
 func main() {
-    ctx := context.Background()
+	ctx := context.Background()
 
-    b, err := ioutil.ReadFile("client_secret.json")
-    if err != nil {
-        log.Fatalf("Unable to read client secret file: %v", err)
-    }
+	b, err := ioutil.ReadFile("client_secret.json")
+	if err != nil {
+		log.Fatalf("Unable to read client secret file: %v", err)
+	}
 
-    config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
-    if err != nil {
-        log.Fatalf("Unable to parse client secret file to config: %v", err)
-    }
-    client := getClient(ctx, config)
-    service, err := youtube.New(client)
+	config, err := google.ConfigFromJSON(b, youtube.YoutubeReadonlyScope)
+	if err != nil {
+		log.Fatalf("Unable to parse client secret file to config: %v", err)
+	}
+	token := getToken(config)
+	service, err := youtube.New(client)
 
-    handleError(err, "Error creating YouTube Client")
-    channelsListByUsername(service, "snippet,contentDetails,statistics", "GoogleDevelopers")
+	handleError(err, "Error creating YouTube Client")
+	channelsListByUsername(service, "snippet,contentDetails,statistics", "GoogleDevelopers")
 }
