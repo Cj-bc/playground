@@ -1,5 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Parser (preamble) where
+module Parser (
+  preamble
+, wasmModule
+) where
 
 import Text.Megaparsec
 import Text.Megaparsec.Byte
@@ -10,6 +13,13 @@ import Data.Void
 import Data.Word (Word32)
 
 type Parser = Parsec Void BS.ByteString
+
+data WasmModule = Module { version :: Int
+                         }
+  deriving (Show)
+
+wasmModule :: Parser WasmModule
+wasmModule = Module <$> (fmap (fromInteger . toInteger) preamble)
 
 -- | Parser for WASM preamble
 preamble :: Parser Word32
