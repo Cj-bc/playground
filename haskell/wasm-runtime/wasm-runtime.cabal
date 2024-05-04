@@ -42,6 +42,7 @@ executable wasm-runtime-exe
   build-depends:       base
                      , wasm-runtime
                      , megaparsec
+                     , bytestring
   default-language:    Haskell2010
   ghc-options:         -Wall
                        -Wcompat

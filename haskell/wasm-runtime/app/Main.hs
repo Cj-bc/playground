@@ -4,7 +4,9 @@ module Main (main) where
 
 import Parser
 import Text.Megaparsec
+import Data.ByteString as BS
 
 main :: IO ()
 main = do
-  print $ parse preamble "" "\0asm"
+  f <- BS.readFile "resources/preambleonly.wasm"
+  print $ parse preamble "" f
