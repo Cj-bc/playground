@@ -1,2 +1,2 @@
-wasm:
-	wat2wasm *.wat
+%.wasm: %.wat
+	wat2wasm -o $@ $<
