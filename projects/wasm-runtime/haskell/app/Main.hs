@@ -8,5 +8,5 @@ import Data.ByteString as BS
 
 main :: IO ()
 main = do
-  f <- BS.readFile "resources/preambleonly.wasm"
+  f <- BS.readFile "resources/emptyfunc.wasm"
   print $ parse wasmModule "" f
