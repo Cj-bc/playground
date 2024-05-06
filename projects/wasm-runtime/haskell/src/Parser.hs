@@ -13,13 +13,9 @@ import Data.Void
 import Data.Word (Word32)
 import Codec.LEB128
 import Codec.LEB128.Constraints
+import Type (WasmModule (Module), FuncType(..))
 
 type Parser = Parsec Void BS.ByteString
-
-data WasmModule = Module { version :: Int
-                         , sections :: [Section]
-                         }
-  deriving (Show)
 
 data Section = CustomSection
              | TypeSection

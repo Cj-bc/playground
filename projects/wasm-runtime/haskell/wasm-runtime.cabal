@@ -22,6 +22,7 @@ description:         Please see the README on Github at <https://github.com/Cj-b
 library
   hs-source-dirs:      src
   exposed-modules:     Parser
+                     , Type
   build-depends:       base >= 4.7 && < 5
                      , megaparsec
                      , bytestring
