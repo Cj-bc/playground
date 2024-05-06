@@ -11,6 +11,8 @@ import Control.Monad
 import qualified Data.ByteString as BS
 import Data.Void
 import Data.Word (Word32)
+import Codec.LEB128
+import Codec.LEB128.Constraints
 
 type Parser = Parsec Void BS.ByteString
 
@@ -43,7 +45,7 @@ preamble = string "\0asm" *> word32le
 section :: Parser Section
 section = do
   code <- word8
-  size <- word32le
+  size <- leb128 :: Parser Word32
   _ <- count (fromInteger . toInteger $ size) word8
   case code of
     0x00 -> return CustomSection
@@ -59,3 +61,13 @@ section = do
     0x0a -> return CodeSection
     0x0b -> return DataSection
     _ -> fail "invalid section code"
+
+-- | Parser for LEB128 encoded unsigned numbers
+leb128 :: LEB128 a => Parser a
+leb128 = do
+  input <- getInput
+  case fromULEB128ByteString input of
+    (Nothing, _) -> fail "Invalid LEB128"
+    (Just n, bs) -> do
+      setInput bs
+      return n

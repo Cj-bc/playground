@@ -25,6 +25,7 @@ library
   build-depends:       base >= 4.7 && < 5
                      , megaparsec
                      , bytestring
+                     , leb128
   default-language:    Haskell2010
   ghc-options:         -Wall
                        -Wcompat
