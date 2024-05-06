@@ -17,20 +17,6 @@ import Type (WasmModule (Module), FuncType(..), ValType(..))
 
 type Parser = Parsec Void BS.ByteString
 
-data Section = CustomSection
-             | TypeSection
-             | ImportSection
-             | FunctionSection
-             | TableSection
-             | MemorySection
-             | GlobalSection
-             | ExportSection
-             | StartSection
-             | ElementSection
-             | CodeSection
-             | DataSection
-             deriving (Show)
-
 wasmModule :: Parser WasmModule
 wasmModule = do
   string "\0asm"
