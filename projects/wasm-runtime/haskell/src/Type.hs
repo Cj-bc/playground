@@ -1,5 +1,6 @@
 module Type where
 import qualified Data.ByteString as BS
+import Data.Word (Word32)
 
 -- | Represents WASM function type definition
 --
@@ -15,12 +16,14 @@ data FuncType = FuncType { parameters :: [ValType]
 data ValType = I32 | I64 | F32 | F64
   deriving (Show)
 
+type TypeIndex = Word32
+
 -- | WASM binary module.
 data WasmModule = Module { wasmVersion :: Int
                          , customSection :: [BS.ByteString]
                          , typeSection :: [FuncType]
                          -- , importSection :: [Import]
-                         -- , functionSection :: [Function]
+                         , functionSection :: [TypeIndex]
                          -- , tableSection :: [Table]
                          -- , memorySection :: [Memory]
                          -- , globalSection :: [Global]

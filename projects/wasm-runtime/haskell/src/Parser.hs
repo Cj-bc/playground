@@ -14,7 +14,8 @@ import Data.Void
 import Data.Word (Word32)
 import Codec.LEB128
 import Codec.LEB128.Constraints
-import Type (WasmModule (Module), FuncType(..), ValType(..))
+import Type (WasmModule (Module), FuncType(..), ValType(..)
+            , TypeIndex)
 
 type Parser = Parsec Void BS.ByteString
 
@@ -25,7 +26,8 @@ wasmModule = do
   ct1 <- optional customSection
   types <- typeSection
   ct2 <- optional customSection
-  return $ Module version (catMaybes [ct1, ct2]) types
+  funcs <- functionSection
+  return $ Module version (catMaybes [ct1, ct2]) types funcs
 
 -- | Parser for WASM preamble
 preamble :: Parser Word32
@@ -63,6 +65,15 @@ valType = do
     0x7D -> return F32
     0x7C -> return F64
     _    -> fail $ "Invalid valueType: " ++ show b
+
+functionSection :: Parser [TypeIndex]
+functionSection = do
+  _ <- satisfy (== 0x04)
+  _ <- leb128 :: Parser Word32
+  vectorOf typeIndex
+
+typeIndex :: Parser TypeIndex
+typeIndex = leb128
 
 -- | Parser for LEB128 encoded unsigned numbers
 leb128 :: LEB128 a => Parser a
