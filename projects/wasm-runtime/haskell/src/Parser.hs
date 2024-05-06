@@ -45,15 +45,13 @@ preamble = string "\0asm" *> word32le
 -- | Parser for Type Section
 typeSection :: Parser [FuncType]
 typeSection = do
-  sectionId <- word8
-  guard $ (== 0x01) sectionId
+  _ <- satisfy (== 0x01)
   size <- leb128 :: Parser Word32
   vectorOf funcType
 
 funcType :: Parser FuncType
 funcType = do
-  magic <- word8
-  guard $ (== 0x60) magic
+  _ <- satisfy (== 0x60)
   params <- vectorOf valType
   res <- vectorOf valType
   return $ FuncType params res
