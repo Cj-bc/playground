@@ -68,7 +68,7 @@ valType = do
 
 functionSection :: Parser [TypeIndex]
 functionSection = do
-  _ <- satisfy (== 0x04)
+  _ <- satisfy (== 0x03)
   _ <- leb128 :: Parser Word32
   vectorOf typeIndex
 
