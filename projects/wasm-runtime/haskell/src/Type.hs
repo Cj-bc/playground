@@ -16,6 +16,17 @@ data FuncType = FuncType { parameters :: [ValType]
 data ValType = I32 | I64 | F32 | F64
   deriving (Show)
 
+data FunctionLocalVar = FunctionLocalVar { countOfLocals :: Int
+                                         , valueType :: ValType
+                                         }
+  deriving (Show)
+
+data Code = Code { locals :: [FunctionLocalVar]
+                 -- | Temporary Stored as ByteString until Instrs are implemented
+                 , exprs :: BS.ByteString
+                 }
+  deriving (Show)
+
 type TypeIndex = Word32
 
 -- | WASM binary module.
@@ -30,7 +41,7 @@ data WasmModule = Module { wasmVersion :: Int
                          -- , exportSection :: [Export]
                          -- , startSection :: [Start]
                          -- , elementSection :: [Element]
-                         -- , codeSection :: [Code]
+                         , codeSection :: [Code]
                          -- , dataSection :: [Data]
                          }
   deriving (Show)

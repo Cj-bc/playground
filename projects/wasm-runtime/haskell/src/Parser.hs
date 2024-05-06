@@ -11,11 +11,11 @@ import Control.Monad
 import qualified Data.ByteString as BS
 import Data.Maybe (catMaybes)
 import Data.Void
-import Data.Word (Word32)
+import Data.Word (Word32, Word8)
 import Codec.LEB128
 import Codec.LEB128.Constraints
 import Type (WasmModule (Module), FuncType(..), ValType(..)
-            , TypeIndex)
+            , TypeIndex, FunctionLocalVar(..), Code(Code))
 
 type Parser = Parsec Void BS.ByteString
 
@@ -27,7 +27,10 @@ wasmModule = do
   types <- typeSection
   ct2 <- optional customSection
   funcs <- functionSection
-  return $ Module version (catMaybes [ct1, ct2]) types funcs
+  ct3 <- optional customSection
+  codes <- codeSection
+  ct4 <- optional customSection
+  return $ Module version (catMaybes [ct1, ct2, ct3, ct4]) types funcs codes
 
 -- | Parser for WASM preamble
 preamble :: Parser Word32
@@ -74,6 +77,33 @@ functionSection = do
 
 typeIndex :: Parser TypeIndex
 typeIndex = leb128
+
+codeSection :: Parser [Code]
+codeSection = do
+  _ <- satisfy (== 0x0a)
+  _ <- (fromInteger . toInteger <$> (leb128 :: Parser Word32)) :: Parser Int
+  vectorOf code
+
+-- | Parse 'code' part of code section
+code :: Parser Code
+code = do
+  _ <- (fromInteger . toInteger <$> (leb128 :: Parser Word32)) :: Parser Int
+  Code <$> vectorOf localVariable <*> expr
+
+-- TODO: Implement instr parsing once those operations are implemented.
+expr :: Parser BS.ByteString
+expr = do
+  inst <- word8
+  BS.pack <$> go inst []
+  where
+    go :: Word8 -> [Word8] -> Parser [Word8]
+    go 0x0b acc = return acc
+    go instr acc = do
+      next <- word8
+      go next (instr:acc)
+
+localVariable :: Parser FunctionLocalVar
+localVariable = FunctionLocalVar <$> (fromInteger . toInteger <$> (leb128 :: Parser Word32)) <*> valType
 
 -- | Parser for LEB128 encoded unsigned numbers
 leb128 :: LEB128 a => Parser a
