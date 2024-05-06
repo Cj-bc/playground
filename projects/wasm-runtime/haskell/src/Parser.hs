@@ -13,7 +13,7 @@ import Data.Void
 import Data.Word (Word32)
 import Codec.LEB128
 import Codec.LEB128.Constraints
-import Type (WasmModule (Module), FuncType(..))
+import Type (WasmModule (Module), FuncType(..), ValType(..))
 
 type Parser = Parsec Void BS.ByteString
 
@@ -32,31 +32,41 @@ data Section = CustomSection
              deriving (Show)
 
 wasmModule :: Parser WasmModule
-wasmModule = Module <$> (fmap (fromInteger . toInteger) preamble) <*> (many section)
+wasmModule = do
+  string "\0asm"
+  version <- fromInteger . toInteger <$> word32le
+  types <- typeSection
+  return $ Module version types
 
 -- | Parser for WASM preamble
 preamble :: Parser Word32
 preamble = string "\0asm" *> word32le
 
-section :: Parser Section
-section = do
-  code <- word8
+-- | Parser for Type Section
+typeSection :: Parser [FuncType]
+typeSection = do
+  sectionId <- word8
+  guard $ (== 0x01) sectionId
   size <- leb128 :: Parser Word32
-  _ <- count (fromInteger . toInteger $ size) word8
-  case code of
-    0x00 -> return CustomSection
-    0x01 -> return TypeSection
-    0x02 -> return ImportSection
-    0x03 -> return FunctionSection
-    0x04 -> return TableSection
-    0x05 -> return MemorySection
-    0x06 -> return GlobalSection
-    0x07 -> return ExportSection
-    0x08 -> return StartSection
-    0x09 -> return ElementSection
-    0x0a -> return CodeSection
-    0x0b -> return DataSection
-    _ -> fail "invalid section code"
+  vectorOf funcType
+
+funcType :: Parser FuncType
+funcType = do
+  magic <- word8
+  guard $ (== 0x60) magic
+  params <- vectorOf valType
+  res <- vectorOf valType
+  return $ FuncType params res
+
+valType :: Parser ValType
+valType = do
+  b <- word8
+  case b of
+    0x7F -> return I32
+    0x7E -> return I64
+    0x7D -> return F32
+    0x7C -> return F64
+    _    -> fail $ "Invalid valueType: " ++ show b
 
 -- | Parser for LEB128 encoded unsigned numbers
 leb128 :: LEB128 a => Parser a
@@ -67,3 +77,7 @@ leb128 = do
     (Just n, bs) -> do
       setInput bs
       return n
+
+-- | Parse wasm vector encoding of some value
+vectorOf :: Parser a -> Parser [a]
+vectorOf content = flip count content =<< (fromInteger . toInteger <$> (leb128 :: Parser Word32))
