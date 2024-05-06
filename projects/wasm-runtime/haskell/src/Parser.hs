@@ -9,6 +9,7 @@ import Text.Megaparsec.Byte
 import Text.Megaparsec.Byte.Binary
 import Control.Monad
 import qualified Data.ByteString as BS
+import Data.Maybe (catMaybes)
 import Data.Void
 import Data.Word (Word32)
 import Codec.LEB128
@@ -21,12 +22,23 @@ wasmModule :: Parser WasmModule
 wasmModule = do
   string "\0asm"
   version <- fromInteger . toInteger <$> word32le
+  ct1 <- optional customSection
   types <- typeSection
-  return $ Module version types
+  ct2 <- optional customSection
+  return $ Module version (catMaybes [ct1, ct2]) types
 
 -- | Parser for WASM preamble
 preamble :: Parser Word32
 preamble = string "\0asm" *> word32le
+
+customSection :: Parser BS.ByteString
+customSection = do
+  _ <- satisfy (== 0x00)
+  size <- (fromInteger . toInteger <$> (leb128 :: Parser Word32)) :: Parser Int
+  restInput <- getInput
+  let (content, rest) = BS.splitAt size restInput
+  setInput rest
+  return content
 
 -- | Parser for Type Section
 typeSection :: Parser [FuncType]
