@@ -40,10 +40,7 @@ customSection :: Parser BS.ByteString
 customSection = do
   _ <- satisfy (== 0x00)
   size <- (fromInteger . toInteger <$> (leb128 :: Parser Word32)) :: Parser Int
-  restInput <- getInput
-  let (content, rest) = BS.splitAt size restInput
-  setInput rest
-  return content
+  takeP Nothing size
 
 -- | Parser for Type Section
 typeSection :: Parser [FuncType]
