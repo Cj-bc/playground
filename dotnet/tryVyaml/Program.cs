@@ -1,4 +1,7 @@
 ﻿using VYaml.Serialization;
+using VYaml.Parser;
+using System.Buffers;
+using System.Text;
 
 async Task<int> Experiment_ExploringFileContent(){
     if (args.Length < 1)
@@ -26,4 +29,28 @@ async Task<int> Experiment_ExploringFileContent(){
     return 0;
 }
 
-return await Experiment_ExploringFileContent();
+int Experiment_AccessAnchorInformationViaParser(){
+    var parser = new YamlParser(new ReadOnlySequence<byte>(Encoding.UTF8.GetBytes(new[]
+    {
+	"%YAML 1.1",
+	"%TAG !u! tag:unity3d.com,2011:",
+	"--- !u!29 &1",
+	"OcclusionCullingSettings:",
+	"  m_ObjectHideFlags: 0",
+    }.Aggregate((a, b) => $"{a}\n{b}"))));
+
+    parser.SkipAfter(ParseEventType.StreamStart);
+
+    Console.WriteLine($"event: {parser.CurrentEventType}");
+    parser.Read();
+    Console.WriteLine($"is tag found: {parser.TryGetCurrentTag(out Tag tag)}");
+    Console.WriteLine($":handle {tag.Handle} :suffix {tag.Suffix}");
+    Console.WriteLine(parser.TryGetCurrentAnchor(out Anchor anchor));
+    Console.WriteLine($"anchor: {anchor}");
+    parser.Read();
+    Console.WriteLine(parser.GetScalarAsString());
+
+    return 0;
+}
+
+return Experiment_AccessAnchorInformationViaParser();
