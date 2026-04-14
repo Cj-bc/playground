@@ -1,13 +1,14 @@
 use Fs.FileRead
 use Fs.FileStat
 use Sys.Env
+use Sys.Console
 
 // The main entry point.
-def main(): Unit \ { IO, FileRead, FileStat, Env } =
+def main(): Unit \ { FileRead, FileStat, Env, Console } =
   Env.getArgs() |> ForEach.forEach(fname ->
  match (wc(fname)) {
-    case Ok(stat) => println("${stat#words} ${stat#lines} ${stat#bytes} ${fname}")
-    case Err(err) => println(err)
+    case Ok(stat) => Console.println("${stat#words} ${stat#lines} ${stat#bytes} ${fname}")
+    case Err(err) => Console.eprintln(ToString.toString(err))
   })
 
 def wc(fpath: String): Result[IoError, WcStat] \ { FileRead, FileStat }
