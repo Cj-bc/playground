@@ -1,12 +1,14 @@
 use Fs.FileRead
 use Fs.FileStat
+use Sys.Env
 
 // The main entry point.
-def main(): Unit \ { IO, FileRead, FileStat } =
-  match (wc("../flake.nix")) {
-    case Ok(stat) => println("${stat#words} ${stat#lines} ${stat#bytes}")
+def main(): Unit \ { IO, FileRead, FileStat, Env } =
+  Env.getArgs() |> ForEach.forEach(fname ->
+ match (wc(fname)) {
+    case Ok(stat) => println("${stat#words} ${stat#lines} ${stat#bytes} ${fname}")
     case Err(err) => println(err)
-  }
+  })
 
 def wc(fpath: String): Result[IoError, WcStat] \ { FileRead, FileStat }
   = forM (
