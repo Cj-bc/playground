@@ -33,3 +33,19 @@ def oneFile_shouldReturnCorrectly(): Unit \ Assert
         }
       }
     })
+
+@Test
+def emptyFile_shouldReturnCorrectly(): Unit \ {Assert}
+  = runTestCase(_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "" }, filename);
+
+      match wc(filename) {
+        case Err(_e) => Assert.fail("failed")
+        case Ok(v) => {
+          Assert.assertEq(expected = 0, v#lines);
+          Assert.assertEq(expected = 0, v#words);
+          Assert.assertEq(expected = 0, v#bytes)
+        }
+      }
+    })
