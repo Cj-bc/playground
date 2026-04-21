@@ -2,7 +2,7 @@ use Time.{Clock,TimeUnit}
 use Fs.{FileSystem,FileStat,FileRead}
 
 def runTestCase(f: Unit -> Unit \ ef): Unit \ {ef - FileSystem - FileStat - FileRead}
-  = run {f() 
+  = run {f()}
     with FileStat.runWithFileSystem
     with FileRead.runWithFileSystem
     with FileSystem.withInMemoryFS
@@ -34,8 +34,26 @@ def oneFile_shouldReturnCorrectly(): Unit \ Assert
       }
     })
 
+
 @Test
-def emptyFile_shouldReturnCorrectly(): Unit \ {Assert}
+def oneLetter_shouldReturnAllOne(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "a" }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => {
+          Assert.assertEq(expected = 1, v#lines);
+          Assert.assertEq(expected = 1, v#words);
+          Assert.assertEq(expected = 1, v#bytes)
+        }
+      }
+    })
+
+
+@Test
+def emptyFile_shouldReturnAllZero(): Unit \ {Assert}
   = runTestCase(_ -> {
       let filename = "test.txt";
       let _ = FileSystem.write({ str = "" }, filename);
@@ -49,3 +67,52 @@ def emptyFile_shouldReturnCorrectly(): Unit \ {Assert}
         }
       }
     })
+
+@Test
+def newline_shouldIncrementWordCount(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc\ndef" }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 2, v#words)
+      }
+    })
+
+@Test
+def newline_shouldIncrementLineCount(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc\ndef" }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 2, v#lines)
+      }
+    })
+
+@Test
+def repeatedSpaces_shouldBeTreatedAsOne(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc   def" }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 2, v#words)
+      }
+    })
+
+@Test
+def trailingSpace_shouldNotIncrementWordCount(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc " }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 1, v#words)
+      }
+    })
+
