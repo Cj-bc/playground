@@ -23,8 +23,12 @@ def wc(fpath: String): Result[IoError, WcStat] \ { FileRead, FileStat }
            case '\n' => { lines = counter#lines + 1, wasSpace = false | counter }
            case ' ' if (not counter#wasSpace) => { words = counter#words + 1, wasSpace = true | counter }
            case _ => { wasSpace = false | counter }
-        }, { lines = 1, words = 1, wasSpace = false }, contents);
-      { lines = c#lines, words = c#words, bytes = contents.length() }
+        }, { lines = 0, words = 0, wasSpace = false }, contents);
+      let length = contents.length();
+
+      { lines = if (c#words == 0) 0 else c#lines + 1
+      , words = if (length == 0) 0 else c#words + c#lines + 1
+      , bytes = length }
     }
      
 
