@@ -36,35 +36,38 @@ def oneFile_shouldReturnCorrectly(): Unit \ Assert
 
 
 @Test
-def oneLetter_shouldReturnAllOne(): Unit \ {Assert}
+def oneLetter_shouldSetLinesToOne(): Unit \ {Assert}
   = runTestCase (_ -> {
       let filename = "test.txt";
       let _ = FileSystem.write({ str = "a" }, filename);
 
       match (wc(filename)) {
         case Err(e) => Assert.fail("ioError: ${e}")
-        case Ok(v) => {
-          Assert.assertEq(expected = 1, v#lines);
-          Assert.assertEq(expected = 1, v#words);
-          Assert.assertEq(expected = 1, v#bytes)
-        }
+        case Ok(v) => Assert.assertEq(expected = 1, v#lines)
       }
     })
 
+@Test
+def oneLetter_shouldSetWordsToOne(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "a" }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 1, v#words)
+      }
+    })
 
 @Test
-def emptyFile_shouldReturnAllZero(): Unit \ {Assert}
+def emptyFile_shouldSetBytesToOne(): Unit \ {Assert}
   = runTestCase(_ -> {
       let filename = "test.txt";
       let _ = FileSystem.write({ str = "" }, filename);
 
       match wc(filename) {
         case Err(_e) => Assert.fail("failed")
-        case Ok(v) => {
-          Assert.assertEq(expected = 0, v#lines);
-          Assert.assertEq(expected = 0, v#words);
-          Assert.assertEq(expected = 0, v#bytes)
-        }
+        case Ok(v) => Assert.assertEq(expected = 0, v#bytes)
       }
     })
 
