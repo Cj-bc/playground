@@ -27,7 +27,7 @@ def wc(fpath: String): Result[IoError, WcStat] \ { FileRead, FileStat }
         }, { lines = 0, words = 0, wasSpace = false }, contents);
       let length = contents.length();
 
-      { lines = if (c#words == 0) 0 else c#lines + 1
+      { lines = if (length == 0) 0 else c#lines + 1
       , words = if (length == 0) 0 else c#words + 1
       , bytes = length }
     }
