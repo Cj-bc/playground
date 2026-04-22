@@ -20,14 +20,14 @@ def wc(fpath: String): Result[IoError, WcStat] \ { FileRead, FileStat }
     ) yield {
       // if (exists and isRegular qnd isReadable)
       let c = String.foldLeft((counter, c) -> match (c) {
-           case '\n' => { lines = counter#lines + 1, wasSpace = false | counter }
+           case '\n' => { lines = counter#lines + 1, words = counter#words + 1, wasSpace = true | counter }
            case ' ' if (not counter#wasSpace) => { words = counter#words + 1, wasSpace = true | counter }
            case _ => { wasSpace = false | counter }
         }, { lines = 0, words = 0, wasSpace = false }, contents);
       let length = contents.length();
 
       { lines = if (c#words == 0) 0 else c#lines + 1
-      , words = if (length == 0) 0 else c#words + c#lines + 1
+      , words = if (length == 0) 0 else c#words + 1
       , bytes = length }
     }
      
