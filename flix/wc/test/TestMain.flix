@@ -119,3 +119,39 @@ def trailingSpace_shouldNotIncrementWordCount(): Unit \ {Assert}
       }
     })
 
+@Test
+def multipleTrailingSpaces_shouldNotIncrementWordCount(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc  " }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 1, v#words)
+      }
+    })
+
+@Test
+def trailingSpace_shouldNotIncrementLineCount(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc " }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 1, v#lines)
+      }
+    })
+
+@Test
+def multipleTrailingSpaces_shouldNotIncrementLineCount(): Unit \ {Assert}
+  = runTestCase (_ -> {
+      let filename = "test.txt";
+      let _ = FileSystem.write({ str = "abc  " }, filename);
+
+      match (wc(filename)) {
+        case Err(e) => Assert.fail("ioError: ${e}")
+        case Ok(v) => Assert.assertEq(expected = 1, v#lines)
+      }
+    })
+
