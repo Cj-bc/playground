@@ -1,10 +1,12 @@
+use Sys.Console
+
 // The main entry point.
 def main(): Unit \ IO = println("a")
 
-def runWithTty(f: Unit -> a \ af): a \ (af - Terminal + IO)
+def runWithConsole(f: Unit -> a \ af): a \ (af - Terminal + Console)
   = run { f()} with handler Terminal {
     def write(str, k) = {
-      println(str);
+      Console.print(str);
       k()
     }
     def flush(k) = k()
