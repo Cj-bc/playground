@@ -1,16 +1,12 @@
 use Sys.Console
 
 // The main entry point.
-def main(): Unit \ IO = println("a")
-
-def runWithConsole(f: Unit -> a \ af): a \ (af - Terminal + Console)
-  = run { f()} with handler Terminal {
-    def write(str, k) = {
-      Console.print(str);
-      k()
-    }
-    def flush(k) = k()
+def main(): Unit \ IO = run {
+    loop()
   }
+  with Terminal.runWithConsole
+  with Ask.runWithConsole
+  with Console.runWithIO
 
 def loop(): Unit \ {Ask, Terminal} = {
   let line = Ask.ask("prompt> ");
@@ -18,17 +14,4 @@ def loop(): Unit \ {Ask, Terminal} = {
   Terminal.flush();
   if (line == "exit") ()
   else loop()
-}
-
-eff Terminal {
-  def write(str: String): Unit
-  def flush(): Unit
-}
-
-mod Terminal {
-  pub def writeln(str: String): Unit \ Terminal = Terminal.write("${str}\n")
-}
-
-eff Ask {
-  def ask(prompt: String): String
 }
