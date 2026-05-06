@@ -26,6 +26,9 @@
       in
         {
           packages.${system}.default = pkgs.flix;
+          devShells.${system}.default = pkgs.mkShell {
+            buildInputs = [pkgs.flix];
+          };
         }
     );
 }
