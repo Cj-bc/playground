@@ -15,4 +15,13 @@ pub mod HitNBlow {
     { hits = hitsn, blows = blowsn }
   }
 
+
+  pub def getCandidates(_secret: List[PinColor], _history: List[{ guess = List[PinColor], hits = Int32, blows = Int32}]): List[List[PinColor]] = {
+    let _rules: #{ Candidate(Int32, Int32, PinColor), Guess(Int32, Int32, PinColor),
+                  SimHit(Int32, Int32, Int32), SimBlow(Int32, Int32, Int32), SimHitCount(Int32, Int32; Set[Int32])} = #{
+      SimHit(candidateId, guessId, pos) :- Candidate(candidateId, pos, pin), Guess(guessId, pos, pin).
+      SimHitCount(cId, gId; Set#{pos}) :- SimHit(cId, gId, pos).
+    };
+    List#{}
+  }
 }
