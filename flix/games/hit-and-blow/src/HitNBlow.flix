@@ -16,12 +16,30 @@ pub mod HitNBlow {
   }
 
 
-  pub def getCandidates(_secret: List[PinColor], _history: List[{ guess = List[PinColor], hits = Int32, blows = Int32}]): List[List[PinColor]] = {
-    let _rules: #{ Candidate(Int32, Int32, PinColor), Guess(Int32, Int32, PinColor),
-                  SimHit(Int32, Int32, Int32), SimBlow(Int32, Int32, Int32), SimHitCount(Int32, Int32; Set[Int32])} = #{
+  pub def getCandidates(history: Nel[{ guess = Nel[PinColor], hits = Int32, blows = Int32}]): List[List[PinColor]] = {
+    let rules: #{ Candidate(Int32, Int32, PinColor)
+                , Guess(Int32, Int32, PinColor)
+                , SimHit(Int32, Int32, Int32)
+                , SimBlow(Int32, Int32, Int32)
+                , SimHitCount(Int32, Int32; Set[Int32])
+                , HistoryResult(Int32, Int32, Int32)
+                , ValidFor(Int32, Int32)
+                }
+      = #{
       SimHit(candidateId, guessId, pos) :- Candidate(candidateId, pos, pin), Guess(guessId, pos, pin).
       SimHitCount(cId, gId; Set#{pos}) :- SimHit(cId, gId, pos).
     };
-    List#{}
+
+    let _allPins = List#{ PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow, PinColor.Pink, PinColor.White };
+
+
+    // let _candidates = forM (pos <- List.range(0, Nel.head(history)#guess |> Nel.length |> Discrete.prev); pin <- allPins)
+    //   yield (pos, pin);
+    let historyGuesses = inject (Nel.mapWithIndex((idx, h) -> ((idx, h#guess): (Int32, Nel[PinColor])), history) |> Nel.flatMap(match (idx, guessPins) -> Nel.mapWithIndex((pos, pin) -> ((idx, pos, pin) : (Int32, Int32, PinColor)), guessPins))) into Guess/3;
+    let historyResults = inject Nel.mapWithIndex((idx, h) -> (idx, h#hits, h#blows), history) into HistoryResult/3;
+    let _a = query rules,historyGuesses,historyResults select sets from SimHitCount(cId, gId; sets)
+      |> Vector.toList |> Functor.map(set -> Set.toList(set))
+      ;
+  List.empty()
   }
 }
