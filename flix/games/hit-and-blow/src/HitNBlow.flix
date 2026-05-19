@@ -16,7 +16,7 @@ pub mod HitNBlow {
   }
 
 
-  pub def getCandidates(history: Nel[{ guess = Nel[PinColor], hits = Int32, blows = Int32}]): List[List[PinColor]] = {
+  pub def getCandidates(history: Nel[{ guess = Nel[PinColor], hits = Int32, blows = Int32}]): List[Nel[(Int32, PinColor)]] = {
     let rules: #{ Candidate(Int32, Int32, PinColor)
                 , Guess(Int32, Int32, PinColor)
                 , SimHit(Int32, Int32, Int32)
@@ -42,9 +42,9 @@ pub mod HitNBlow {
     //   yield (pos, pin);
     let historyGuesses = inject (Nel.mapWithIndex((idx, h) -> ((idx, h#guess): (Int32, Nel[PinColor])), history) |> Nel.flatMap(match (idx, guessPins) -> Nel.mapWithIndex((pos, pin) -> ((idx, pos, pin) : (Int32, Int32, PinColor)), guessPins))) into Guess/3;
     let historyResults = inject Nel.mapWithIndex((idx, h) -> (idx, h#hits, h#blows), history) into HistoryResult/3;
-    let _a = query rules,historyGuesses,historyResults select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
+    query rules,historyGuesses,historyResults select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
       |> Vector.toList
-      ;
-  List.empty()
+      |> List.groupBy(match (cId, _, _) -> cId) 
+      |> Functor.map(Functor.map(match (_, pos, pin) -> (pos, pin)))
   }
 }
