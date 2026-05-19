@@ -28,6 +28,7 @@ pub mod HitNBlow {
       = #{
       SimHit(candidateId, guessId, pos) :- Candidate(candidateId, pos, pin), Guess(guessId, pos, pin).
       SimHitCount(cId, gId; Set#{pos}) :- SimHit(cId, gId, pos).
+      ValidFor(cId, gId) :- HistoryResult(gId, hits, blows), SimHitCount(cId, gId; sets), if (Set.count(_ -> true, sets) == hits).
     };
 
     let _allPins = List#{ PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow, PinColor.Pink, PinColor.White };
