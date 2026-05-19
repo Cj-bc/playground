@@ -24,11 +24,15 @@ pub mod HitNBlow {
                 , SimHitCount(Int32, Int32; Set[Int32])
                 , HistoryResult(Int32, Int32, Int32)
                 , ValidFor(Int32, Int32)
+                , Invalid(Int32)
+                , Valid(Int32)
                 }
       = #{
       SimHit(candidateId, guessId, pos) :- Candidate(candidateId, pos, pin), Guess(guessId, pos, pin).
       SimHitCount(cId, gId; Set#{pos}) :- SimHit(cId, gId, pos).
       ValidFor(cId, gId) :- HistoryResult(gId, hits, blows), SimHitCount(cId, gId; sets), if (Set.count(_ -> true, sets) == hits).
+      Invalid(cId) :- Candidate(cId, _, _), Guess(gId, _, _), not ValidFor(cId, gId).
+      Valid(cId) :- Candidate(cId, _, _), not Invalid(cId).
     };
 
     let _allPins = List#{ PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow, PinColor.Pink, PinColor.White };
@@ -38,8 +42,8 @@ pub mod HitNBlow {
     //   yield (pos, pin);
     let historyGuesses = inject (Nel.mapWithIndex((idx, h) -> ((idx, h#guess): (Int32, Nel[PinColor])), history) |> Nel.flatMap(match (idx, guessPins) -> Nel.mapWithIndex((pos, pin) -> ((idx, pos, pin) : (Int32, Int32, PinColor)), guessPins))) into Guess/3;
     let historyResults = inject Nel.mapWithIndex((idx, h) -> (idx, h#hits, h#blows), history) into HistoryResult/3;
-    let _a = query rules,historyGuesses,historyResults select sets from SimHitCount(cId, gId; sets)
-      |> Vector.toList |> Functor.map(set -> Set.toList(set))
+    let _a = query rules,historyGuesses,historyResults select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
+      |> Vector.toList
       ;
   List.empty()
   }
