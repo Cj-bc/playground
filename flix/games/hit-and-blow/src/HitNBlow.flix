@@ -35,11 +35,6 @@ pub mod HitNBlow {
       Valid(cId) :- Candidate(cId, _, _), not Invalid(cId).
     };
 
-    let _allPins = List#{ PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow, PinColor.Pink, PinColor.White };
-
-
-    // let _candidates = forM (pos <- List.range(0, Nel.head(history)#guess |> Nel.length |> Discrete.prev); pin <- allPins)
-    //   yield (pos, pin);
     let historyGuesses = inject (Nel.mapWithIndex((idx, h) -> ((idx, h#guess): (Int32, Nel[PinColor])), history) |> Nel.flatMap(match (idx, guessPins) -> Nel.mapWithIndex((pos, pin) -> ((idx, pos, pin) : (Int32, Int32, PinColor)), guessPins))) into Guess/3;
     let historyResults = inject Nel.mapWithIndex((idx, h) -> (idx, h#hits, h#blows), history) into HistoryResult/3;
     query rules,historyGuesses,historyResults select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
