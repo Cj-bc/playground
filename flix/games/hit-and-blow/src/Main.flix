@@ -13,4 +13,13 @@ def main(): Unit \ IO =
 
     let res = eval(List#{PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow },
         List#{PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow });
-    println("Hit: ${res#hits}, Blow:  ${res#blows}")
+    println("Hit: ${res#hits}, Blow:  ${res#blows}");
+
+    getCandidatesDemo()
+
+
+def getCandidatesDemo(): Unit \ IO =
+    use HitNBlow.getCandidates;
+
+    let res = getCandidates(Nel.Nel({ guess = Nel.Nel(PinColor.Red, List#{PinColor.Blue}), hits = 1, blows = 2 }, List#{}));
+    println(res)
