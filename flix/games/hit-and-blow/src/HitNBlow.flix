@@ -56,7 +56,7 @@ pub mod HitNBlow {
         yield pin :: cand)
         |> mkCombo (level - 1));
 
-    let allCands = mkCombo(len - 1, allColors |> List.map(pin -> pin :: Nil))
+    let allCands = mkCombo(len - 1, allColors |> List.map(Applicative.point))
       |> List.mapWithIndex((id, l) ->
           List.mapWithIndex((pos, pin) -> (id, pos, pin), l))
       |> List.flatten;
