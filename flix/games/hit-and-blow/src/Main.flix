@@ -21,5 +21,5 @@ def main(): Unit \ IO =
 def getCandidatesDemo(): Unit \ IO =
     use HitNBlow.getCandidates;
 
-    let res = getCandidates(Nel.Nel({ guess = Nel.Nel(PinColor.Red, List#{PinColor.Blue}), hits = 1, blows = 2 }, List#{}));
+    let res = getCandidates(Nel.Nel({ guess = Nel.Nel(PinColor.Red, List#{PinColor.Blue}), hits = 1, blows = 1 }, List#{}));
     println(res)

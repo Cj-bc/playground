@@ -37,9 +37,31 @@ pub mod HitNBlow {
 
     let historyGuesses = inject (Nel.mapWithIndex((idx, h) -> ((idx, h#guess): (Int32, Nel[PinColor])), history) |> Nel.flatMap(match (idx, guessPins) -> Nel.mapWithIndex((pos, pin) -> ((idx, pos, pin) : (Int32, Int32, PinColor)), guessPins))) into Guess/3;
     let historyResults = inject Nel.mapWithIndex((idx, h) -> (idx, h#hits, h#blows), history) into HistoryResult/3;
-    query rules,historyGuesses,historyResults select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
+
+    query rules,historyGuesses,historyResults,getAllCandidates(2)
+    select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
       |> Vector.toList
       |> List.groupBy(match (cId, _, _) -> cId) 
       |> Functor.map(Functor.map(match (_, pos, pin) -> (pos, pin)))
   }
+
+   def getAllCandidates(len: Int32): #{ Candidate(Int32, Int32, PinColor) | r } =
+  // def _getAllCandidates(len: Int32): List[(Int32, Int32, PinColor)] =
+    let allColors = List#{ PinColor.Blue, PinColor.Red
+                    , PinColor.Green, PinColor.Yellow
+                    , PinColor.Pink, PinColor.White };
+
+    def mkCombo(level: Int32, cands: List[List[PinColor]]): List[List[PinColor]] =
+      if (level == 0) Nil
+      else ((forM (cand <- cands;
+                 pin <- allColors)
+        yield pin :: cand)
+        |> mkCombo (level - 1));
+
+    let allCands = mkCombo(len, allColors |> List.map(pin -> pin :: Nil))
+      |> List.mapWithIndex((id, l) ->
+          List.mapWithIndex((pos, pin) -> (id, pos, pin), l))
+      |> List.flatten;
+
+    inject allCands into Candidate/3
 }
