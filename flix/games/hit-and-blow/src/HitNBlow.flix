@@ -46,7 +46,6 @@ pub mod HitNBlow {
   }
 
    def getAllCandidates(len: Int32): #{ Candidate(Int32, Int32, PinColor) | r } =
-  // def _getAllCandidates(len: Int32): List[(Int32, Int32, PinColor)] =
     let allColors = List#{ PinColor.Blue, PinColor.Red
                     , PinColor.Green, PinColor.Yellow
                     , PinColor.Pink, PinColor.White };
