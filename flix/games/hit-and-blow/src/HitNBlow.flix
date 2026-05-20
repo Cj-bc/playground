@@ -1,5 +1,7 @@
 pub mod HitNBlow {
 
+  type alias ResultHistory = Nel[{ guess = Nel[PinColor], hits = Int32, blows = Int32}]
+
   pub def eval(secret: List[PinColor], guess: List[PinColor]): {hits = Int32, blows = Int32 }
     = {
     let rules = #{
@@ -16,7 +18,7 @@ pub mod HitNBlow {
   }
 
 
-  pub def getCandidates(history: Nel[{ guess = Nel[PinColor], hits = Int32, blows = Int32}]): List[Nel[(Int32, PinColor)]] = {
+  pub def getCandidates(history: ResultHistory): List[Nel[(Int32, PinColor)]] = {
     let rules: #{ Candidate(Int32, Int32, PinColor)
                 , Guess(Int32, Int32, PinColor)
                 , SimHit(Int32, Int32, Int32)
