@@ -52,12 +52,11 @@ pub mod HitNBlow {
 
     def mkCombo(level: Int32, cands: List[List[PinColor]]): List[List[PinColor]] =
       if (level == 0) cands
-      else ((forM (cand <- cands;
-                 pin <- allColors)
+      else ((forM (cand <- cands; pin <- allColors)
         yield pin :: cand)
         |> mkCombo (level - 1));
 
-    let allCands = mkCombo(len, allColors |> List.map(pin -> pin :: Nil))
+    let allCands = mkCombo(len - 1, allColors |> List.map(pin -> pin :: Nil))
       |> List.mapWithIndex((id, l) ->
           List.mapWithIndex((pos, pin) -> (id, pos, pin), l))
       |> List.flatten;
