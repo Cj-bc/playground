@@ -51,7 +51,7 @@ pub mod HitNBlow {
                     , PinColor.Pink, PinColor.White };
 
     def mkCombo(level: Int32, cands: List[List[PinColor]]): List[List[PinColor]] =
-      if (level == 0) Nil
+      if (level == 0) cands
       else ((forM (cand <- cands;
                  pin <- allColors)
         yield pin :: cand)
