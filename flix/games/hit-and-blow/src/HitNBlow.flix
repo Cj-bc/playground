@@ -45,7 +45,7 @@ pub mod HitNBlow {
       |> Functor.map(Functor.map(match (_, pos, pin) -> (pos, pin)))
   }
 
-   def getAllCandidates(len: Int32): #{ Candidate(Int32, Int32, PinColor) | r } =
+   pub def getAllCandidates(len: Int32): #{ Candidate(Int32, Int32, PinColor) | r } =
     let allColors = List#{ PinColor.Blue, PinColor.Red
                     , PinColor.Green, PinColor.Yellow
                     , PinColor.Pink, PinColor.White };

@@ -16,6 +16,7 @@ def main(): Unit \ IO =
     println("Hit: ${res#hits}, Blow:  ${res#blows}");
 
     getCandidatesDemo()
+    //getAllCandidatesDemo()
 
 
 def getCandidatesDemo(): Unit \ IO =
@@ -23,3 +24,9 @@ def getCandidatesDemo(): Unit \ IO =
 
     let res = getCandidates(Nel.Nel({ guess = Nel.Nel(PinColor.Red, List#{PinColor.Blue}), hits = 1, blows = 1 }, List#{}));
     println(res)
+
+def getAllCandidatesDemo(): Unit \ IO =
+    use HitNBlow.getAllCandidates;
+
+    query getAllCandidates(2) select (id, pos, pin) from Candidate(id, pos, pin)
+    |> println
