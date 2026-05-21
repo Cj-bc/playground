@@ -83,8 +83,10 @@ pub mod HitNBlow {
             (idx, h#hits, h#blows), history)
         into HistoryResult/3;
 
+    let secretLength = Nel.head(history)#guess |> Nel.length;
+
     query rules,historyGuesses,
-          historyResults,getAllCandidates(2)
+          historyResults,getAllCandidates(secretLength)
     select (cId, pos, pin)
     from Valid(cId),Candidate(cId, pos, pin)
       |> Vector.toList
