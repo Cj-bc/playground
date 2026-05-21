@@ -18,7 +18,7 @@ pub mod HitNBlow {
   }
 
 
-  pub def getCandidates(history: ResultHistory): List[Nel[(Int32, PinColor)]] = {
+  pub def getCandidates(history: ResultHistory): List[Nel[PinColor]] = {
     let rules: #{ Candidate(Int32, Int32, PinColor)
                 , Guess(Int32, Int32, PinColor)
                 , SimHit(Int32, Int32, Int32)
@@ -44,7 +44,8 @@ pub mod HitNBlow {
     select (cId, pos, pin) from Valid(cId),Candidate(cId, pos, pin)
       |> Vector.toList
       |> List.groupBy(match (cId, _, _) -> cId) 
-      |> Functor.map(Functor.map(match (_, pos, pin) -> (pos, pin)))
+      |> Functor.map(Nel.sortBy(match (_, pos, _) -> pos))
+      |> Functor.map(Functor.map(match (_, _, pin) -> pin))
   }
 
    pub def getAllCandidates(len: Int32): #{ Candidate(Int32, Int32, PinColor) | r } =
