@@ -45,6 +45,7 @@ pub mod HitNBlow {
                 , SimHit(Int32, Int32, Int32)
                 , SimBlow(Int32, Int32, Int32)
                 , SimHitCount(Int32, Int32; Set[Int32])
+                , SimBlowCount(Int32, Int32; Set[Int32])
                 , HistoryResult(Int32, Int32, Int32)
                 , ValidFor(Int32, Int32)
                 , Invalid(Int32)
@@ -56,10 +57,19 @@ pub mod HitNBlow {
            Guess(guessId, pos, pin).
       SimHitCount(cId, gId; Set#{pos})
         :- SimHit(cId, gId, pos).
+      SimBlow(candidateId, guessId, pos1)
+        :- Candidate(candidateId, pos1, pin),
+           Guess(guessId, pos2, pin),
+           not SimHit(candidateId, guessId, pos1),
+           not SimHit(candidateId, guessId, pos2).
+      SimBlowCount(cId, gId; Set#{pos})
+        :- SimBlow(cId, gId, pos).
       ValidFor(cId, gId)
         :- HistoryResult(gId, hits, blows),
            SimHitCount(cId, gId; sets),
-           if (Set.count(_ -> true, sets) == hits).
+           SimBlowCount(cId, gId; actualBlows),
+           if (Set.count(_ -> true, sets) == hits),
+           if (Set.count(_ -> true, actualBlows) == blows).
       Invalid(cId)
         :- Candidate(cId, _, _),
            Guess(gId, _, _),
