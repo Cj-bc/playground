@@ -28,5 +28,4 @@ def getCandidatesDemo(): Unit \ IO =
 def getAllCandidatesDemo(): Unit \ IO =
     use HitNBlow.getAllCandidates;
 
-    query getAllCandidates(2) select (id, pos, pin) from Candidate(id, pos, pin)
-    |> println
+    getAllCandidates(2) |> println

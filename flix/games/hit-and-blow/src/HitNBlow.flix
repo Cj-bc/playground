@@ -104,9 +104,10 @@ pub mod HitNBlow {
         into HistoryResult/3;
 
     let secretLength = Nel.head(history)#guess |> Nel.length;
+    let allCands = inject getAllCandidates(secretLength) into Candidate/3;
 
     query rules,historyGuesses,
-          historyResults,getAllCandidates(secretLength)
+          historyResults,allCands
     select (cId, pos, pin)
     from Valid(cId),Candidate(cId, pos, pin)
       |> Vector.toList
@@ -116,7 +117,7 @@ pub mod HitNBlow {
   }
 
    pub def getAllCandidates(len: Int32)
-           : #{ Candidate(Int32, Int32, PinColor) | r } =
+           : List[(Int32, Int32, PinColor)] =
     let allColors = List#{ PinColor.Blue, PinColor.Red
                     , PinColor.Green, PinColor.Yellow
                     , PinColor.Pink, PinColor.White };
@@ -129,12 +130,9 @@ pub mod HitNBlow {
         yield pin :: cand)
         |> mkCombo (level - 1));
 
-    let allCands =
       mkCombo(len - 1
              , allColors |> List.map(Applicative.point))
       |> List.mapWithIndex((id, l) ->
           List.mapWithIndex((pos, pin) -> (id, pos, pin), l))
-      |> List.flatten;
-
-    inject allCands into Candidate/3
+      |> List.flatten
 }

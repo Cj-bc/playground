@@ -15,29 +15,33 @@ def assertHasAllColors(v: t[PinColor]): Unit \ {Assert, Foldable.Aef[t]}  with F
 
 @Test
 pub def getAllCandidates_oneLength(): Unit \ Assert =
-  discard query getAllCandidates(1) select (pos, pin) from Candidate(_, pos, pin)
-    |> Vector.groupBy(match (pos, _) -> pos)
-    |> Functor.map(Functor.map(snd) >> assertHasAllColors);
+  discard getAllCandidates(1)
+    |> List.groupBy(match (_, pos, _) -> pos)
+    |> Functor.map(Functor.map(match (_, _, pin) -> pin)
+                   >> assertHasAllColors);
   ()
   
 
 @Test
 pub def getAllCandidates_twoLength(): Unit \ Assert =
-  discard query getAllCandidates(2) select (pos, pin) from Candidate(_, pos, pin)
-    |> Vector.groupBy(match (pos, _) -> pos)
-    |> Functor.map(Functor.map(snd) >> assertHasAllColors);
+  discard getAllCandidates(2)
+    |> List.groupBy(match (_, pos, _) -> pos)
+    |> Functor.map(Functor.map(match (_, _, pin) -> pin)
+                   >> assertHasAllColors);
   ()
 
 @Test
 pub def getAllCandidates_threeLength(): Unit \ Assert =
-  discard query getAllCandidates(3) select (pos, pin) from Candidate(_, pos, pin)
-    |> Vector.groupBy(match (pos, _) -> pos)
-    |> Functor.map(Functor.map(snd) >> assertHasAllColors);
+  discard getAllCandidates(3)
+    |> List.groupBy(match (_, pos, _) -> pos)
+    |> Functor.map(Functor.map(match (_, _, pin) -> pin)
+                   >> assertHasAllColors);
   ()
 
 @Test
 pub def getAllCandidates_fourLength(): Unit \ Assert =
-  discard query getAllCandidates(3) select (pos, pin) from Candidate(_, pos, pin)
-    |> Vector.groupBy(match (pos, _) -> pos)
-    |> Functor.map(Functor.map(snd) >> assertHasAllColors);
+  discard getAllCandidates(4)
+    |> List.groupBy(match (_, pos, _) -> pos)
+    |> Functor.map(Functor.map(match (_, _, pin) -> pin)
+                   >> assertHasAllColors);
   ()
