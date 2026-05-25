@@ -1,5 +1,15 @@
 pub mod HitNBlow {
 
+  pub def allColors(): Set[PinColor] = Set#{
+    PinColor.Blue,
+    PinColor.Red,
+    PinColor.Green,
+    PinColor.Yellow,
+    PinColor.Pink,
+    PinColor.White
+  }
+
+
   type alias ResultHistory
     = Nel[{ guess = Nel[PinColor]
           , hits = Int32
