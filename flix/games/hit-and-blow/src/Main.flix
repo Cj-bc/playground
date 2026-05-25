@@ -11,7 +11,8 @@ pub enum PinColor with ToString, Eq, Order {
 def main(): Unit \ IO =
     use HitNBlow.eval;
 
-    let res = eval(List#{PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow },
+    let secret = List#{PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow };
+    let res = eval(secret,
         List#{PinColor.Blue, PinColor.Red, PinColor.Green, PinColor.Yellow });
     println("Hit: ${res#hits}, Blow:  ${res#blows}");
 
@@ -19,10 +20,24 @@ def main(): Unit \ IO =
     //getAllCandidatesDemo()
 
 
+// def process(sec: Nel[PinColor], history: ResultHistory): Nel[PinColor] =
+//     getCandidates(history);
+
+
 def getCandidatesDemo(): Unit \ IO =
     use HitNBlow.getCandidates;
 
-    let res = getCandidates(Nel.Nel({ guess = Nel.Nel(PinColor.Red, List#{PinColor.Blue}), hits = 1, blows = 1 }, List#{}));
+    let res = getCandidates(Nel.Nel(
+                { guess = Nel.Nel(PinColor.Red
+                                 , List#{PinColor.Blue
+                                        , PinColor.Green})
+                , hits = 1, blows = 2 }
+              , List#{
+                { guess = Nel.Nel(PinColor.Green
+                                 , List#{PinColor.Blue
+                                        , PinColor.Red})
+                , hits = 0, blows = 3 }
+              }));
     println(res)
 
 def getAllCandidatesDemo(): Unit \ IO =
