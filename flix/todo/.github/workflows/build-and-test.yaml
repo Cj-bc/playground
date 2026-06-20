@@ -1,0 +1,38 @@
+name: Build and Test
+
+on:
+  pull_request:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v5
+
+      - name: Install JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Read Flix version from flix.toml
+        id: flix
+        run: |
+          version=$(grep -E '^"?flix"?[[:space:]]*=' flix.toml \
+            | head -n1 \
+            | sed -E 's/.*"([^"]+)"[[:space:]]*$/\1/')
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Download Flix
+        run: |
+          curl -fsSL -o flix.jar \
+            "https://github.com/flix/flix/releases/download/v${{ steps.flix.outputs.version }}/flix.jar"
+
+      - name: Check
+        run: java -jar flix.jar check
+
+      - name: Test
+        run: java -jar flix.jar test
