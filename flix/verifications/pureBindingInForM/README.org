@@ -1,0 +1,41 @@
+* Pure binding in forM
+
+As of flix 0.73.0, ~forM~ can contains pure local variable binding using ~VARNAME = EXPRESSION~ syntax.
+
+#+begin_src flix
+
+def f(): Result[Unit, Int32] =
+  forM (
+    _ <- Ok(1); // First line should be generator to suppress unrelated error
+    const = (1)
+  ) yield const
+
+def main(): Unit \ IO = println(f())
+
+#+end_src
+
+This behaviour is confirmed with flix 0.71.0, 0.72.0, 0.73.0.
+
+** other notes
+
+*** how did I found that?
+
+I've encounted compilation error that saying:
+
+
+
+*** about forA
+
+forA doesn't allow this and result in compile error:
+
+#+begin_quote
+-- Syntax Error [E0125] ------------------------------ unusedvariableInForM.flix
+
+>> Unexpected forA fragment: only generators allowed.
+
+6 |     const = (1)
+        ^^^^^^^^^^^
+        unexpected fragment
+
+Explanation: A forA loop may only contain generators (x <- xs).
+#+end_quote
