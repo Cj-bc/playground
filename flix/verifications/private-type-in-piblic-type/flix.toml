@@ -1,0 +1,6 @@
+[package]
+name        = "private-type-in-piblic-type"
+description = "test"
+version     = "0.1.0"
+flix        = "0.75.3"
+authors     = ["John Doe <john@example.com>"]
