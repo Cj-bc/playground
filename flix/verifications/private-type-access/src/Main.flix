@@ -5,7 +5,7 @@ def main(): Unit \ IO =
     // expected behavior
     let _o = make(12);
 
-    // why is this allowed? both Sealed and I are private
+    // why is this allowed? Sealed is not defined as public
     let direct = Sealed.Sealed(1);
     println(direct)
 
