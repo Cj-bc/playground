@@ -1,6 +1,6 @@
 pub mod Another {
-  use Sealed.{make, Sealed};
+  use Private.{make, Private};
 
-  pub def expected_to_work(): Sealed = make(1)
-  pub def should_be_invalid(): Sealed = Sealed.Sealed(1)
+  pub def expected_to_work(): Private = make(1)
+  pub def should_be_invalid(): Private = Private.Private(1)
 }

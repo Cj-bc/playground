@@ -1,4 +1,4 @@
-use Sealed.{make, Sealed, NonCompanionPrivate}
+use Private.{make, Private, NonCompanionPrivate}
 
 // The main entry point.
 def main(): Unit \ IO =
@@ -6,7 +6,7 @@ def main(): Unit \ IO =
     let _o = make(12);
     let _ncp = NonCompanionPrivate.NonCompanionPrivate(2);
 
-    // why is this allowed? Sealed is not defined as public
-    let direct = Sealed.Sealed(1);
+    // why is this allowed? Private is not defined as public
+    let direct = Private.Private(1);
     println(direct)
 
