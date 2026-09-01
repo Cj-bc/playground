@@ -18,7 +18,7 @@ $ nix develop -c flix run
 
 ## non companion enum has the same behaviour
 
-from [documentation] (https://doc.flix.dev/companion-modules.html), I assumed that name of `Private`was exported because it's companion name. 
+from [documentation](https://doc.flix.dev/companion-modules.html), I assumed that name of `Private`was exported because it's companion name. 
 
 > The companion’s name is exported from the module. This means that Color can refer to both the module and the enum. We can refer to a case as Color.Red or as Color.Color.Red.
 >
@@ -33,7 +33,7 @@ when calling private method, compilation fails and error below is returned.
 
 ```
 -- Resolution Error [E0237] -------------------------------------- src/Main.flix
-                                                                         >> Definition 'Private.privateMethod' is not accessible from the module ''.
+>> Definition 'Private.privateMethod' is not accessible from the module ''.
                                                                          16 |     println(privateMethod())
                  ^^^^^^^^^^^^^
                  inaccessible definition                                                                                                          Tip: Mark the definition as 'pub'.
