@@ -27,7 +27,7 @@ from [documentation](https://doc.flix.dev/companion-modules.html), I assumed tha
 So I added `NonCompanionPrivate` type, which is neither companion nor public. 
 but it still succeeds compilation, so it isn't because `Private` is companion. 
 
-## of we try to call private method, fails to compile
+## calling private method results in compilation failure
 
 when calling private method, compilation fails and error below is returned. 
 
