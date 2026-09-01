@@ -29,7 +29,7 @@ but it still succeeds compilation, so it isn't because `Private` is companion.
 
 ## calling private method results in compilation failure
 
-when calling private method, compilation fails and error below is returned. 
+when calling private method(https://github.com/Cj-bc/playground/commit/3a14d34e8962ff03c9edb459612053098de0864b), compilation fails and error below is returned. 
 
 ```
 -- Resolution Error [E0237] -------------------------------------- src/Main.flix
