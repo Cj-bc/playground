@@ -10,4 +10,6 @@ pub mod Private {
       let Private(n) = x;
       ToString.toString(n)
   }
+
+  def privateMethod(): Int32 = 1
 }
