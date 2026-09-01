@@ -1,6 +1,40 @@
 {
   "nodes": {
+    "flix": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1786895620,
+        "narHash": "sha256-JWTX7KHNbTPqnVQamLpP2tMCQxlftj0EafN/s7hP/1o=",
+        "owner": "Cj-bc",
+        "repo": "flix.nix",
+        "rev": "b7b781ee8a277e26c7dab2879b3c46d05319b79b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Cj-bc",
+        "repo": "flix.nix",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1780243769,
+        "narHash": "sha256-x5UQuRsH3MqI0U9afaXSNqzTPSeZlRLvFAav2Ux1pNw=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "331800de5053fcebacf6813adb5db9c9dca22a0c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1775710090,
         "narHash": "sha256-ar3rofg+awPB8QXDaFJhJ2jJhu+KqN/PRCXeyuXR76E=",
@@ -18,7 +52,8 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "flix": "flix",
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },
