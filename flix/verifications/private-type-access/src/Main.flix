@@ -1,4 +1,4 @@
-use Private.{make, Private, makeNonCompanion, NonCompanionPrivate, privateMethod}
+use Private.{make, Private, makeNonCompanion, NonCompanionPrivate}
 
 // The main entry point.
 def main(): Unit \ IO =
@@ -11,6 +11,5 @@ def main(): Unit \ IO =
 
     // why is this allowed? Private is not defined as public
     let direct = Private.Private(1);
-    println(direct);
+    println(direct)
 
-    println(privateMethod())
